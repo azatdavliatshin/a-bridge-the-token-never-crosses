@@ -130,7 +130,7 @@
 		<img src="assets/azat.jpg" alt="" style="max-width:300px; max-height:450px; border-radius:12px; object-fit:cover;">
 		<div>
 			<p>Azat Davliatshin</p>
-			<p class="small">Software Architect &amp; Tech Lead, Quantori<br>
+			<p class="small">Software Architect &amp; Tech Lead<br>
 			10+ years in JavaScript</p>
 			<p class="small muted">[your joke line goes here]</p>
 		</div>
@@ -151,7 +151,7 @@
 	<p class="big">One codebase. Two contexts. Same bug.</p>
 	<ul>
 		<li class="fragment">an iframe inside SharePoint / Teams — can't see the host's session</li>
-		<li class="fragment">a WKWebView on iOS — can't see Safari's passkeys and autofill</li>
+		<li class="fragment">a WKWebView on iOS — isolated from the device's passkeys, autofill and Safari session</li>
 		<li class="fragment accent">a primary session lives next door; a secondary context needs its own — without asking the user again</li>
 	</ul>
 	<aside class="notes">
@@ -688,7 +688,7 @@ window.location.reload();
 	<h2>Where the same bridge goes next</h2>
 	<div class="two-col">
 		<div class="card"><p><strong>Web ↔ web</strong></p><p class="small">iframe · popup · <code class="inline">postMessage</code> · partitioned cookie</p></div>
-		<div class="card hl"><p><strong>Native ↔ web</strong></p><p class="small">WKWebView can't see Safari — passkeys, autofill<br>same handle store · <code class="inline">ASWebAuthenticationSession</code> transport</p></div>
+		<div class="card hl"><p><strong>Native ↔ web</strong></p><p class="small">WKWebView is isolated from the device's credential store — passkeys, autofill, Safari session<br>same handle store · <code class="inline">ASWebAuthenticationSession</code> transport</p></div>
 	</div>
 	<p class="big accent" style="margin-top:0.8em">One shape, two transports.</p>
 	<aside class="notes">Closes the origin-story loop: the iOS transport was the other half of the same task. One sentence — it's the next talk. (39:00)</aside>

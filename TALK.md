@@ -7,11 +7,11 @@
 ## 1 · Title
 
 Hi. Ok, let's start.
-The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but the title is literally the whole talk. I'm going going to carry a user's session across an origin boundary — from a page that has it to an iframe that doesn't — and the one thing that will never make the trip is the session token itself. Sounds like a magic? Follow me, and by the end you'll know exactly what *does* cross, and why that turns out to be enough.
+The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but the title is literally the whole talk. I'm going to carry a user's session across an origin boundary — from a page that has it to an iframe that doesn't — and the one thing that will never make the trip is the session token itself. Sounds like a magic? Follow me, and by the end you'll know exactly what *does* cross, and why that turns out to be enough.
 
 ## 2 · Who's talking
 
-I'm Azat. I'm a software architect and tech lead at Quantori, and I've been writing JavaScript for a bit over ten years. One thing up front: tonight is about a pattern, not a product. If you walk out of here and hand-roll your own version — that's a win, as long as it passes the checklist I'll give you later.
+I'm Azat. I'm a software architect and tech lead, and I've been writing JavaScript for a bit over ten years. One thing up front: tonight is about a pattern, not a product. If you walk out of here and hand-roll your own version — that's a win, as long as it passes the checklist I'll give you later.
 
 *[your joke line]*
 
@@ -19,9 +19,9 @@ I'm Azat. I'm a software architect and tech lead at Quantori, and I've been writ
 
 This came out of a real project. An enterprise AI assistant for a large pharma company — one Next.js codebase, two ways of reaching users.
 
-Inside SharePoint and Teams it ran as an iframe. The user was signed in on the host — SharePoint knew who they were. But inside our iframe, they were anonymous. Our app couldn't see the host's session at all.
+Inside SharePoint and Teams assistant ran as an iframe. The user was signed in on the host — SharePoint knew who they were. But inside our iframe, they were anonymous. Our app couldn't see the host's session at all.
 
-On iOS it shipped as a wrapped PWA — a WKWebView. And a WKWebView can't see Safari. So the user's passkeys, their autofill, their existing login — all out of reach.
+On iOS it shipped as a wrapped PWA — a WKWebView. And a WKWebView is an isolated web process: its own cookie store, and no access to the device's credential store. Passkeys live at the device level — in the Keychain, behind the platform authenticator — and the WebView simply can't reach them. Same for autofill, same for the login the user already has in Safari. All out of reach.
 
 Two platforms, two separate bug reports. And it took us a while to notice that it was the same bug. In both cases there's a *primary* session that lives in one browsing context, and a *secondary* context that needs a session of its own — without asking the user to sign in again.
 
@@ -203,7 +203,7 @@ I deleted the fallback. And the lesson: when a cross-context assumption feels ob
 
 ## 16 · Where the same bridge goes next
 
-Back to the origin story. The other half of that task was iOS — a WKWebView that can't see Safari's passkeys and autofill. Same shape: a primary session in one context, a secondary context that needs its own. The same handle store, a different transport — the system auth session instead of a popup, and a URL callback instead of `postMessage`. One shape, two transports. That's the next talk.
+Back to the origin story. The other half of that task was iOS — a WKWebView that has no access to the device's passkeys, autofill, or the session the user already has in Safari. Same shape: a primary session in one context, a secondary context that needs its own. The same handle store, a different transport — the system auth session instead of a popup, and a URL callback instead of `postMessage`. One shape, two transports. That's the next talk.
 
 ## 17 · Back to the four constraints
 
