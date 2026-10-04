@@ -7,11 +7,11 @@
 ## 1 · Title
 
 Hi. Ok, let's start.
-The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but the title is literally the whole talk. I'm going going to carry a user's session across an origin boundary — from a page that has it to an iframe that doesn't — and the one thing that will never make the trip is the session token itself. Sounds like a magic? Follow me, By the end you'll know exactly what *does* cross, and why that turns out to be enough.
+The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but the title is literally the whole talk. I'm going going to carry a user's session across an origin boundary — from a page that has it to an iframe that doesn't — and the one thing that will never make the trip is the session token itself. Sounds like a magic? Follow me, and by the end you'll know exactly what *does* cross, and why that turns out to be enough.
 
 ## 2 · Who's talking
 
-I'm Azat. I'm a software architect and tech lead at Quantori, I've been writing JavaScript for a bit over ten years, and in a previous life I founded a developer community called Undefined — so tonight is a bit of a déjà vu. I'm also the author of a small open-source package called `next-auth-bridge`. I want to say this up front: the package is the reference implementation for what I'll show you. It is not the subject. The subject is a pattern, and if you walk out of here and hand-roll your own version — that's a win, as long as it passes the checklist I'll give you later.
+I'm Azat. I'm a software architect and tech lead at Quantori, and I've been writing JavaScript for a bit over ten years. One thing up front: tonight is about a pattern, not a product. If you walk out of here and hand-roll your own version — that's a win, as long as it passes the checklist I'll give you later.
 
 *[your joke line]*
 
@@ -209,9 +209,9 @@ Back to the origin story. The other half of that task was iOS — a WKWebView th
 
 The clipboard. Inherit the existing host SSO — yes, the popup inherits it. Silently — one sub-second flash, no prompt. No token where it can leak — only a sixty-second, single-use receipt ever crosses. No lock-in — two libraries, two live demos, two lines of difference.
 
-## 18 · Credits & honesty
+## 18 · Where the work ended up
 
-Three things I owe you. The popup-bridge pattern was co-developed with Kirill Evtushenko. `next-auth-bridge` is my generalisation of it — version 0.3.1, a few months old, no meaningful adoption yet. It's a reference implementation of the pattern, not battle-tested infrastructure; treat it as one way to express the idea. And it's a clean-room build — no employer code; everything you saw on screen is from the public repo and the two Keycloak demos.
+Three things I owe you. The popup-bridge pattern was co-developed with Kirill Evtushenko. Working it through — the invariants, the tests, the two libraries — turned into a package: `next-auth-bridge`, my generalisation of the pattern. It's version 0.3.1, a few months old, no meaningful adoption yet — a reference implementation, not battle-tested infrastructure; treat it as one way to express the idea. And it's a clean-room build — no employer code; everything you saw on screen is from the public repo and the two Keycloak demos.
 
 ## 19 · Thanks
 
