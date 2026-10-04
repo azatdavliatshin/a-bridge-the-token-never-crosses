@@ -7,4 +7,4 @@ Slides for the YerevanJS #1 talk. reveal.js 5.2.1, single `index.html`, no build
 - Identity: all colours are CSS variables at the top of `index.html` (`--accent`, `--bg`, `--fg`); swap when the YerevanJS theme is ready.
 - Placeholders to fill: `assets/azat.jpg` (photo), `assets/qr-contact.png` (LinkedIn/Telegram QR), the joke line on the "Who's talking" slide.
 - Appendix slides live after "Thanks" — jump with `#/appendix-jwt`, `#/appendix-chips`, `#/appendix-store`, `#/appendix-fetchmeta`, `#/appendix-authjs`.
-- Outline with per-slide notes and timing: `../auth-bridge-talk-yerevanjs-outline.md`.
+- Outline with per-slide notes and timing: `talent-visa/05-build-projects/auth-bridge-talk-yerevanjs-outline.md`.
