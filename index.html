@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>A Bridge the Token Never Crosses</title>
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css">
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+	<style>
+		/* ---- Identity knobs: change these when the YerevanJS theme lands ---- */
+		:root {
+			--accent: #5eead4;          /* single accent colour used everywhere */
+			--accent-dim: rgba(94, 234, 212, 0.18);
+			--bg: #0f1115;
+			--fg: #e8e8ea;
+			--muted: #8b8f98;
+			--danger: #f87171;
+			--ok: #86efac;
+			--r-background-color: var(--bg);
+			--r-main-color: var(--fg);
+			--r-heading-color: var(--fg);
+			--r-link-color: var(--accent);
+			--r-link-color-hover: #a7f3eb;
+			--r-selection-background-color: var(--accent-dim);
+			--r-main-font: -apple-system, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+			--r-heading-font: var(--r-main-font);
+			--r-code-font: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+			--r-main-font-size: 36px;
+			--r-heading1-size: 2.2em;
+			--r-heading2-size: 1.5em;
+			--r-heading3-size: 1.15em;
+		}
+		.reveal { font-weight: 400; }
+		.reveal h1, .reveal h2, .reveal h3 { text-transform: none; letter-spacing: -0.01em; font-weight: 650; }
+		.reveal h2 { margin-bottom: 0.6em; }
+		.reveal .slides section { text-align: left; }
+		.reveal .slides section.center-slide { text-align: center; }
+		.reveal p { line-height: 1.4; }
+		.reveal ul { margin-left: 0.6em; }
+		.reveal li { margin: 0.25em 0; }
+		.reveal .muted { color: var(--muted); }
+		.reveal .accent { color: var(--accent); }
+		.reveal .danger { color: var(--danger); }
+		.reveal .ok { color: var(--ok); }
+		.reveal .small { font-size: 0.7em; }
+		.reveal .tiny { font-size: 0.55em; color: var(--muted); }
+		.reveal .subtitle { color: var(--muted); font-size: 0.8em; margin-top: 0.2em; }
+		.reveal .kicker { color: var(--accent); font-size: 0.6em; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4em; }
+		.reveal .big { font-size: 1.35em; line-height: 1.3; font-weight: 600; }
+		.reveal .bridge-line { width: 60%; height: 3px; background: linear-gradient(90deg, transparent, var(--accent), transparent); margin: 0.8em auto; }
+		.reveal .two-col { display: flex; gap: 1.2em; align-items: flex-start; }
+		.reveal .two-col > * { flex: 1; min-width: 0; }
+		.reveal .fix-no { display: inline-block; color: var(--muted); font-size: 0.6em; letter-spacing: 0.1em; text-transform: uppercase; }
+		.reveal .cross { color: var(--danger); font-weight: 700; margin-right: 0.3em; }
+		.reveal .tick { color: var(--ok); font-weight: 700; margin-right: 0.3em; }
+		.reveal pre { width: 100%; box-shadow: none; font-size: 0.72em; }
+		.reveal pre code { padding: 0.8em 1em; border-radius: 8px; max-height: 560px; line-height: 1.45; }
+		.reveal code.inline { font-family: var(--r-code-font); font-size: 0.85em; background: rgba(255,255,255,0.06); padding: 0.05em 0.3em; border-radius: 4px; }
+		.reveal .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 0.6em 0.9em; font-size: 0.8em; }
+		.reveal .card.hl { border-color: var(--accent); }
+		.reveal table { font-size: 0.65em; }
+		.reveal table th { color: var(--accent); font-weight: 600; }
+		.reveal table td, .reveal table th { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0.35em 0.7em; }
+		.reveal .checklist { list-style: none; margin-left: 0; font-size: 0.85em; }
+		.reveal .checklist li { padding: 0.25em 0 0.25em 1.6em; position: relative; }
+		.reveal .checklist li::before { content: "☐"; position: absolute; left: 0; color: var(--muted); }
+		.reveal .checklist li.done::before { content: "☑"; color: var(--accent); }
+		.reveal .checklist li.todo { color: var(--muted); }
+		.reveal .quote { border-left: 4px solid var(--accent); padding-left: 0.7em; font-size: 1.05em; line-height: 1.35; }
+		.reveal .footer-links { font-size: 0.6em; color: var(--muted); }
+		.reveal .footer-links a { color: var(--accent); }
+		.reveal .qr { display: flex; gap: 1.5em; justify-content: center; align-items: flex-start; }
+		.reveal .qr div { text-align: center; font-size: 0.55em; color: var(--muted); }
+		.reveal .qr img { width: 220px; height: 220px; background: #fff; border-radius: 8px; margin-bottom: 0.4em; }
+
+		/* --- diagram --- */
+		.reveal svg.diagram { width: 100%; height: auto; font-family: var(--r-main-font); }
+		.reveal svg.diagram text { fill: var(--fg); font-size: 22px; }
+		.reveal svg.diagram .lane-title { font-size: 22px; font-weight: 600; }
+		.reveal svg.diagram .lane { stroke: rgba(255,255,255,0.14); stroke-width: 2; stroke-dasharray: 6 6; }
+		.reveal svg.diagram .arrow { stroke: var(--fg); stroke-width: 3; fill: none; marker-end: url(#ah); }
+		.reveal svg.diagram .arrow.acc { stroke: var(--accent); marker-end: url(#ah-acc); }
+		.reveal svg.diagram .arrow.bad { stroke: var(--danger); marker-end: url(#ah-bad); }
+		.reveal svg.diagram .label { font-size: 19px; }
+		.reveal svg.diagram .label.acc { fill: var(--accent); }
+		.reveal svg.diagram .label.bad { fill: var(--danger); }
+		.reveal svg.diagram .label.muted { fill: var(--muted); }
+		.reveal svg.diagram .box { fill: rgba(255,255,255,0.05); stroke: rgba(255,255,255,0.2); stroke-width: 2; rx: 10; }
+		.reveal svg.diagram .box.acc { stroke: var(--accent); fill: var(--accent-dim); }
+		.reveal svg.diagram .box.bad { stroke: var(--danger); }
+		.reveal svg.diagram .jar { fill: rgba(255,255,255,0.05); stroke: rgba(255,255,255,0.3); stroke-width: 2; }
+		.reveal svg.diagram .jar.full { fill: var(--accent-dim); stroke: var(--accent); }
+		.reveal svg.diagram .dim { opacity: 0.35; }
+	</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ===================== BLOCK 0 — OPENING ===================== -->
+
+<section id="title" class="center-slide">
+	<h1>A Bridge the Token<br>Never Crosses</h1>
+	<p class="subtitle">Signing users into embedded apps<br>without third-party cookies</p>
+	<div class="bridge-line"></div>
+	<p class="small">Azat Davliatshin · YerevanJS #1</p>
+	<aside class="notes">
+		The title is the whole talk: a session crosses an origin boundary, and the token never does.
+		By the end you'll know exactly what does cross — and why that's enough.
+		(0:30)
+	</aside>
+</section>
+
+<section id="about">
+	<h2>Who's talking</h2>
+	<div class="two-col" style="align-items:center">
+		<img src="assets/azat.jpg" alt="" style="max-width:320px; border-radius:12px;">
+		<div>
+			<p>Azat Davliatshin</p>
+			<p class="small">Software Architect &amp; Tech Lead, Quantori<br>
+			author of <code class="inline">next-auth-bridge</code><br>
+			10+ years in JavaScript · founded Undefined community (2017)</p>
+			<p class="small muted">[your joke line goes here]</p>
+		</div>
+	</div>
+	<aside class="notes">
+		20 seconds. Say explicitly: the library is the reference implementation, not the subject —
+		this is a talk about a pattern. (1:00)
+	</aside>
+</section>
+
+<section id="origin">
+	<p class="kicker">Origin story</p>
+	<p class="big">One codebase. Two contexts. Same bug.</p>
+	<ul>
+		<li class="fragment">an iframe inside SharePoint / Teams — can't see the host's session</li>
+		<li class="fragment">a WKWebView on iOS — can't see Safari's passkeys and autofill</li>
+		<li class="fragment accent">a primary session lives next door; a secondary context needs its own — without asking the user again</li>
+	</ul>
+	<aside class="notes">
+		Real project: an enterprise AI assistant for a top-10 pharma company (do NOT name the client).
+		One Next.js codebase, two ways of reaching users. Inside SharePoint and Teams it ran as an iframe —
+		the user was signed in on the host but anonymous to us. On iOS it shipped as a wrapped PWA —
+		WKWebView couldn't see Safari, so passkeys and autofill were out of reach. Two bug reports, same bug.
+		Wording: "I designed the auth flow"; "our team built the product".
+		The package is a from-scratch reimplementation — the pattern carried over, the code did not.
+		End on: once you see it as one shape, the fix is one shape too. (3:00)
+	</aside>
+</section>
+
+<section id="takeaways">
+	<h2>What you'll leave with</h2>
+	<ul>
+		<li class="fragment">a mental model: <span class="accent">a one-time code across a trust boundary</span></li>
+		<li class="fragment">an invariant checklist for <em>any</em> popup/iframe auth scheme</li>
+		<li class="fragment">where CHIPS helps — and where it doesn't</li>
+		<li class="fragment">working wiring for Auth.js and Better Auth</li>
+	</ul>
+	<aside class="notes">
+		Pattern talk with a security spine, not a library tour. If you hand-roll your own popup auth after
+		this talk, that's a success — as long as it passes the checklist. (3:30)
+	</aside>
+</section>
+
+<!-- ===================== BLOCK 1 — THE PROBLEM ===================== -->
+
+<section id="setup">
+	<h2>Your Next.js app, inside somebody else's page</h2>
+	<svg class="diagram" viewBox="0 0 1000 420">
+		<rect class="box" x="20" y="20" width="960" height="380"/>
+		<text x="40" y="58" class="lane-title">host.example — SharePoint · Teams · Salesforce · ServiceNow · Confluence</text>
+		<text x="760" y="58" class="label acc">Signed in as Anna ✓</text>
+		<rect class="box" x="120" y="100" width="760" height="270"/>
+		<text x="140" y="138" class="label muted">&lt;iframe src="https://app.example"&gt;</text>
+		<text x="400" y="250" class="label" style="font-size:30px">Sign in</text>
+		<rect x="380" y="270" width="200" height="54" rx="8" fill="var(--accent)"/>
+		<text x="420" y="306" style="fill:#0f1115;font-weight:600">Continue →</text>
+	</svg>
+	<aside class="notes">
+		Enterprise reality: the host already holds a session with a shared IdP — usually Entra.
+		Ten years ago the iframe simply saw the same cookies. (4:30)
+	</aside>
+</section>
+
+<section id="what-changed">
+	<h2>Your cookie became a <span class="accent">third-party</span> cookie</h2>
+	<ul>
+		<li>Safari — ITP, blocked for years</li>
+		<li>Firefox — ETP, partitioned by default</li>
+		<li>Chrome — incognito, enterprise policy, and the long deprecation</li>
+	</ul>
+	<p class="fragment quote small">"Your app's session cookie inside someone else's page" is, to the browser, exactly the tracking shape it's trying to kill.</p>
+	<aside class="notes">
+		Don't moralise about Chrome's timeline. The practical truth: in the enterprise browser matrix you
+		cannot rely on third-party cookies today. Full stop. (6:00)
+	</aside>
+</section>
+
+<section id="fixes">
+	<section>
+		<h2>Four obvious fixes</h2>
+		<p class="muted">…and why each one breaks the UX or the architecture ▼</p>
+	</section>
+	<section>
+		<p class="fix-no">Fix #1</p>
+		<h3>"Just sign in again inside the iframe"</h3>
+		<ul>
+			<li class="fragment"><span class="cross">✕</span>a redundant login the user already completed</li>
+			<li class="fragment"><span class="cross">✕</span>the IdP refuses to render framed — <code class="inline">X-Frame-Options</code>, <code class="inline">frame-ancestors</code></li>
+			<li class="fragment"><span class="cross">✕</span>even if it completes, the cookie it sets is <em>still third-party</em></li>
+		</ul>
+		<aside class="notes">Three independent reasons; the third is the one people miss. (6:45)</aside>
+	</section>
+	<section>
+		<p class="fix-no">Fix #2</p>
+		<h3>Storage Access API</h3>
+		<ul>
+			<li class="fragment"><code class="inline">document.requestStorageAccess()</code></li>
+			<li class="fragment"><span class="cross">✕</span>needs a user gesture <em>and</em> a permission prompt</li>
+			<li class="fragment"><span class="cross">✕</span>uneven support</li>
+			<li class="fragment"><span class="cross">✕</span>solves <em>access</em>, not <em>inheritance</em></li>
+		</ul>
+		<aside class="notes">A fine API for a different problem. Silent SSO with a prompt is not silent. (7:30)</aside>
+	</section>
+	<section>
+		<p class="fix-no">Fix #3</p>
+		<h3>CHIPS — "just set <code class="inline">Partitioned</code>"</h3>
+		<div class="two-col">
+			<div>
+				<ul>
+					<li class="fragment">a partitioned cookie is a cookie your frame <span class="accent">can keep</span></li>
+					<li class="fragment"><span class="cross">✕</span>it is not a cookie your frame <span class="accent">already has</span></li>
+					<li class="fragment">your partition starts <em>empty</em></li>
+				</ul>
+			</div>
+			<svg class="diagram" viewBox="0 0 300 260" style="max-width:300px">
+				<path class="jar" d="M60 70 h180 v150 a20 20 0 0 1 -20 20 h-140 a20 20 0 0 1 -20 -20 z"/>
+				<rect class="jar" x="80" y="40" width="140" height="30" rx="6"/>
+				<text x="150" y="160" text-anchor="middle" class="label muted">(empty)</text>
+				<text x="150" y="250" text-anchor="middle" class="label muted" style="font-size:16px">(app.example, host.example)</text>
+			</svg>
+		</div>
+		<aside class="notes">
+			The key conceptual slide of this block. CHIPS gives you a place to store a session in the embedded
+			context; it does nothing to mint that session. Plant the seed: we'll use CHIPS — on the far side of the bridge. (8:15)
+		</aside>
+	</section>
+	<section>
+		<p class="fix-no">Fix #4</p>
+		<h3>Use the vendor SDK</h3>
+		<ul>
+			<li class="fragment">Auth0 / Okta / Clerk solve it — inside their ecosystem</li>
+			<li class="fragment"><span class="cross">✕</span>you now rent your identity</li>
+			<li class="fragment"><span class="cross">✕</span>the thing self-hosted cookie-session auth exists to avoid</li>
+		</ul>
+		<aside class="notes">Not a bad choice for some teams. Just name the trade. (8:45)</aside>
+	</section>
+</section>
+
+<section id="constraints">
+	<h2>What we actually want</h2>
+	<ul class="checklist">
+		<li class="todo">inherit the <em>existing</em> host SSO</li>
+		<li class="todo">silently — no second prompt</li>
+		<li class="todo">no session token anywhere it can leak</li>
+		<li class="todo">no vendor lock-in</li>
+	</ul>
+	<aside class="notes">Any solution must satisfy all four. Keep these on your mental clipboard — we'll check them off at the end. (9:00)</aside>
+</section>
+
+<!-- ===================== BLOCK 2 — THE BRIDGE ===================== -->
+
+<section id="realisation" class="center-slide">
+	<p class="quote" style="text-align:left">The iframe is the wrong place to do OAuth.<br><br>
+	A popup runs in the <span class="accent">top-level</span> context — and there, the IdP's cookies are <span class="accent">first-party</span>.</p>
+	<aside class="notes">Everything else in the talk follows from this sentence. Pause on it. (10:00)</aside>
+</section>
+
+<section id="flow">
+	<p class="kicker">The bridge, step by step</p>
+	<svg class="diagram" viewBox="0 0 1000 470" style="max-height:600px">
+		<defs>
+			<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#e8e8ea"/></marker>
+			<marker id="ah-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
+			<marker id="ah-bad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f87171"/></marker>
+		</defs>
+		<g>
+			<text x="110" y="30" text-anchor="middle" class="lane-title">Iframe</text>
+			<text x="110" y="54" text-anchor="middle" class="label muted">app · embedded</text>
+			<text x="380" y="30" text-anchor="middle" class="lane-title">Popup</text>
+			<text x="380" y="54" text-anchor="middle" class="label muted">app · top-level</text>
+			<text x="660" y="30" text-anchor="middle" class="lane-title">App server</text>
+			<text x="900" y="30" text-anchor="middle" class="lane-title">IdP</text>
+			<line class="lane" x1="110" y1="66" x2="110" y2="460"/>
+			<line class="lane" x1="380" y1="66" x2="380" y2="460"/>
+			<line class="lane" x1="660" y1="66" x2="660" y2="460"/>
+			<line class="lane" x1="900" y1="66" x2="900" y2="460"/>
+		</g>
+		<g class="fragment" data-fragment-index="1">
+			<line class="arrow" x1="115" y1="100" x2="370" y2="100"/>
+			<text x="125" y="90" class="label">① openAuthPopup() → /auth/popup</text>
+		</g>
+		<g class="fragment" data-fragment-index="2">
+			<line class="arrow" x1="385" y1="150" x2="890" y2="150"/>
+			<text x="400" y="140" class="label">② normal OAuth sign-in — top-level, first-party</text>
+			<line class="arrow" x1="895" y1="190" x2="670" y2="190"/>
+			<text x="680" y="214" class="label muted">code, no prompt · PKCE as usual</text>
+			<line class="arrow" x1="655" y1="240" x2="390" y2="240"/>
+			<text x="400" y="264" class="label muted">session cookie → popup's first-party jar</text>
+		</g>
+		<g class="fragment" data-fragment-index="3">
+			<line class="arrow acc" x1="385" y1="300" x2="650" y2="300"/>
+			<text x="400" y="290" class="label acc">③ POST /auth/bridge → verify session → mint</text>
+			<line class="arrow acc" x1="655" y1="336" x2="390" y2="336"/>
+			<text x="400" y="360" class="label acc">{ code } · 256-bit · one-time · ≤ 60 s</text>
+		</g>
+		<g class="fragment" data-fragment-index="4">
+			<line class="arrow acc" x1="375" y1="392" x2="120" y2="392"/>
+			<text x="125" y="382" class="label acc">④ postMessage({ code }, appOrigin)</text>
+		</g>
+		<g class="fragment" data-fragment-index="5">
+			<path class="arrow acc" d="M115 424 H650"/>
+			<text x="125" y="414" class="label acc">⑤ fetch /auth/consume?code=… (credentials: include)</text>
+			<path class="arrow" d="M655 460 H120"/>
+			<text x="125" y="450" class="label">Set-Cookie: session=…; <tspan class="accent">Partitioned</tspan>; Secure; HttpOnly; SameSite=None</text>
+		</g>
+	</svg>
+	<aside class="notes">
+		① The popup is on the app's origin, not the host's — no code on the host side; that's why the pattern ports to any host.
+		② Nothing custom yet: Auth.js / Better Auth doing what it always does. The only new thing is WHERE it runs.
+		③ The title of the talk happens here. The popup has a session but never holds the token in JS,
+		   never puts it in a URL or a message. It gets a receipt.
+		④ Explicit target origin, never "*". The receiver checks origin AND source — why both, in the invariants block.
+		⑤ Close the loop with CHIPS: it couldn't mint the session; it can keep the one we delivered. (14:00)
+	</aside>
+</section>
+
+<section id="shape" class="center-slide">
+	<p class="quote" style="text-align:left">A server-side handle store mediates a<br>
+	<span class="accent">one-time-code exchange across a trust boundary</span>.<br><br>
+	Everything else is transport.</p>
+	<p class="small muted">The user sees a popup flash for under a second.</p>
+	<aside class="notes">The sentence to remember. The same shape solves native↔web — teaser for the end. (15:00)</aside>
+</section>
+
+<section id="demo">
+	<h2>Demo</h2>
+	<div class="two-col">
+		<div class="card hl">
+			<p><strong>Auth.js</strong></p>
+			<p class="small"><a href="https://nab-host.vercel.app/" target="_blank">nab-host.vercel.app</a></p>
+			<p class="tiny">bridge-test-user / bridge-test-password</p>
+		</div>
+		<div class="card hl">
+			<p><strong>Better Auth</strong></p>
+			<p class="small"><a href="https://nab-ba-host.vercel.app/" target="_blank">nab-ba-host.vercel.app</a></p>
+			<p class="tiny">bridge-test-ba-user / bridge-test-ba-password</p>
+		</div>
+	</div>
+	<p class="small muted" style="margin-top:1em">Two Vercel origins + self-hosted Keycloak — the cross-site handoff is real, not faked on one origin.</p>
+	<aside class="notes">
+		Sign in on the host → the embedded app signs itself in. Show DevTools › Application › Cookies with the
+		Partitioned column once. Then the Better Auth demo: same bridge, different library — hold that thought.
+		Fallback if the network dies: describe it over the flow diagram. (18:00)
+	</aside>
+</section>
+
+<!-- ===================== BLOCK 3 — INVARIANTS ===================== -->
+
+<section id="invariants">
+	<section>
+		<h2>Remove one condition and the bridge becomes a hole</h2>
+		<ul class="checklist">
+			<li class="todo">verify the session first</li>
+			<li class="todo">the code is a receipt, not a key</li>
+			<li class="todo">trust the sender twice</li>
+			<li class="todo">zero tokens in URLs — for the whole roundtrip</li>
+			<li class="todo">redirect hygiene</li>
+			<li class="todo">only a same-origin <em>fetch</em> may redeem</li>
+		</ul>
+		<p class="tiny">Each row = one property + one negative test · <code class="inline">THREAT-NN</code> in docs/threat-model.md</p>
+		<aside class="notes">This is the part you can take to any popup/iframe scheme, including a hand-rolled one. (18:30)</aside>
+	</section>
+
+	<section data-auto-animate>
+		<p class="kicker">Invariant 1</p>
+		<h3>Verify the session <span class="accent">first</span></h3>
+		<pre data-id="code"><code class="language-ts" data-trim data-line-numbers="|6-9">
+// bridge-route.ts — the real boundary
+const origin = request.headers.get("Origin");
+if (origin !== null &amp;&amp; !allowedOrigins.includes(origin))
+  return new Response(null, { status: 403 });
+
+// runs before ANY context / wrapper signal is looked at
+const session = await verifySession();
+if (!session)
+  return new Response(null, { status: 401 }); // mints nothing
+		</code></pre>
+		<p class="small fragment"><span class="cross">✕</span>without it: anyone who can spoof an "I'm in an iframe" header gets a code for free</p>
+		<aside class="notes">
+			Middleware is routing; the server check is the boundary — say it twice.
+			Accuracy: the Origin allowlist (403) runs before verifySession (401); "first" means "before any context signal". (20:00)
+		</aside>
+	</section>
+
+	<section>
+		<p class="kicker">Invariant 2</p>
+		<h3>The code is a receipt, not a key</h3>
+		<ul>
+			<li class="fragment">256 bits of CSPRNG — <code class="inline">randomBytes(32).toString("hex")</code></li>
+			<li class="fragment">one-time: delete-on-read / atomic <code class="inline">GETDEL</code></li>
+			<li class="fragment">TTL ≤ 60 s — an over-cap TTL <em>throws at construction</em>, no silent clamp</li>
+		</ul>
+		<div class="two-col fragment" style="margin-top:0.6em">
+			<div class="card"><span class="ok">1st consume</span> → 302 + partitioned cookie</div>
+			<div class="card"><span class="danger">2nd consume</span> → 4xx, no cookie</div>
+		</div>
+		<aside class="notes">
+			"No silent clamp" is deliberate: a config that quietly extends TTL to 10 minutes is how "short-lived" stops being true. (21:30)
+		</aside>
+	</section>
+
+	<section>
+		<p class="kicker">Invariant 3</p>
+		<h3>Trust the sender <span class="accent">twice</span></h3>
+		<pre><code class="language-ts" data-trim>
+window.addEventListener("message", (event) => {
+  if (!allowedOrigins.includes(event.origin)) return; // wrong origin
+  if (event.source !== popupRef) return;              // right origin, wrong window
+  // … settle the flow with event.data.code
+});
+		</code></pre>
+		<ul class="small">
+			<li class="fragment">wrong origin → dropped</li>
+			<li class="fragment">right origin, wrong window — the <span class="accent">same-origin racer</span> → dropped</li>
+			<li class="fragment">a dropped message never settles the flow; a later valid one still does</li>
+		</ul>
+		<aside class="notes">
+			The same-origin racer is the one people never test: another tab or frame of YOUR OWN origin can post to the opener.
+			Origin check alone passes it. Pinning source is the second lock. (23:00)
+		</aside>
+	</section>
+
+	<section>
+		<p class="kicker">Invariant 4</p>
+		<h3>Zero tokens in URLs — for the <span class="accent">whole roundtrip</span></h3>
+		<table>
+			<tr><th>client-constructed URL</th><th>carries</th></tr>
+			<tr><td><code class="inline">/auth/popup</code></td><td>nothing</td></tr>
+			<tr><td>IdP authorize URL</td><td>state, PKCE challenge — owned by your auth library</td></tr>
+			<tr><td><code class="inline">POST /auth/bridge</code> → body</td><td><code class="inline">{ code }</code> only</td></tr>
+			<tr><td><code class="inline">postMessage</code> payload</td><td><code class="inline">{ source, type, code }</code></td></tr>
+			<tr><td><code class="inline">/auth/consume?code=…</code></td><td>the opaque code — the only thing allowed in a URL</td></tr>
+		</table>
+		<p class="small fragment">per-component tests pass while the <em>composition</em> leaks → the e2e test sweeps every URL the client builds</p>
+		<aside class="notes">Logs, referrers, history: a token in a URL lives forever. (24:30)</aside>
+	</section>
+
+	<section>
+		<p class="kicker">Invariant 5</p>
+		<h3>Redirect hygiene</h3>
+		<table>
+			<tr><th><code class="inline">?next=</code></th><th>→</th></tr>
+			<tr><td><code class="inline">/dashboard</code></td><td class="ok">/dashboard</td></tr>
+			<tr><td><code class="inline">/auth/popup</code> · <code class="inline">/api/auth/…</code></td><td class="danger">/ (auth loop)</td></tr>
+			<tr><td><code class="inline">https://evil.example</code></td><td class="danger">/</td></tr>
+			<tr><td><code class="inline">//evil.example</code></td><td class="danger">/</td></tr>
+			<tr><td><code class="inline">/\evil.example</code></td><td class="danger">/ — the one you'd miss</td></tr>
+		</table>
+		<aside class="notes">Open redirect and auth loop closed in one function. The backslash case was a real bypass found in review. (25:30)</aside>
+	</section>
+
+	<section>
+		<p class="kicker">Invariant 6 · added after shipping (v0.3.1)</p>
+		<h3>Only a same-origin <span class="accent">fetch</span> may redeem</h3>
+		<div class="two-col">
+			<div>
+				<p class="small"><span class="danger">Login CSRF:</span> attacker mints a code for <em>their</em> session, links the victim to <code class="inline">/auth/consume?code=…</code> → victim is signed in as the attacker</p>
+				<p class="small fragment"><span class="accent">Gate on Fetch Metadata:</span><br>
+				<code class="inline">Sec-Fetch-Site: same-origin</code><br>
+				<code class="inline">Sec-Fetch-Dest: empty</code></p>
+			</div>
+			<ul class="small fragment">
+				<li>navigation / <code class="inline">&lt;img&gt;</code> / cross-site fetch → 4xx</li>
+				<li>store untouched — the code survives for the real opener</li>
+				<li>rejection byte-identical to a forged code: no oracle</li>
+				<li>page script can't set or strip <code class="inline">Sec-Fetch-*</code></li>
+			</ul>
+		</div>
+		<aside class="notes">
+			Story beat: the handle was already one-time and short-lived — and that was NOT enough, because a valid handle
+			redeemed in the wrong browser is a login-CSRF. Honesty: a request with no Fetch Metadata falls through to the
+			Origin check — fine for the supported browser matrix; a future major may fail closed.
+			Next step, not shipped: bind the code to the opener with a PKCE-style verifier. (28:00)
+		</aside>
+	</section>
+
+	<section>
+		<h2>The checklist</h2>
+		<ul class="checklist">
+			<li class="done">verify the session first</li>
+			<li class="done">one-time · ≤ 60 s · 256-bit</li>
+			<li class="done">origin <em>and</em> source</li>
+			<li class="done">no token in any URL — checked at roundtrip level</li>
+			<li class="done">redirect hygiene</li>
+			<li class="done">same-origin-fetch-only redemption</li>
+		</ul>
+		<p class="tiny">github.com/azatdavliatshin/next-auth-bridge/blob/main/docs/threat-model.md — each row ↔ a named, currently-green test</p>
+		<aside class="notes">"Take a photo of this one." (29:00)</aside>
+	</section>
+
+	<section>
+		<h2>What the tests <span class="accent">don't</span> prove</h2>
+		<div class="two-col">
+			<div class="card">
+				<p><strong>On the Node bench</strong></p>
+				<p class="small"><span class="tick">✓</span><code class="inline">Partitioned</code> is <em>emitted</em><br>
+				<span class="tick">✓</span>data flows end to end<br>
+				<span class="tick">✓</span>every negative case above</p>
+			</div>
+			<div class="card">
+				<p><strong>Only in a real browser</strong></p>
+				<p class="small"><span class="tick">✓</span>the browser <em>isolates</em> the partition<br>
+				<span class="tick">✓</span>a credentialed fetch commits the cookie under the right top-level site<br>
+				<span class="muted">→ two live origins, positive + negative case, recorded in live-validation.md</span></p>
+			</div>
+		</div>
+		<p class="tiny">CHIPS: Chrome/Edge 114+ · Firefox 130+ · Safari 18+</p>
+		<aside class="notes">The honest boundary. If you adopt the pattern, run that live check in YOUR browser matrix. (30:00)</aside>
+	</section>
+</section>
+
+<!-- ===================== BLOCK 4 — ONE SEAM, TWO LIBRARIES ===================== -->
+
+<section id="seam">
+	<section data-auto-animate>
+		<h2>Where the library lives</h2>
+		<pre data-id="cfg"><code class="language-ts" data-trim data-line-numbers="|6-9">
+import { createAuthBridge } from "next-auth-bridge";
+import { createKVTransferStore } from "next-auth-bridge/store/kv";
+import { auth } from "@/auth";
+
+export const { bridge, consume } = createAuthBridge({
+  // ── the entire per-library surface ──────────────
+  verifySession: () => auth(),
+  // cookieName: defaults to Auth.js's session cookie
+  // ────────────────────────────────────────────────
+  store: createKVTransferStore(),
+  allowedOrigins: [HOST_SHELL_ORIGIN, APP_ORIGIN],
+  secure: true,
+});
+		</code></pre>
+		<p class="small"><span class="accent">Auth.js</span> — store, origins, routes, popup, client: all library-agnostic</p>
+		<aside class="notes">
+			Auth.js is in maintenance mode; momentum moved to Better Auth. The thing that carries your session
+			across contexts must not be the thing that pins your auth library. (31:30)
+		</aside>
+	</section>
+	<section data-auto-animate>
+		<h2>Where the library lives</h2>
+		<pre data-id="cfg"><code class="language-ts" data-trim data-line-numbers="7-8">
+import { createAuthBridge, getBetterAuthCookieName } from "next-auth-bridge";
+import { createKVTransferStore } from "next-auth-bridge/store/kv";
+import { auth } from "@/lib/auth";
+
+export const { bridge, consume } = createAuthBridge({
+  // ── the entire per-library surface ──────────────
+  verifySession: async () => auth.api.getSession({ headers: await headers() }),
+  cookieName: getBetterAuthCookieName({ secure: true }),
+  // ────────────────────────────────────────────────
+  store: createKVTransferStore(),
+  allowedOrigins: [HOST_SHELL_ORIGIN, APP_ORIGIN],
+  secure: true,
+});
+		</code></pre>
+		<p class="small"><span class="accent">Better Auth</span> — the two-line difference. Any other cookie-session library plugs into the same seam.</p>
+		<aside class="notes">
+			The promised two lines. Cookie name derived, not hardcoded — the __Secure- prefix rule bit once
+			(__Secure-__Secure- is in the changelog). (33:00)
+		</aside>
+	</section>
+
+	<section>
+		<h2>Wiring in 20 lines</h2>
+		<div class="two-col">
+			<pre style="font-size:0.46em"><code class="language-ts" data-trim>
+// app/auth/bridge/route.ts
+export const GET  = (r: Request) => bridge(r);
+export const POST = (r: Request) => bridge(r);
+
+// app/auth/consume/route.ts
+export const GET = (r: Request) => consume(r);
+
+// middleware.ts — UX routing only
+import { createBridgeMiddleware }
+  from "next-auth-bridge/middleware"; // Edge-safe subpath
+const route = createBridgeMiddleware({
+  popupEntryPath: "/auth/popup",
+  isAuthenticated: (req) =>
+    !!req.headers.get("cookie")?.includes(SESSION_COOKIE),
+});
+			</code></pre>
+			<pre style="font-size:0.46em"><code class="language-tsx" data-trim>
+// app/auth/popup/page.tsx — runs top-level
+useEffect(() => {
+  void runPopupFlow({ opener: window.opener,
+                      hostOrigin: APP_ORIGIN })
+    .then(() => window.close());
+}, []);
+
+// the launcher, in the iframe
+const { code } = await openAuthPopup({
+  allowedOrigins: [APP_ORIGIN],
+  popupUrl: "/auth/popup",
+  timeoutMs: 60_000,
+});
+await fetch(`/auth/consume?code=${code}`, {
+  credentials: "include", // → right CHIPS partition
+});
+window.location.reload();
+			</code></pre>
+		</div>
+		<aside class="notes">
+			Go fast — the point is there's no magic and the volume is small. credentials:"include" so the Set-Cookie commits
+			under the right partition; the middleware subpath because the root reaches node:crypto. (35:00)
+		</aside>
+	</section>
+
+	<section>
+		<h2>Cold start: one silent attempt</h2>
+		<ul>
+			<li class="fragment">popup finds no app session → <em>one</em> <code class="inline">prompt=none</code> attempt against the shared IdP</li>
+			<li class="fragment">one-shot guard — no redirect loops</li>
+			<li class="fragment"><code class="inline">login_required</code> → "sign in on the host first" — never an interactive login in the popup</li>
+			<li class="fragment muted">works only when host and app share an IdP (Entra in M365, Keycloak in the demos) — the warm handoff is the general core</li>
+		</ul>
+		<aside class="notes">Lives in the demo apps' popup page, not in the library core — say "the demo apps do this". (36:00)</aside>
+	</section>
+</section>
+
+<!-- ===================== BLOCK 5 — WRONG, AND WHERE IT GROWS ===================== -->
+
+<section id="opener">
+	<h2>The afternoon I lost to <code class="inline">window.opener</code></h2>
+	<ul>
+		<li class="fragment"><span class="muted">assumption:</span> navigating the popup to the IdP and back nulls <code class="inline">window.opener</code> → built a polling fallback</li>
+		<li class="fragment"><span class="accent">reality:</span> <code class="inline">opener</code> survived the full redirect round-trip — Chrome and Safari private</li>
+		<li class="fragment"><span class="muted">what actually severs it:</span> <code class="inline">Cross-Origin-Opener-Policy: same-origin</code></li>
+		<li class="fragment">deleted the fallback</li>
+	</ul>
+	<p class="quote small fragment">When a cross-context assumption feels obvious, the browser is the only authority. Verify in two engines before you build around it.</p>
+	<aside class="notes">
+		Practical warning: if your IdP or app DOES set COOP same-origin, then you have the problem. (38:00)
+	</aside>
+</section>
+
+<section id="grows">
+	<h2>Where the same bridge goes next</h2>
+	<div class="two-col">
+		<div class="card"><p><strong>Web ↔ web</strong></p><p class="small">iframe · popup · <code class="inline">postMessage</code> · partitioned cookie</p></div>
+		<div class="card hl"><p><strong>Native ↔ web</strong></p><p class="small">WKWebView can't see Safari — passkeys, autofill<br>same handle store · <code class="inline">ASWebAuthenticationSession</code> transport</p></div>
+	</div>
+	<p class="big accent" style="margin-top:0.8em">One shape, two transports.</p>
+	<aside class="notes">Closes the origin-story loop: the iOS transport was the other half of the same task. One sentence — it's the next talk. (39:00)</aside>
+</section>
+
+<section id="constraints-done">
+	<h2>Back to the four constraints</h2>
+	<ul class="checklist">
+		<li class="done">inherit the <em>existing</em> host SSO</li>
+		<li class="done">silently — no second prompt</li>
+		<li class="done">no session token anywhere it can leak</li>
+		<li class="done">no vendor lock-in — two libraries, two live demos</li>
+	</ul>
+	<aside class="notes">Pay off the clipboard. (39:30)</aside>
+</section>
+
+<section id="credits">
+	<h2>Credits &amp; honesty</h2>
+	<ul class="small">
+		<li>the popup-bridge pattern was co-developed with Kirill Evtushenko</li>
+		<li><code class="inline">next-auth-bridge</code> is my generalisation — v0.3.1, months old, no meaningful adoption yet: a reference implementation, not battle-tested infrastructure</li>
+		<li>clean-room: no employer code; everything on screen is from the public repo and the two Keycloak demos</li>
+	</ul>
+	<aside class="notes">Same honesty line as the README and the article; must match the recommendation-letter wording. (40:00)</aside>
+</section>
+
+<section id="thanks" class="center-slide">
+	<h2>Thanks</h2>
+	<div class="qr">
+		<div><img src="assets/qr-repo.png" alt="">github.com/azatdavliatshin/next-auth-bridge</div>
+		<div><img src="assets/qr-contact.png" alt="">[LinkedIn / Telegram]</div>
+	</div>
+	<div class="bridge-line"></div>
+	<p class="small muted">YerevanJS — see you at the next one</p>
+	<aside class="notes">Seed Q&A if quiet: "the question I expect — why not just a JWT in the URL?" → appendix A1. (41:00)</aside>
+</section>
+
+<!-- ===================== APPENDIX ===================== -->
+
+<section id="appendix">
+	<section class="center-slide"><h2 class="muted">Appendix</h2></section>
+	<section id="appendix-jwt">
+		<h3>Why not a JWT in the URL / in <code class="inline">postMessage</code>?</h3>
+		<ul class="small">
+			<li>a token in a URL lives in history, logs, referrers, screenshots</li>
+			<li>a token in a message payload is a bearer sitting in JS</li>
+			<li>the code is worthless after one use and 60 seconds; the token is not</li>
+		</ul>
+	</section>
+	<section id="appendix-chips">
+		<h3>CHIPS browser matrix</h3>
+		<p class="small">Chrome/Edge 114+ · Firefox 130+ · Safari 18+</p>
+		<p class="small muted">Older Safari: fall back to the Storage Access prompt or a host-level "sign in first" notice.</p>
+	</section>
+	<section id="appendix-store">
+		<h3>Store options</h3>
+		<ul class="small">
+			<li><code class="inline">createInMemoryTransferStore()</code> — tests, single instance</li>
+			<li><code class="inline">createKVTransferStore()</code> — Upstash / Vercel KV, atomic <code class="inline">GETDEL</code></li>
+			<li>TTL cap enforced at construction — misconfiguration fails loudly</li>
+		</ul>
+	</section>
+	<section id="appendix-fetchmeta">
+		<h3>Fetch Metadata fall-through</h3>
+		<p class="small">A request with <em>no</em> <code class="inline">Sec-Fetch-*</code> headers falls through to the Origin check. Every supported browser sends them, so it can't be triggered from a supported browser; it exists so non-browser clients and the Node bench keep working. A future major may fail closed.</p>
+	</section>
+	<section id="appendix-authjs">
+		<h3>Auth.js status</h3>
+		<p class="small">Auth.js (formerly NextAuth) is effectively in maintenance mode in 2026; ecosystem momentum has moved to Better Auth. The bridge touches either through the same two-value seam.</p>
+	</section>
+</section>
+
+</div>
+</div>
+
+<script src="dist/reveal.js"></script>
+<script src="plugin/notes/notes.js"></script>
+<script src="plugin/highlight/highlight.js"></script>
+<script>
+	Reveal.initialize({
+		hash: true,
+		slideNumber: 'c/t',
+		transition: 'none',
+		width: 1280,
+		height: 720,
+		margin: 0.06,
+		plugins: [ RevealHighlight, RevealNotes ]
+	});
+</script>
+</body>
+</html>

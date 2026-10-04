@@ -1,0 +1,12 @@
+{
+  "name": "a-bridge-the-token-never-crosses",
+  "version": "1.0.0",
+  "private": true,
+  "description": "YerevanJS #1 talk — A Bridge the Token Never Crosses (reveal.js)",
+  "scripts": {
+    "start": "serve -l 8000 ."
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
