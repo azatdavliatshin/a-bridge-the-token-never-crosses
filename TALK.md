@@ -6,7 +6,8 @@
 
 ## 1 · Title
 
-Hi. The talk is called "A Bridge the Token Never Crosses", and the title is literally the whole talk. We're going to carry a user's session across an origin boundary — from a page that has it to an iframe that doesn't — and the one thing that will never make the trip is the session token itself. By the end you'll know exactly what *does* cross, and why that turns out to be enough.
+Hi. Ok, let's start.
+The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but the title is literally the whole talk. I'm going going to carry a user's session across an origin boundary — from a page that has it to an iframe that doesn't — and the one thing that will never make the trip is the session token itself. Sound like a magic, right?! By the end you'll know exactly what *does* cross, and why that turns out to be enough.
 
 ## 2 · Who's talking
 
