@@ -77,6 +77,10 @@
 		.reveal .qr div { text-align: center; font-size: 0.55em; color: var(--muted); }
 		.reveal .qr img { width: 220px; height: 220px; background: #fff; border-radius: 8px; margin-bottom: 0.4em; }
 
+		.reveal .meme { position: relative; display: inline-block; }
+		.reveal .meme img { display: block; max-height: 480px; border-radius: 12px; }
+		.reveal .meme-label { position: absolute; font-family: Impact, "Arial Black", sans-serif; font-size: 44px; letter-spacing: 0.04em; text-transform: uppercase; color: #fff; -webkit-text-stroke: 1.5px #000; text-shadow: 2px 2px 0 #000; }
+
 		/* --- diagram --- */
 		.reveal svg.diagram { width: 100%; height: auto; font-family: var(--r-main-font); }
 		.reveal svg.diagram text { fill: var(--fg); font-size: 22px; }
@@ -149,6 +153,16 @@
 		The package is a from-scratch reimplementation — the pattern carried over, the code did not.
 		End on: once you see it as one shape, the fix is one shape too. (3:00)
 	</aside>
+</section>
+
+<section id="bridge-meme" class="center-slide">
+	<h2>That shape is the bridge.</h2>
+	<div class="meme" style="margin:0 auto;">
+		<img src="assets/bridge-meme.jpg" alt="">
+		<span class="meme-label" style="left:3%; top:12%;">host</span>
+		<span class="meme-label" style="right:3%; top:12%;">iframe</span>
+	</div>
+	<aside class="notes">Once you see it as one shape, the fix is one shape too. (3:00)</aside>
 </section>
 
 <section id="takeaways">

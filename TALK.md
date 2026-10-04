@@ -25,7 +25,7 @@ On iOS it shipped as a wrapped PWA — a WKWebView. And a WKWebView can't see Sa
 
 Two platforms, two separate bug reports. And it took us a while to notice that it was the same bug. In both cases there's a *primary* session that lives in one browsing context, and a *secondary* context that needs a session of its own — without asking the user to sign in again.
 
-Once you see it as one shape, the fix is one shape too. That shape is the bridge. The package I'll show is a from-scratch reimplementation — the pattern carried over, the code did not.
+Once you see it as one shape, the fix is one shape too. *(next slide — the meme)* That shape is the bridge. The package I'll show is a from-scratch reimplementation — the pattern carried over, the code did not.
 
 ## 4 · What you'll leave with
 
