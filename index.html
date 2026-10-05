@@ -689,13 +689,12 @@ window.location.reload();
 <section id="opener">
 	<h2>The afternoon I lost to <code class="inline">window.opener</code></h2>
 	<div class="two-col">
-		<ul style="flex:2">
+		<ul>
 			<li class="fragment" data-fragment-index="1"><span class="muted">assumption:</span> navigating the popup to the IdP and back nulls <code class="inline">window.opener</code> → built a polling fallback</li>
 			<li class="fragment" data-fragment-index="2"><span class="accent">reality:</span> <code class="inline">opener</code> survived the full redirect round-trip — Chrome and Safari private</li>
 			<li class="fragment" data-fragment-index="3"><span class="muted">what actually severs it:</span> <code class="inline">Cross-Origin-Opener-Policy: same-origin</code></li>
 			<li class="fragment" data-fragment-index="4">deleted the fallback</li>
 		</ul>
-		<img class="fragment" data-fragment-index="2" src="assets/azat-debugging.jpg" alt="" style="flex:1; max-width:280px; max-height:380px; object-fit:cover; border-radius:12px; align-self:center;">
 	</div>
 	<p class="quote small fragment" data-fragment-index="5">When a cross-context assumption feels obvious, the browser is the only authority. Verify in two engines before you build around it.</p>
 	<aside class="notes">

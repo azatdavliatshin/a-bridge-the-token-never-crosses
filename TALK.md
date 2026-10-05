@@ -1,6 +1,6 @@
 # A Bridge the Token Never Crosses — speaker script
 
-> Full spoken text, slide by slide. ~3,600 words ≈ 26–28 min at a calm pace, plus the demo. Sections marked **[cut-candidate]** are the first to go if the rehearsal runs long; dropping all of them lands at ~22 min. Slide numbers are the horizontal slide count as the deck's corner shows it (reveal's URL hash is zero-based, so slide N is `#/N-1`); vertical sub-slides are N.1, N.2…
+> Full spoken text, slide by slide. ~3,600 words ≈ 26–28 min at a calm pace, plus the demo. Sections marked **[cut-candidate]** are the first to go if the rehearsal runs long; dropping all of them lands at ~22 min. Slide numbers are the horizontal slide count as the deck's corner shows it (reveal's URL hash is zero-based, so slide N is `#/N-1`); vertical sub-slides are N.1, N.2… **▸ = click (next fragment appears)**; a slide with no ▸ has no fragments.
 
 ---
 
@@ -15,15 +15,17 @@ I'm Azat. I'm a software architect and tech lead, and I've been writing JavaScri
 
 *[your joke line]*
 
+▸ *(the ad block appears)* — one line about it, no more.
+
 ## 3 · Origin story
 
 This came out of a real project. An enterprise AI assistant for a large pharma company — one Next.js codebase, two ways of reaching users.
 
-Inside SharePoint and Teams assistant ran  inside iframe. The user was signed in on the host — SharePoint knew who they were. But inside our iframe, they were anonymous. Our app couldn't see the host's session at all.
+▸ Inside SharePoint and Teams assistant ran  inside iframe. The user was signed in on the host — SharePoint knew who they were. But inside our iframe, they were anonymous. Our app couldn't see the host's session at all.
 
-On iOS it shipped as a wrapped PWA — a WKWebView. For people who don't know what it is, it's like iframe inside RN app. And a WKWebView is an isolated web process: its own cookie store, and no access to the device's credential store. Passkeys live at the device level — in the Keychain, behind the platform authenticator — and the WebView simply can't reach them. Same for autofill, same for the login the user already has in Safari. All out of reach.
+▸ On iOS it shipped as a wrapped PWA — a WKWebView. For people who don't know what it is, it's like iframe inside RN app. And a WKWebView is an isolated web process: its own cookie store, and no access to the device's credential store. Passkeys live at the device level — in the Keychain, behind the platform authenticator — and the WebView simply can't reach them. Same for autofill, same for the login the user already has in Safari. All out of reach.
 
-Two platforms, two separate bug reports. And it took me a while to notice that it was the same bug. In both cases there's a *primary* session that lives in one browsing context, and a *secondary* context that needs a session of its own — without asking the user to sign in again.
+Two platforms, two separate bug reports. And it took me a while to notice that it was the same bug. ▸ In both cases there's a *primary* session that lives in one browsing context, and a *secondary* context that needs a session of its own — without asking the user to sign in again.
 
 Once you see it as one shape, the fix is one shape too.
 
@@ -33,7 +35,7 @@ That shape is the bridge. *(beat — let the room react, then move on)*
 
 ## 5 · What you'll leave with
 
-Four things. 1) A mental model — cross-context auth is a one-time code across a trust boundary, and everything else is transport detail. 2) An invariant checklist you can hold up against *any* popup-or-iframe auth scheme. 3) A clear picture of where CHIPS — partitioned cookies — helps (besides wathching movies), and where it doesn't. And working wiring for both Auth.js and Better Auth, so you can see the pattern is not tied to a library.
+Four things. ▸ A mental model — cross-context auth is a one-time code across a trust boundary, and everything else is transport detail. ▸ An invariant checklist you can hold up against *any* popup-or-iframe auth scheme. ▸ A clear picture of where CHIPS — partitioned cookies — helps (besides wathching movies), and where it doesn't. ▸ And working wiring for both Auth.js and Better Auth, so you can see the pattern is not tied to a library.
 
 ---
 
@@ -45,13 +47,13 @@ Ten years ago this was boring. The iframe just saw the same cookies as the host,
 
 ## 7 · Why third-party cookies had to go
 
-A quick detour into why, because it explains every failed fix we're about to see. A third-party cookie is the primitive of cross-site tracking: one ad pixel embedded on a thousand sites, one cookie, one profile of you. Browsers decided to kill that.
+A quick detour into why, because it explains every failed fix we're about to see. ▸ A third-party cookie is the primitive of cross-site tracking: one ad pixel embedded on a thousand sites, one cookie, one profile of you. Browsers decided to kill that.
 
-And here's the problem for us: the browser cannot tell your embedded app from that pixel. Same shape — a foreign origin, inside someone else's page, asking for its cookies. So the fix was blunt: no cookies for foreign origins inside a page. Safari went first with ITP in 2017 and a full block by 2020. Firefox partitions everything by default since 2022. Chrome announced, delayed, trialled, pivoted, and in the end kept them — but blocks them in incognito and under enterprise policy. We're collateral damage of anti-tracking, and every fix that tries to "get the cookie back" is fighting the browser.
+▸ And here's the problem for us: the browser cannot tell your embedded app from that pixel. Same shape — a foreign origin, inside someone else's page, asking for its cookies. ▸ So the fix was blunt: no cookies for foreign origins inside a page. ▸ Safari went first with ITP in 2017 and a full block by 2020. Firefox partitions everything by default since 2022. Chrome announced, delayed, trialled, pivoted, and in the end kept them — but blocks them in incognito and under enterprise policy. We're collateral damage of anti-tracking, and every fix that tries to "get the cookie back" is fighting the browser.
 
 ## 8 · What changed
 
-What changed is that your cookie became a *third-party* cookie. From the browser's point of view, your app's session cookie, inside someone else's page, is exactly the shape of cross-site tracking it has spent a decade trying to kill.
+What changed is that your cookie became a *third-party* cookie. ▸ From the browser's point of view, your app's session cookie, inside someone else's page, is exactly the shape of cross-site tracking it has spent a decade trying to kill.
 
 Safari has blocked this for years with ITP. Firefox partitions it by default. Chrome — well, Chrome's deprecation timeline is its own soap opera, but it doesn't matter: in incognito it's blocked, under enterprise policy it's blocked, and the enterprise browser matrix is exactly where this app lives. So the practical truth is simple: you cannot rely on third-party cookies today. Full stop.
 
@@ -61,23 +63,23 @@ So what do people try? Four things, and each one breaks either the UX or the arc
 
 ### 9.1 · Sign in again inside the iframe
 
-The first instinct: just run the sign-in flow inside the iframe. Three independent reasons that fails. One, it's a redundant login — the user *already* signed in, on the host, thirty seconds ago. Two, the identity provider will very often refuse to render inside a frame at all — `X-Frame-Options`, `frame-ancestors`, you've seen the blank box. And three — this is the one people miss — even if the redirect somehow completes, the cookie it sets is *still* a third-party cookie. You're back where you started.
+The first instinct: just run the sign-in flow inside the iframe. Three independent reasons that fails. ▸ One, it's a redundant login — the user *already* signed in, on the host, thirty seconds ago. ▸ Two, the identity provider will very often refuse to render inside a frame at all — `X-Frame-Options`, `frame-ancestors`, you've seen the blank box. ▸ And three — this is the one people miss — even if the redirect somehow completes, the cookie it sets is *still* a third-party cookie. You're back where you started.
 
 ### 9.2 · Storage Access API
 
-Second: the Storage Access API. `document.requestStorageAccess()`. 1) It's a real API, it's designed for roughly this situation, and it doesn't fit. 2) It needs a user gesture *and* shows a permission prompt — and silent SSO with a prompt is not silent. 3) Support is uneven. 4) And more fundamentally, it solves *access* — "let my frame read its own cookies" — not *inheritance*. It won't give you the host's session.
+Second: the Storage Access API. ▸ `document.requestStorageAccess()`. It's a real API, it's designed for roughly this situation, and it doesn't fit. ▸ It needs a user gesture *and* shows a permission prompt — and silent SSO with a prompt is not silent. ▸ Support is uneven. ▸ And more fundamentally, it solves *access* — "let my frame read its own cookies" — not *inheritance*. It won't give you the host's session.
 
 ### 9.3 · CHIPS
 
 Third: CHIPS — cookies with the `Partitioned` attribute. Someone on the team reads the spec and says: "we just set `Partitioned` and we're done."
 
-Here's the thing. 1) A partitioned cookie is a cookie your frame *can keep*. 2) It is not a cookie your frame *already has*. 3) Your partition — keyed by your origin plus the host's top-level site — starts empty. CHIPS gives you a place to store a session in the embedded context. It does nothing to mint one.
+Here's the thing. ▸ A partitioned cookie is a cookie your frame *can keep*. ▸ It is not a cookie your frame *already has*. ▸ Your partition — keyed by your origin plus the host's top-level site — starts empty. CHIPS gives you a place to store a session in the embedded context. It does nothing to mint one.
 
 Hold onto that, because we *will* use CHIPS — on the far side of the bridge.
 
 ### 9.4 · Vendor SDK
 
-Fourth: use the vendor SDK. 1) Auth0, Okta, Clerk — they all solve this, inside their own ecosystem. 2) And that's the trade: you now rent your identity. 3) Which is precisely the thing self-hosted cookie-session auth — Auth.js, Better Auth — exists to avoid. Not a bad choice for some teams. Just name the trade honestly.
+Fourth: use the vendor SDK. ▸ Auth0, Okta, Clerk — they all solve this, inside their own ecosystem. ▸ And that's the trade: you now rent your identity. ▸ Which is precisely the thing self-hosted cookie-session auth — Auth.js, Better Auth — exists to avoid. Not a bad choice for some teams. Just name the trade honestly.
 
 ## 10 · What we actually want
 
@@ -97,15 +99,15 @@ That's it. That's the trick. Everything else is making it safe.
 
 Let me walk the flow. Four lanes: the iframe — that's your app, embedded; the popup — also your app, but top-level; your app's server; and the identity provider.
 
-**Step one.** The iframe opens a popup to `/auth/popup` — on *your* origin, not the host's. This matters: the host never runs any of your code. That's why the same pattern ports to SharePoint, Teams, Salesforce, whatever.
+▸ **Step one.** The iframe opens a popup to `/auth/popup` — on *your* origin, not the host's. This matters: the host never runs any of your code. That's why the same pattern ports to SharePoint, Teams, Salesforce, whatever.
 
-**Step two.** In that popup, your auth library does its completely normal OAuth sign-in. Nothing custom. Because the popup is top-level, the IdP sees its own first-party cookies, finds the live session, and returns an authorization code with no prompt. PKCE, state — all handled by the library exactly as always. Your server completes the exchange and sets a session cookie — in the popup's first-party jar. So far the only new thing is *where* this runs.
+▸ **Step two.** In that popup, your auth library does its completely normal OAuth sign-in. Nothing custom. Because the popup is top-level, the IdP sees its own first-party cookies, finds the live session, and returns an authorization code with no prompt. PKCE, state — all handled by the library exactly as always. Your server completes the exchange and sets a session cookie — in the popup's first-party jar. So far the only new thing is *where* this runs.
 
-**Step three.** This is where the title happens. The popup calls `POST /auth/bridge`. The server verifies that there really is a session — and only then mints a one-time code. Two hundred fifty-six bits from a CSPRNG, single use, sixty-second TTL. It returns `{ code }`. Notice what the popup does *not* get: the token. It has a session, but it never holds the token in JavaScript, never puts it in a URL, never puts it in a message. It gets a receipt.
+▸ **Step three.** This is where the title happens. The popup calls `POST /auth/bridge`. The server verifies that there really is a session — and only then mints a one-time code. Two hundred fifty-six bits from a CSPRNG, single use, sixty-second TTL. It returns `{ code }`. Notice what the popup does *not* get: the token. It has a session, but it never holds the token in JavaScript, never puts it in a URL, never puts it in a message. It gets a receipt.
 
-**Step four.** The popup `postMessage`s that code to the iframe — with an explicit target origin, never `*`. The iframe checks the sender's origin *and* the sender's window identity. Why both — in a few minutes.
+▸ **Step four.** The popup `postMessage`s that code to the iframe — with an explicit target origin, never `*`. The iframe checks the sender's origin *and* the sender's window identity. Why both — in a few minutes.
 
-**Step five.** The iframe redeems the code: `fetch('/auth/consume?code=…', { credentials: 'include' })`. The server deletes the code on first read and responds with `Set-Cookie` — and *this* cookie carries `Partitioned`. It lands in the partition we said was empty five minutes ago. CHIPS couldn't mint the session; it can absolutely keep the one we just delivered.
+▸ **Step five.** The iframe redeems the code: `fetch('/auth/consume?code=…', { credentials: 'include' })`. The server deletes the code on first read and responds with `Set-Cookie` — and *this* cookie carries `Partitioned`. It lands in the partition we said was empty five minutes ago. CHIPS couldn't mint the session; it can absolutely keep the one we just delivered.
 
 The popup closes. The user saw a flash for under a second. The iframe reloads, signed in.
 
@@ -133,25 +135,25 @@ Now the part I actually care about. Everything I just showed is held together by
 
 The bridge route mints a code only *after* your auth library confirms a real session. Not on a header, not on a "I'm inside an iframe" signal, not on anything the client says about itself. No session — 401, nothing minted.
 
-What breaks without it: anyone who can spoof a context header gets a code for free, and a code is a session. Middleware is routing. The server-side session check is the boundary. I'll say that twice because it's the one that gets skipped under deadline: middleware is routing; the server check is the boundary.
+▸ What breaks without it: anyone who can spoof a context header gets a code for free, and a code is a session. Middleware is routing. The server-side session check is the boundary. I'll say that twice because it's the one that gets skipped under deadline: middleware is routing; the server check is the boundary.
 
 ### 15.2 · Invariant 2 — the code is a receipt, not a key
 
-The code itself: 256 bits of CSPRNG output — `randomBytes(32)`, one entropy site, never hand-rolled. Single use — delete-on-read in memory, atomic `GETDEL` in KV. And a TTL capped at sixty seconds — and if you configure a longer one, construction *throws*. No silent clamp. That last bit is deliberate: a config that quietly extends sixty seconds to ten minutes is exactly how "short-lived" stops being true without anyone noticing.
+▸ The code itself: 256 bits of CSPRNG output — `randomBytes(32)`, one entropy site, never hand-rolled. ▸ Single use — delete-on-read in memory, atomic `GETDEL` in KV. ▸ And a TTL capped at sixty seconds — and if you configure a longer one, construction *throws*. No silent clamp. That last bit is deliberate: a config that quietly extends sixty seconds to ten minutes is exactly how "short-lived" stops being true without anyone noticing.
 
-So: first consume, 302 and a cookie. Second consume of the same code — 4xx, no cookie. A leaked or replayed code is inert.
+▸ So: first consume, 302 and a cookie. Second consume of the same code — 4xx, no cookie. A leaked or replayed code is inert.
 
 ### 15.3 · Invariant 3 — trust the sender twice
 
 The `postMessage` receiver. Two checks. `event.origin` must be in the allowlist — everyone does this one. *And* `event.source` must be the popup window you actually opened.
 
-Why the second? Because of the same-origin racer. Another tab, another frame, *of your own origin*, can post to the opener. The origin check passes it — it's your origin! Pinning the source is the second lock. And a dropped message must not settle the flow — a later valid one still should. This is the one almost nobody tests.
+▸ Wrong origin — dropped, obviously. ▸ But why the second check? Because of the same-origin racer. Another tab, another frame, *of your own origin*, can post to the opener. The origin check passes it — it's your origin! Pinning the source is the second lock. ▸ And a dropped message must not settle the flow — a later valid one still should. This is the one almost nobody tests.
 
 ### 15.4 · Invariant 4 — zero tokens in URLs, for the whole roundtrip
 
 No session token in any client-constructed URL, response body, or message payload. The *only* thing permitted in a URL is the opaque code, in `?code=`. A token in a URL lives forever — history, logs, referrers, screenshots.
 
-The subtle part is the phrase "whole roundtrip". Every component can pass its own test while the *composition* leaks — one helper builds a URL from another's output. So the end-to-end test sweeps every URL the client builds across the whole flow, not per component.
+▸ The subtle part is the phrase "whole roundtrip". Every component can pass its own test while the *composition* leaks — one helper builds a URL from another's output. So the end-to-end test sweeps every URL the client builds across the whole flow, not per component.
 
 ### 15.5 · Invariant 5 — redirect hygiene **[cut-candidate]**
 
@@ -163,7 +165,7 @@ This one I added *after* shipping, so it gets its own story.
 
 The code was already one-time and sixty seconds. And that was not enough. Think about login CSRF: I, the attacker, sign in to the app with *my* account, mint a code for *my* session — legitimately — and send you a link to `/auth/consume?code=…`. You click. The code is valid. You're now signed in as me, and whatever you type into the app lands in my account.
 
-The fix is Fetch Metadata. The consume route accepts only `Sec-Fetch-Site: same-origin` and `Sec-Fetch-Dest: empty` — that is, a `fetch()` from the app's own page. A top-level navigation, an `<img>` load, a cross-site fetch — all 4xx. The store isn't even touched, so the real code survives for the real opener. And the rejection is byte-identical to a forged-code rejection — no oracle. Browsers set these headers; page script can't set or strip them.
+▸ The fix is Fetch Metadata. The consume route accepts only `Sec-Fetch-Site: same-origin` and `Sec-Fetch-Dest: empty` — that is, a `fetch()` from the app's own page. ▸ A top-level navigation, an `<img>` load, a cross-site fetch — all 4xx. The store isn't even touched, so the real code survives for the real opener. And the rejection is byte-identical to a forged-code rejection — no oracle. Browsers set these headers; page script can't set or strip them.
 
 One honest note: a request with *no* Fetch Metadata at all falls through to the Origin check. Every supported browser sends it, so you can't trigger that from a browser; it exists so the test bench and non-browser clients don't break. A future major may close it. The proper structural fix — binding the code to the window that opened the popup, PKCE-style — is the planned follow-up.
 
@@ -195,7 +197,7 @@ For completeness, the rest of the wiring. Two route files, one line each — `br
 
 ### 16.3 · Cold start **[cut-candidate]**
 
-One more case: a first-time user with no app session at all, but a live host SSO. The demo apps' popup handles it with exactly one `prompt=none` attempt against the shared IdP, with a one-shot guard so it can't loop. If it comes back `login_required`, you get a "sign in on the host first" notice — never an interactive login inside the popup. Scoping note: this only works when host and app share an identity provider — Entra in Microsoft 365, Keycloak in my demos. The warm handoff is the fully general core; this is a nice extra.
+One more case: a first-time user with no app session at all, but a live host SSO. ▸ The demo apps' popup handles it with exactly one `prompt=none` attempt against the shared IdP, ▸ with a one-shot guard so it can't loop. ▸ If it comes back `login_required`, you get a "sign in on the host first" notice — never an interactive login inside the popup. ▸ Scoping note: this only works when host and app share an identity provider — Entra in Microsoft 365, Keycloak in my demos. The warm handoff is the fully general core; this is a nice extra.
 
 ---
 
@@ -203,13 +205,13 @@ One more case: a first-time user with no app session at all, but a live host SSO
 
 One bug story, because it taught me the lesson I most want you to leave with.
 
-The cold-start path *navigates* the popup — off to the IdP and back — before it can `postMessage` the code to its opener. I was *certain* this would break the bridge. My mental model said: navigate the popup, `window.opener` becomes null, the popup loses its reference to the iframe, the code has nowhere to go. So I built an elaborate fallback — stash the code server-side, poll for it from the opener.
+▸ The cold-start path *navigates* the popup — off to the IdP and back — before it can `postMessage` the code to its opener. I was *certain* this would break the bridge. My mental model said: navigate the popup, `window.opener` becomes null, the popup loses its reference to the iframe, the code has nowhere to go. So I built an elaborate fallback — stash the code server-side, poll for it from the opener.
 
-Then I actually tested it. Chrome, and Safari in private mode. `window.opener` survived the entire redirect round-trip. The code posted fine. The fallback was dead code.
+▸ Then I actually tested it. Chrome, and Safari in private mode. `window.opener` survived the entire redirect round-trip. The code posted fine. The fallback was dead code.
 
-What I'd confused: it's not *navigation* that severs the opener relationship. It's COOP — `Cross-Origin-Opener-Policy: same-origin`. That header puts the page in a fresh browsing-context group and *that* nulls the opener. A plain redirect, no COOP, keeps it. I'd attributed to "navigation" a behaviour that belongs to a specific security header.
+▸ What I'd confused: it's not *navigation* that severs the opener relationship. It's COOP — `Cross-Origin-Opener-Policy: same-origin`. That header puts the page in a fresh browsing-context group and *that* nulls the opener. A plain redirect, no COOP, keeps it. I'd attributed to "navigation" a behaviour that belongs to a specific security header.
 
-I deleted the fallback. And the lesson: when a cross-context assumption feels obvious, the browser is the only authority worth trusting. Verify it in two engines before you build around it. — And the practical corollary: if your IdP or your app *does* set COOP `same-origin`, *then* you have this problem, and now you know why.
+▸ I deleted the fallback. ▸ And the lesson: when a cross-context assumption feels obvious, the browser is the only authority worth trusting. Verify it in two engines before you build around it. — And the practical corollary: if your IdP or your app *does* set COOP `same-origin`, *then* you have this problem, and now you know why.
 
 ## 18 · Where the same bridge goes next
 
