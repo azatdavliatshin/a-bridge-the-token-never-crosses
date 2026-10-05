@@ -196,7 +196,7 @@
 	<svg class="diagram" viewBox="0 0 1000 420">
 		<rect class="box" x="20" y="20" width="960" height="380"/>
 		<text x="40" y="58" class="lane-title">host.example — SharePoint · Teams · Salesforce · …</text>
-		<text x="960" y="58" text-anchor="end" class="label acc">Signed in as Anna ✓</text>
+		<text x="960" y="58" text-anchor="end" class="label acc">Signed in as Azat ✓</text>
 		<rect class="box" x="120" y="100" width="760" height="270"/>
 		<text x="140" y="138" class="label muted">&lt;iframe src="https://app.example"&gt;</text>
 		<text x="400" y="250" class="label" style="font-size:30px">Sign in</text>
@@ -402,7 +402,8 @@
 			<p class="tiny">bridge-test-ba-user / bridge-test-ba-password</p>
 		</div>
 	</div>
-	<p class="small muted" style="margin-top:1em">Two Vercel origins + self-hosted Keycloak — the cross-site handoff is real, not faked on one origin.</p>
+	<p class="small muted" style="margin-top:1em">Two Vercel origins + self-hosted Keycloak — the cross-site handoff is real, not faked on one origin.<br>
+	Both run on an open-source reference implementation of the pattern — more on it at the end.</p>
 	<aside class="notes">
 		Sign in on the host → the embedded app signs itself in. Show DevTools › Application › Cookies with the
 		Partitioned column once. Then the Better Auth demo: same bridge, different library — hold that thought.
@@ -423,7 +424,7 @@
 			<li class="todo">redirect hygiene</li>
 			<li class="todo">only a same-origin <em>fetch</em> may redeem</li>
 		</ul>
-		<p class="tiny">Each row = one property + one negative test · <code class="inline">THREAT-NN</code> in docs/threat-model.md</p>
+		<p class="tiny">Each row = one property + one negative test in the reference implementation's threat model</p>
 		<aside class="notes">This is the part you can take to any popup/iframe scheme, including a hand-rolled one. (18:30)</aside>
 	</section>
 
@@ -550,7 +551,7 @@ window.addEventListener("message", (event) => {
 			<li class="done">redirect hygiene</li>
 			<li class="done">same-origin-fetch-only redemption</li>
 		</ul>
-		<p class="tiny">github.com/azatdavliatshin/next-auth-bridge/blob/main/docs/threat-model.md — each row ↔ a named, currently-green test</p>
+		<p class="tiny">each row ↔ a named, currently-green test in the reference implementation's threat model — link at the end</p>
 		<aside class="notes">"Take a photo of this one." (29:00)</aside>
 	</section>
 

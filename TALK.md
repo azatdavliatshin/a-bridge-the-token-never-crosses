@@ -65,19 +65,19 @@ The first instinct: just run the sign-in flow inside the iframe. Three independe
 
 ### 9.2 · Storage Access API
 
-Second: the Storage Access API. `document.requestStorageAccess()`. It's a real API, it's designed for roughly this situation, and it doesn't fit. It needs a user gesture *and* shows a permission prompt — and silent SSO with a prompt is not silent. Support is uneven. And more fundamentally, it solves *access* — "let my frame read its own cookies" — not *inheritance*. It won't give you the host's session.
+Second: the Storage Access API. `document.requestStorageAccess()`. 1) It's a real API, it's designed for roughly this situation, and it doesn't fit. 2) It needs a user gesture *and* shows a permission prompt — and silent SSO with a prompt is not silent. 3) Support is uneven. 4) And more fundamentally, it solves *access* — "let my frame read its own cookies" — not *inheritance*. It won't give you the host's session.
 
 ### 9.3 · CHIPS
 
 Third: CHIPS — cookies with the `Partitioned` attribute. Someone on the team reads the spec and says: "we just set `Partitioned` and we're done."
 
-Here's the thing. A partitioned cookie is a cookie your frame *can keep*. It is not a cookie your frame *already has*. Your partition — keyed by your origin plus the host's top-level site — starts empty. CHIPS gives you a place to store a session in the embedded context. It does nothing to mint one.
+Here's the thing. 1) A partitioned cookie is a cookie your frame *can keep*. 2) It is not a cookie your frame *already has*. 3) Your partition — keyed by your origin plus the host's top-level site — starts empty. CHIPS gives you a place to store a session in the embedded context. It does nothing to mint one.
 
 Hold onto that, because we *will* use CHIPS — on the far side of the bridge.
 
 ### 9.4 · Vendor SDK
 
-Fourth: use the vendor SDK. Auth0, Okta, Clerk — they all solve this, inside their own ecosystem. And that's the trade: you now rent your identity. Which is precisely the thing self-hosted cookie-session auth — Auth.js, Better Auth — exists to avoid. Not a bad choice for some teams. Just name the trade honestly.
+Fourth: use the vendor SDK. 1) Auth0, Okta, Clerk — they all solve this, inside their own ecosystem. 2) And that's the trade: you now rent your identity. 3) Which is precisely the thing self-hosted cookie-session auth — Auth.js, Better Auth — exists to avoid. Not a bad choice for some teams. Just name the trade honestly.
 
 ## 10 · What we actually want
 
@@ -117,7 +117,7 @@ Compressed to one sentence: a server-side handle store mediates a one-time-code 
 
 Let me show you it's real. *(live)*
 
-Two deployments, two Vercel origins, one self-hosted Keycloak — so the cross-site handoff is genuine, not faked on a single origin. I sign in on the host… and the embedded app signs itself in. Open DevTools, Application, Cookies — there's the session cookie, and there's the `Partitioned` column.
+Two deployments, two Vercel origins, one self-hosted Keycloak — so the cross-site handoff is genuine, not faked on a single origin. Both run on an open-source reference implementation of the pattern that I wrote; I'll come back to it at the end — for now it's just "the repo". I sign in on the host… and the embedded app signs itself in. Open DevTools, Application, Cookies — there's the session cookie, and there's the `Partitioned` column.
 
 Second deployment — same flow, same bridge, but the app underneath is Better Auth instead of Auth.js. Hold that thought; we'll come back to it.
 
@@ -127,7 +127,7 @@ Second deployment — same flow, same bridge, but the app underneath is Better A
 
 ## 15 · Remove one condition…
 
-Now the part I actually care about. Everything I just showed is held together by a handful of invariants, and if you remove *any one* of them, the bridge becomes a hole. I want to go through them one at a time, each with the question "what breaks without it?" — because this list works against any popup-and-iframe scheme, not just mine. In the repo these are `THREAT-01` through `THREAT-12`, and each one is backed by a currently-green negative test.
+Now the part I actually care about. Everything I just showed is held together by a handful of invariants, and if you remove *any one* of them, the bridge becomes a hole. I want to go through them one at a time, each with the question "what breaks without it?" — because this list works against any popup-and-iframe scheme, not just mine. In the reference implementation's threat model each of these is a numbered row, and each row is backed by a currently-green negative test.
 
 ### 15.1 · Invariant 1 — verify the session first
 
