@@ -75,7 +75,7 @@
 		.reveal .footer-links a { color: var(--accent); }
 		.reveal .qr { display: flex; gap: 1.5em; justify-content: center; align-items: flex-start; }
 		.reveal .qr div { text-align: center; font-size: 0.55em; color: var(--muted); }
-		.reveal .qr img { display: block; width: 220px; height: 220px; background: #fff; border-radius: 8px; margin: 0 auto 0.4em; }
+		.reveal .qr img { display: block; width: 200px; height: 200px; background: #fff; border-radius: 8px; margin: 0 auto 0.4em; }
 
 		.reveal .meme { position: relative; display: inline-block; }
 		.reveal .meme img { display: block; max-height: 480px; border-radius: 12px; }
@@ -119,7 +119,6 @@
 	<p class="small">Azat Davliatshin · YerevanJS #1</p>
 	<aside class="notes">
 		<p>Hi. Ok, let's start.<br>The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but the title is literally the whole talk. I'm going to carry a user's session across an origin boundary — from a page that has it to an iframe that doesn't — and the one thing that will never make the trip is the session token itself. Sounds like a magic? Follow me, and by the end you'll know exactly what <i>does</i> cross, and why that turns out to be enough.</p>
-		<p>⏱ 0:30</p>
 	</aside>
 </section>
 
@@ -143,7 +142,6 @@
 		<p>I'm Azat. I'm a software architect and tech lead, and I've been writing JavaScript for a bit over ten years. One thing up front: tonight is about a pattern, not a product. If you walk out of here and hand-roll your own version — that's a win, as long as it passes the checklist I'll give you later.</p>
 		<p><i>[your joke line]</i></p>
 		<p>▸ <i>(the ad block appears)</i> — one line about it, no more.</p>
-		<p>⏱ 1:00</p>
 	</aside>
 </section>
 
@@ -161,7 +159,6 @@
 		<p>▸ On iOS it shipped as a wrapped PWA — a WKWebView. For people who don't know what it is, it's like iframe inside RN app. And a WKWebView is an isolated web process: its own cookie store, and no access to the device's credential store. Passkeys live at the device level — in the Keychain, behind the platform authenticator — and the WebView simply can't reach them. Same for autofill, same for the login the user already has in Safari. All out of reach.</p>
 		<p>Two platforms, two separate bug reports. And it took me a while to notice that it was the same bug. ▸ In both cases there's a <i>primary</i> session that lives in one browsing context, and a <i>secondary</i> context that needs a session of its own — without asking the user to sign in again.</p>
 		<p>Once you see it as one shape, the fix is one shape too.</p>
-		<p>⏱ 3:00</p>
 	</aside>
 </section>
 
@@ -174,7 +171,6 @@
 	</div>
 	<aside class="notes">
 		<p>That shape is the bridge. <i>(beat — let the room react, then move on)</i></p>
-		<p>⏱ 3:00</p>
 	</aside>
 </section>
 
@@ -188,7 +184,6 @@
 	</ul>
 	<aside class="notes">
 		<p>Four things. ▸ A mental model — cross-context auth is a one-time code across a trust boundary, and everything else is transport detail. ▸ An invariant checklist you can hold up against <i>any</i> popup-or-iframe auth scheme. ▸ A clear picture of where CHIPS — partitioned cookies — helps (besides wathching movies), and where it doesn't. ▸ And working wiring for both Auth.js and Better Auth, so you can see the pattern is not tied to a library.</p>
-		<p>⏱ 3:30</p>
 	</aside>
 </section>
 
@@ -209,7 +204,6 @@
 	<aside class="notes">
 		<p>Here's the situation. Your Next.js app lives inside somebody else's page. SharePoint web part, Teams tab, Salesforce Lightning component, ServiceNow, Confluence — chose your fighter. The host already has the user signed in against a shared identity provider — in the Microsoft world that's Entra.</p>
 		<p>Ten years ago this was boring. The iframe just saw the same cookies as the host, and life went on.</p>
-		<p>⏱ 4:30</p>
 	</aside>
 </section>
 
@@ -228,7 +222,6 @@
 	<aside class="notes">
 		<p>A quick detour into why, because it explains every failed fix we're about to see. ▸ A third-party cookie is the primitive of cross-site tracking: one ad pixel embedded on a thousand sites, one cookie, one profile of you. Browsers decided to kill that.</p>
 		<p>▸ And here's the problem for us: the browser cannot tell your embedded app from that pixel. Same shape — a foreign origin, inside someone else's page, asking for its cookies. ▸ So the fix was blunt: no cookies for foreign origins inside a page. ▸ Safari went first with ITP in 2017 and a full block by 2020. Firefox partitions everything by default since 2022. Chrome announced, delayed, trialled, pivoted, and in the end kept them — but blocks them in incognito and under enterprise policy. We're collateral damage of anti-tracking, and every fix that tries to "get the cookie back" is fighting the browser.</p>
-		<p>⏱ 6:00</p>
 	</aside>
 </section>
 
@@ -243,7 +236,6 @@
 	<aside class="notes">
 		<p>What changed is that your cookie became a <i>third-party</i> cookie. ▸ From the browser's point of view, your app's session cookie, inside someone else's page, is exactly the shape of cross-site tracking it has spent a decade trying to kill.</p>
 		<p>Safari has blocked this for years with ITP. Firefox partitions it by default. Chrome — well, Chrome's deprecation timeline is its own soap opera, but it doesn't matter: in incognito it's blocked, under enterprise policy it's blocked, and the enterprise browser matrix is exactly where this app lives. So the practical truth is simple: you cannot rely on third-party cookies today. Full stop.</p>
-		<p>⏱ 6:00</p>
 	</aside>
 </section>
 
@@ -265,7 +257,6 @@
 		</ul>
 		<aside class="notes">
 		<p>The first instinct: just run the sign-in flow inside the iframe. Three independent reasons that fails. ▸ One, it's a redundant login — the user <i>already</i> signed in, on the host, thirty seconds ago. ▸ Two, the identity provider will very often refuse to render inside a frame at all — <code>X-Frame-Options</code>, <code>frame-ancestors</code>, you've seen the blank box. ▸ And three — this is the one people miss — even if the redirect somehow completes, the cookie it sets is <i>still</i> a third-party cookie. You're back where you started.</p>
-		<p>⏱ 6:45</p>
 	</aside>
 	</section>
 	<section>
@@ -279,7 +270,6 @@
 		</ul>
 		<aside class="notes">
 		<p>Second: the Storage Access API. ▸ <code>document.requestStorageAccess()</code>. It's a real API, it's designed for roughly this situation, and it doesn't fit. ▸ It needs a user gesture <i>and</i> shows a permission prompt — and silent SSO with a prompt is not silent. ▸ Support is uneven. ▸ And more fundamentally, it solves <i>access</i> — "let my frame read its own cookies" — not <i>inheritance</i>. It won't give you the host's session.</p>
-		<p>⏱ 7:30</p>
 	</aside>
 	</section>
 	<section>
@@ -304,7 +294,6 @@
 		<p>Third: CHIPS — cookies with the <code>Partitioned</code> attribute. Someone on the team reads the spec and says: "we just set <code>Partitioned</code> and we're done."</p>
 		<p>Here's the thing. ▸ A partitioned cookie is a cookie your frame <i>can keep</i>. ▸ It is not a cookie your frame <i>already has</i>. ▸ Your partition — keyed by your origin plus the host's top-level site — starts empty. CHIPS gives you a place to store a session in the embedded context. It does nothing to mint one.</p>
 		<p>Hold onto that, because we <i>will</i> use CHIPS — on the far side of the bridge.</p>
-		<p>⏱ 8:15</p>
 	</aside>
 	</section>
 	<section>
@@ -317,7 +306,6 @@
 		</ul>
 		<aside class="notes">
 		<p>Fourth: use the vendor SDK. ▸ Auth0, Okta, Clerk — they all solve this, inside their own ecosystem. ▸ And that's the trade: you now rent your identity. ▸ Which is precisely the thing self-hosted cookie-session auth — Auth.js, Better Auth — exists to avoid. Not a bad choice for some teams. Just name the trade honestly.</p>
-		<p>⏱ 8:45</p>
 	</aside>
 	</section>
 </section>
@@ -332,7 +320,6 @@
 	</ul>
 	<aside class="notes">
 		<p>So here's the spec. Inherit the <i>existing</i> host SSO — not a new login. Silently — no prompt. No session token anywhere it can leak. And no vendor lock-in. Keep these four on your mental clipboard. We'll check them off at the end.</p>
-		<p>⏱ 9:00</p>
 	</aside>
 </section>
 
@@ -345,7 +332,6 @@
 		<p>Everything that follows comes from one sentence.</p>
 		<p>The iframe is the wrong place to do OAuth. A popup runs in the <i>top-level</i> browsing context. And in the top-level context, the identity provider's cookies are <i>first-party</i>. The user's existing session is right there.</p>
 		<p>That's it. That's the trick. Everything else is making it safe.</p>
-		<p>⏱ 10:00</p>
 	</aside>
 </section>
 
@@ -408,7 +394,6 @@
 		<p>▸ <b>Step four.</b> The popup <code>postMessage</code>s that code to the iframe — with an explicit target origin, never <code>*</code>. The iframe checks the sender's origin <i>and</i> the sender's window identity. Why both — in a few minutes.</p>
 		<p>▸ <b>Step five.</b> The iframe redeems the code: <code>fetch('/auth/consume?code=…', { credentials: 'include' })</code>. The server deletes the code on first read, pulls the parked cookie value out of the store, and responds with <code>Set-Cookie</code> — the same session, now written into <i>this</i> context — and <i>this</i> cookie carries <code>Partitioned</code>. It lands in the partition we said was empty five minutes ago. CHIPS couldn't mint the session; it can absolutely keep the one we just delivered.</p>
 		<p>The popup closes. The user saw a flash for under a second. The iframe reloads, signed in.</p>
-		<p>⏱ 14:00</p>
 	</aside>
 </section>
 
@@ -417,9 +402,10 @@
 	<span class="accent">one-time-code exchange across a trust boundary</span>.<br><br>
 	Everything else is transport.</p>
 	<p class="small muted">The user sees a popup flash for under a second.</p>
+	<p class="tiny">You already know this figure: it is the OAuth <em>authorization code</em> — RFC 6749 §4.1 — with a different boundary. For native apps, RFC 8252 draws the same line.</p>
 	<aside class="notes">
-		<p>Compressed to one sentence: a server-side handle store mediates a one-time-code exchange across a trust boundary. Everything else is transport. Remember that sentence — we'll see the <i>same</i> shape with a different transport at the end.</p>
-		<p>⏱ 15:00</p>
+		<p>Compressed to one sentence: a server-side handle store mediates a one-time-code exchange across a trust boundary. Everything else is transport.</p>
+		<p>And if that figure feels familiar — it should. It's the OAuth authorization code: a short-lived, single-use code crosses the untrusted leg, and the real credential is exchanged for it on the back end. RFC 6749, section 4.1. We've just moved the boundary from "browser ↔ IdP" to "top-level ↔ iframe". RFC 8252 does the same move for native apps, and we'll meet it again at the end. Remember that sentence — we'll see the <i>same</i> shape with a different transport.</p>
 	</aside>
 </section>
 
@@ -444,7 +430,6 @@
 		<p>Two deployments, two Vercel origins, one self-hosted Keycloak — so the cross-site handoff is genuine, not faked on a single origin. Both run on an open-source reference implementation of the pattern that I wrote; I'll come back to it at the end — for now it's just "the repo". I sign in on the host… and the embedded app signs itself in. Open DevTools, Application, Cookies — there's the session cookie, and there's the <code>Partitioned</code> column.</p>
 		<p>Second deployment — same flow, same bridge, but the app underneath is Better Auth instead of Auth.js. Hold that thought; we'll come back to it.</p>
 		<p><i>(If the network is dead: narrate it over the diagram — "this is where the popup would flash" — and move on. Don't fight it.)</i></p>
-		<p>⏱ 18:00</p>
 	</aside>
 </section>
 
@@ -464,7 +449,6 @@
 		<p class="tiny">Each row = one property + one negative test in the reference implementation's threat model</p>
 		<aside class="notes">
 		<p>Now the part I actually care about. Everything I just showed is held together by a handful of invariants, and if you remove <i>any one</i> of them, the bridge becomes a hole. I want to go through them one at a time, each with the question "what breaks without it?" — because this list works against any popup-and-iframe scheme, not just mine. In the reference implementation's threat model each of these is a numbered row, and each row is backed by a currently-green negative test.</p>
-		<p>⏱ 18:30</p>
 	</aside>
 	</section>
 
@@ -486,7 +470,6 @@ if (!session)
 		<aside class="notes">
 		<p>The bridge route mints a code only <i>after</i> your auth library confirms a real session. Not on a header, not on a "I'm inside an iframe" signal, not on anything the client says about itself. No session — 401, nothing minted.</p>
 		<p>▸ What breaks without it: anyone who can spoof a context header gets a code for free, and a code is a session. Middleware is routing. The server-side session check is the boundary. I'll say that twice because it's the one that gets skipped under deadline: middleware is routing; the server check is the boundary.</p>
-		<p>⏱ 20:00</p>
 	</aside>
 	</section>
 
@@ -507,7 +490,6 @@ if (!session)
 		<p>▸ The code itself: 256 bits of CSPRNG output — <code>randomBytes(32)</code>, one entropy site, never hand-rolled. ▸ Single use — delete-on-read in memory, atomic <code>GETDEL</code> in KV. ▸ And a TTL capped at sixty seconds — and if you configure a longer one, construction <i>throws</i>. No silent clamp. That last bit is deliberate: a config that quietly extends sixty seconds to ten minutes is exactly how "short-lived" stops being true without anyone noticing.</p>
 		<p>▸ And be honest with yourself about what sits in that store: the session cookie's value. The actual token, for up to sixty seconds. Which means the transfer store has to be trusted exactly like your session database — same network boundary, same access rules. The TTL cap and delete-on-read aren't pedantry; they're what keeps that window small. Encrypting the parked value with a server-side key is a follow-up I haven't shipped yet — I'd rather say that than pretend it's there.</p>
 		<p>▸ So: first consume, 302 and a cookie. Second consume of the same code — 4xx, no cookie. A leaked or replayed code is inert.</p>
-		<p>⏱ 21:30</p>
 	</aside>
 	</section>
 
@@ -529,7 +511,6 @@ window.addEventListener("message", (event) => {
 		<aside class="notes">
 		<p>The <code>postMessage</code> receiver. Two checks. <code>event.origin</code> must be in the allowlist — everyone does this one. <i>And</i> <code>event.source</code> must be the popup window you actually opened.</p>
 		<p>▸ Wrong origin — dropped, obviously. ▸ But why the second check? Because of the same-origin racer. Another tab, another frame, <i>of your own origin</i>, can post to the opener. The origin check passes it — it's your origin! Pinning the source is the second lock. ▸ And a dropped message must not settle the flow — a later valid one still should. This is the one almost nobody tests.</p>
-		<p>⏱ 23:00</p>
 	</aside>
 	</section>
 
@@ -548,7 +529,6 @@ window.addEventListener("message", (event) => {
 		<aside class="notes">
 		<p>No session token in any client-constructed URL, response body, or message payload. The <i>only</i> thing permitted in a URL is the opaque code, in <code>?code=</code>. A token in a URL lives forever — history, logs, referrers, screenshots.</p>
 		<p>▸ The subtle part is the phrase "whole roundtrip". Every component can pass its own test while the <i>composition</i> leaks — one helper builds a URL from another's output. So the end-to-end test sweeps every URL the client builds across the whole flow, not per component.</p>
-		<p>⏱ 24:30</p>
 	</aside>
 	</section>
 
@@ -565,7 +545,6 @@ window.addEventListener("message", (event) => {
 		</table>
 		<aside class="notes">
 		<p>The <code>?next=</code> parameter after sign-in. One function, <code>sanitizeNext</code>: anything under <code>/auth</code> or <code>/api/auth</code> is rejected — that's the auth-loop case; absolute URLs, protocol-relative <code>//evil</code>, and — the one you'd miss — backslash <code>/\evil</code>, which some parsers normalise to a protocol-relative URL. All fall back to <code>/</code>. Open redirect and auth loop, closed in one place.</p>
-		<p>⏱ 25:30</p>
 	</aside>
 	</section>
 
@@ -591,7 +570,6 @@ window.addEventListener("message", (event) => {
 		<p>The code was already one-time and sixty seconds. And that was not enough. Think about login CSRF: I, the attacker, sign in to the app with <i>my</i> account, mint a code for <i>my</i> session — legitimately — and send you a link to <code>/auth/consume?code=…</code>. You click. The code is valid. You're now signed in as me, and whatever you type into the app lands in my account.</p>
 		<p>▸ The fix is Fetch Metadata. The consume route accepts only <code>Sec-Fetch-Site: same-origin</code> and <code>Sec-Fetch-Dest: empty</code> — that is, a <code>fetch()</code> from the app's own page. ▸ A top-level navigation, an <code>&lt;img&gt;</code> load, a cross-site fetch — all 4xx. The store isn't even touched, so the real code survives for the real opener. And the rejection is byte-identical to a forged-code rejection — no oracle. Browsers set these headers; page script can't set or strip them.</p>
 		<p>One honest note: a request with <i>no</i> Fetch Metadata at all falls through to the Origin check. Every supported browser sends it, so you can't trigger that from a browser; it exists so the test bench and non-browser clients don't break. A future major may close it. The proper structural fix — binding the code to the window that opened the popup, PKCE-style — is the planned follow-up.</p>
-		<p>⏱ 28:00</p>
 	</aside>
 	</section>
 
@@ -608,7 +586,6 @@ window.addEventListener("message", (event) => {
 		<p class="tiny">each row ↔ a named, currently-green test in the reference implementation's threat model — link at the end</p>
 		<aside class="notes">
 		<p>Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin <i>and</i> source. No token in any URL — at roundtrip level. Redirect hygiene. Same-origin-fetch-only redemption. If you have a popup auth scheme in production, go through these six tomorrow.</p>
-		<p>⏱ 29:00</p>
 	</aside>
 	</section>
 
@@ -632,7 +609,6 @@ window.addEventListener("message", (event) => {
 		<aside class="notes">
 		<p>And the honest boundary. The Node test suite proves the <code>Partitioned</code> attribute is <i>emitted</i>, that data flows end-to-end, and every negative case I just listed. It does <i>not</i> prove that a real browser <i>isolates</i> the partition — that's a property of the browser's CHIPS implementation, and you can only check it in a browser. I did: two live origins, positive and negative case, written down in the repo. Also: that a credentialed <code>fetch</code> — not a navigation — commits the cookie under the right top-level site. That was an open question until I tried it.</p>
 		<p>If you adopt the pattern, run that live check in <i>your</i> browser matrix. CHIPS is Chrome and Edge 114, Firefox 130, Safari 18.</p>
-		<p>⏱ 30:00</p>
 	</aside>
 	</section>
 </section>
@@ -662,7 +638,6 @@ export const { bridge, consume } = createAuthBridge({
 		<p>Now the "two libraries" promise. Here's the entire configuration. Where does the auth library live in it? Two values: <code>verifySession</code> and <code>cookieName</code>. The store, the origin allowlist, the routes, the popup, the client helpers — none of it knows which library you use.</p>
 		<p>This is also <i>why</i> the bridge copies the cookie instead of minting a fresh session on the far side. "Create a session for user X" is a deeply library-specific operation — Auth.js doesn't expose one for the JWT strategy, Better Auth has one but it's its own shape. "Copy the cookie your library already issued" works with any cookie-session library. The seam is two values precisely because the bridge moves a cookie, not an identity.</p>
 		<p>Why does this matter? Auth.js — NextAuth — is effectively in maintenance mode, and the ecosystem's momentum has moved to Better Auth. If your auth library is a thing you might swap in two years, the piece that carries your session across contexts must not be the piece that pins you.</p>
-		<p>⏱ 31:30</p>
 	</aside>
 	</section>
 	<section data-auto-animate>
@@ -685,7 +660,6 @@ export const { bridge, consume } = createAuthBridge({
 		<p class="small"><span class="accent">Better Auth</span> — the two-line difference. Any other cookie-session library plugs into the same seam.</p>
 		<aside class="notes">
 		<p>Same config, Better Auth. Watch what moves. <code>verifySession</code> becomes <code>auth.api.getSession</code> with the request headers. <code>cookieName</code> becomes <code>getBetterAuthCookieName({ secure: true })</code> — derived, not hardcoded, because the <code>__Secure-</code> prefix rule bit me once; there's a <code>__Secure-__Secure-</code> bug in the changelog. Everything else is byte-identical. Any other cookie-session library plugs into the same two values.</p>
-		<p>⏱ 33:00</p>
 	</aside>
 	</section>
 
@@ -731,7 +705,6 @@ window.location.reload();
 		</div>
 		<aside class="notes">
 		<p>For completeness, the rest of the wiring. Two route files, one line each — <code>bridge</code> and <code>consume</code> are plain <code>Request → Response</code> functions. A middleware that does <i>UX routing only</i> — it rewrites unauthenticated embedded requests to the popup entry page; it is not a security boundary, we covered that. It imports from the <code>/middleware</code> subpath because the package root reaches <code>node:crypto</code> and won't bundle for Edge. The popup page: <code>runPopupFlow</code>, then <code>window.close()</code>. And the launcher in the iframe: <code>openAuthPopup</code>, then <code>fetch</code> consume with <code>credentials: 'include'</code> — that's what commits the cookie under the right partition — then reload. There's no magic. The volume is small.</p>
-		<p>⏱ 35:00</p>
 	</aside>
 	</section>
 
@@ -745,7 +718,6 @@ window.location.reload();
 		</ul>
 		<aside class="notes">
 		<p>One more case: a first-time user with no app session at all, but a live host SSO. ▸ The demo apps' popup handles it with exactly one <code>prompt=none</code> attempt against the shared IdP, ▸ with a one-shot guard so it can't loop. ▸ If it comes back <code>login_required</code>, you get a "sign in on the host first" notice — never an interactive login inside the popup. ▸ Scoping note: this only works when host and app share an identity provider — Entra in Microsoft 365, Keycloak in my demos. The warm handoff is the fully general core; this is a nice extra.</p>
-		<p>⏱ 36:00</p>
 	</aside>
 	</section>
 </section>
@@ -769,7 +741,6 @@ window.location.reload();
 		<p>▸ Then I actually tested it. Chrome, and Safari in private mode. <code>window.opener</code> survived the entire redirect round-trip. The code posted fine. The fallback was dead code.</p>
 		<p>▸ What I'd confused: it's not <i>navigation</i> that severs the opener relationship. It's COOP — <code>Cross-Origin-Opener-Policy: same-origin</code>. That header puts the page in a fresh browsing-context group and <i>that</i> nulls the opener. A plain redirect, no COOP, keeps it. I'd attributed to "navigation" a behaviour that belongs to a specific security header.</p>
 		<p>▸ I deleted the fallback. ▸ And the lesson: when a cross-context assumption feels obvious, the browser is the only authority worth trusting. Verify it in two engines before you build around it. — And the practical corollary: if your IdP or your app <i>does</i> set COOP <code>same-origin</code>, <i>then</i> you have this problem, and now you know why.</p>
-		<p>⏱ 38:00</p>
 	</aside>
 </section>
 
@@ -777,12 +748,11 @@ window.location.reload();
 	<h2>Where the same bridge goes next</h2>
 	<div class="two-col">
 		<div class="card"><p><strong>Web ↔ web</strong></p><p class="small">iframe · popup · <code class="inline">postMessage</code> · partitioned cookie</p></div>
-		<div class="card hl"><p><strong>Native ↔ web</strong></p><p class="small">WKWebView is isolated from the device's credential store — passkeys, autofill, Safari session<br>same handle store · <code class="inline">ASWebAuthenticationSession</code> transport</p></div>
+		<div class="card hl"><p><strong>Native ↔ web</strong></p><p class="small">WKWebView is isolated from the device's credential store — passkeys, autofill, Safari session<br>same handle store · <code class="inline">ASWebAuthenticationSession</code> transport<br><span class="muted">the playbook: RFC 8252, OAuth 2.0 for Native Apps</span></p></div>
 	</div>
 	<p class="big accent" style="margin-top:0.8em">One shape, two transports.</p>
 	<aside class="notes">
-		<p>Back to the origin story. The other half of that task was iOS — a WKWebView that has no access to the device's passkeys, autofill, or the session the user already has in Safari. Same shape: a primary session in one context, a secondary context that needs its own. The same handle store, a different transport — the system auth session instead of a popup, and a URL callback instead of <code>postMessage</code>. One shape, two transports. That's the next talk.</p>
-		<p>⏱ 39:00</p>
+		<p>Back to the origin story. The other half of that task was iOS — a WKWebView that has no access to the device's passkeys, autofill, or the session the user already has in Safari. Same shape: a primary session in one context, a secondary context that needs its own. The same handle store, a different transport — the system auth session instead of a popup, and a URL callback instead of <code>postMessage</code>. That transport isn't my invention: it's RFC 8252, OAuth 2.0 for Native Apps — the system browser instead of a WebView, a one-time code coming back over a redirect. The bridge is what you get when you take that RFC seriously on both platforms. One shape, two transports. That's the next talk.</p>
 	</aside>
 </section>
 
@@ -796,7 +766,6 @@ window.location.reload();
 	</ul>
 	<aside class="notes">
 		<p>The clipboard. Inherit the existing host SSO — yes, the popup inherits it. Silently — one sub-second flash, no prompt. No token where it can leak — only a sixty-second, single-use receipt ever crosses. No lock-in — two libraries, two live demos, two lines of difference.</p>
-		<p>⏱ 39:30</p>
 	</aside>
 </section>
 
@@ -809,7 +778,6 @@ window.location.reload();
 	</ul>
 	<aside class="notes">
 		<p>Three things I owe you. The popup-bridge pattern was co-developed with Kirill Evtushenko. Working it through — the invariants, the tests, the two libraries — turned into a package: <code>next-auth-bridge</code>, my generalisation of the pattern. It's version 0.3.1, a few months old, no meaningful adoption yet — a reference implementation, not battle-tested infrastructure; treat it as one way to express the idea. And it's a clean-room build — no employer code; everything you saw on screen is from the public repo and the two Keycloak demos.</p>
-		<p>⏱ 40:00</p>
 	</aside>
 </section>
 
@@ -819,12 +787,12 @@ window.location.reload();
 		<div><img src="assets/qr-repo.png" alt="">next-auth-bridge<br>github.com/azatdavliatshin</div>
 		<div><img src="assets/qr-telegram.png" alt="">Telegram<br>t.me/adavliatshin</div>
 		<div><img src="assets/qr-linkedin.png" alt="">LinkedIn<br>linkedin.com/in/azat-davliasthin</div>
+		<div><img src="assets/qr-rfc8252.png" alt="">RFC 8252<br>where the native half comes from</div>
 	</div>
 	<div class="bridge-line"></div>
 	<p class="small muted">YerevanJS — see you at the next one</p>
 	<aside class="notes">
-		<p>That's the bridge. The repo, the threat model, and both demos are at the QR. Questions — and if nobody has one, I'll start with the one I always get: "why not just put a JWT in the URL?"</p>
-		<p>⏱ 41:00</p>
+		<p>That's the bridge. The repo, the threat model, and both demos are at the QR — and RFC 8252, if you want to read where the native half comes from. Questions — and if nobody has one, I'll start with the one I always get: "why not just put a JWT in the URL?"</p>
 	</aside>
 </section>
 

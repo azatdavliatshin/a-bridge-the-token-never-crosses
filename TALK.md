@@ -115,7 +115,9 @@ The popup closes. The user saw a flash for under a second. The iframe reloads, s
 
 ## 13 · The whole shape
 
-Compressed to one sentence: a server-side handle store mediates a one-time-code exchange across a trust boundary. Everything else is transport. Remember that sentence — we'll see the *same* shape with a different transport at the end.
+Compressed to one sentence: a server-side handle store mediates a one-time-code exchange across a trust boundary. Everything else is transport.
+
+And if that figure feels familiar — it should. It's the OAuth authorization code: a short-lived, single-use code crosses the untrusted leg, and the real credential is exchanged for it on the back end. RFC 6749, section 4.1. We've just moved the boundary from "browser ↔ IdP" to "top-level ↔ iframe". RFC 8252 does the same move for native apps, and we'll meet it again at the end. Remember that sentence — we'll see the *same* shape with a different transport.
 
 ## 14 · Demo
 
@@ -221,7 +223,7 @@ One bug story, because it taught me the lesson I most want you to leave with.
 
 ## 18 · Where the same bridge goes next
 
-Back to the origin story. The other half of that task was iOS — a WKWebView that has no access to the device's passkeys, autofill, or the session the user already has in Safari. Same shape: a primary session in one context, a secondary context that needs its own. The same handle store, a different transport — the system auth session instead of a popup, and a URL callback instead of `postMessage`. One shape, two transports. That's the next talk.
+Back to the origin story. The other half of that task was iOS — a WKWebView that has no access to the device's passkeys, autofill, or the session the user already has in Safari. Same shape: a primary session in one context, a secondary context that needs its own. The same handle store, a different transport — the system auth session instead of a popup, and a URL callback instead of `postMessage`. That transport isn't my invention: it's RFC 8252, OAuth 2.0 for Native Apps — the system browser instead of a WebView, a one-time code coming back over a redirect. The bridge is what you get when you take that RFC seriously on both platforms. One shape, two transports. That's the next talk.
 
 ## 19 · Back to the four constraints
 
@@ -233,7 +235,7 @@ Three things I owe you. The popup-bridge pattern was co-developed with Kirill Ev
 
 ## 21 · Thanks
 
-That's the bridge. The repo, the threat model, and both demos are at the QR. Questions — and if nobody has one, I'll start with the one I always get: "why not just put a JWT in the URL?"
+That's the bridge. The repo, the threat model, and both demos are at the QR — and RFC 8252, if you want to read where the native half comes from. Questions — and if nobody has one, I'll start with the one I always get: "why not just put a JWT in the URL?"
 
 ---
 
