@@ -323,7 +323,7 @@
 
 <section id="flow">
 	<p class="kicker">The bridge, step by step</p>
-	<svg class="diagram" viewBox="0 0 1000 470" style="max-height:600px">
+	<svg class="diagram" viewBox="0 0 1000 500" style="max-height:600px">
 		<defs>
 			<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#e8e8ea"/></marker>
 			<marker id="ah-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
@@ -336,10 +336,10 @@
 			<text x="380" y="54" text-anchor="middle" class="label muted">app · top-level</text>
 			<text x="660" y="30" text-anchor="middle" class="lane-title">App server</text>
 			<text x="900" y="30" text-anchor="middle" class="lane-title">IdP</text>
-			<line class="lane" x1="110" y1="66" x2="110" y2="460"/>
-			<line class="lane" x1="380" y1="66" x2="380" y2="460"/>
-			<line class="lane" x1="660" y1="66" x2="660" y2="460"/>
-			<line class="lane" x1="900" y1="66" x2="900" y2="460"/>
+			<line class="lane" x1="110" y1="66" x2="110" y2="492"/>
+			<line class="lane" x1="380" y1="66" x2="380" y2="492"/>
+			<line class="lane" x1="660" y1="66" x2="660" y2="492"/>
+			<line class="lane" x1="900" y1="66" x2="900" y2="492"/>
 		</g>
 		<g class="fragment" data-fragment-index="1">
 			<line class="arrow" x1="115" y1="100" x2="370" y2="100"/>
@@ -357,17 +357,18 @@
 			<line class="arrow acc" x1="385" y1="300" x2="650" y2="300"/>
 			<text x="400" y="290" class="label acc">③ POST /auth/bridge → verify session → mint</text>
 			<line class="arrow acc" x1="655" y1="336" x2="390" y2="336"/>
-			<text x="400" y="360" class="label acc">{ code } · 256-bit · one-time · ≤ 60 s</text>
+			<text x="400" y="358" class="label acc">{ code } — a claim ticket</text>
+			<text x="400" y="380" class="label acc" style="font-size:17px">session cookie parked server-side · ≤ 60 s · read once</text>
 		</g>
 		<g class="fragment" data-fragment-index="4">
-			<line class="arrow acc" x1="375" y1="392" x2="120" y2="392"/>
-			<text x="125" y="382" class="label acc">④ postMessage({ code }, appOrigin)</text>
+			<line class="arrow acc" x1="375" y1="414" x2="120" y2="414"/>
+			<text x="125" y="405" class="label acc">④ postMessage({ code }, appOrigin)</text>
 		</g>
 		<g class="fragment" data-fragment-index="5">
-			<path class="arrow acc" d="M115 424 H650"/>
-			<text x="125" y="414" class="label acc">⑤ fetch /auth/consume?code=… (credentials: include)</text>
-			<path class="arrow" d="M655 460 H120"/>
-			<text x="125" y="450" class="label">Set-Cookie: session=…; <tspan class="accent">Partitioned</tspan>; Secure; HttpOnly; SameSite=None</text>
+			<path class="arrow acc" d="M115 452 H650"/>
+			<text x="125" y="443" class="label acc">⑤ fetch /auth/consume?code=… (credentials: include)</text>
+			<path class="arrow" d="M655 488 H120"/>
+			<text x="125" y="479" class="label">Set-Cookie: session=…; <tspan class="accent">Partitioned</tspan>; Secure; HttpOnly; SameSite=None</text>
 		</g>
 	</svg>
 	<aside class="notes">
@@ -456,6 +457,7 @@ if (!session)
 			<li class="fragment">256 bits of CSPRNG — <code class="inline">randomBytes(32).toString("hex")</code></li>
 			<li class="fragment">one-time: delete-on-read / atomic <code class="inline">GETDEL</code></li>
 			<li class="fragment">TTL ≤ 60 s — an over-cap TTL <em>throws at construction</em>, no silent clamp</li>
+			<li class="fragment">what the store holds: <span class="accent">the session cookie value itself</span> — trust the store like your session DB</li>
 		</ul>
 		<div class="two-col fragment" style="margin-top:0.6em">
 			<div class="card"><span class="ok">1st consume</span> → 302 + partitioned cookie</div>

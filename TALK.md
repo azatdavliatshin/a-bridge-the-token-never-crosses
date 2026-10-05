@@ -103,11 +103,13 @@ Let me walk the flow. Four lanes: the iframe — that's your app, embedded; the 
 
 ▸ **Step two.** In that popup, your auth library does its completely normal OAuth sign-in. Nothing custom. Because the popup is top-level, the IdP sees its own first-party cookies, finds the live session, and returns an authorization code with no prompt. PKCE, state — all handled by the library exactly as always. Your server completes the exchange and sets a session cookie — in the popup's first-party jar. So far the only new thing is *where* this runs.
 
-▸ **Step three.** This is where the title happens. The popup calls `POST /auth/bridge`. The server verifies that there really is a session — and only then mints a one-time code. Two hundred fifty-six bits from a CSPRNG, single use, sixty-second TTL. It returns `{ code }`. Notice what the popup does *not* get: the token. It has a session, but it never holds the token in JavaScript, never puts it in a URL, never puts it in a message. It gets a receipt.
+▸ **Step three.** This is where the title happens. The popup calls `POST /auth/bridge`. The request carries the popup's session cookie — that's just the browser doing its normal thing. The server verifies that there really is a session, and only then does two things: it takes the session cookie's value out of that request and *parks it server-side* — in a transfer store, Redis or KV, for at most sixty seconds, readable exactly once — and it mints a one-time code that points at that parked entry. Two hundred fifty-six bits from a CSPRNG. It returns `{ code }` — and nothing else.
+
+So where is the session right now? In two places. Still in the popup's own cookie jar, where it always was. And parked on the server, under a key that's worthless to anyone who can't redeem it in the next sixty seconds. Notice what the popup does *not* get: the token. It never holds it in JavaScript, never puts it in a URL, never puts it in a message. It gets a claim ticket.
 
 ▸ **Step four.** The popup `postMessage`s that code to the iframe — with an explicit target origin, never `*`. The iframe checks the sender's origin *and* the sender's window identity. Why both — in a few minutes.
 
-▸ **Step five.** The iframe redeems the code: `fetch('/auth/consume?code=…', { credentials: 'include' })`. The server deletes the code on first read and responds with `Set-Cookie` — and *this* cookie carries `Partitioned`. It lands in the partition we said was empty five minutes ago. CHIPS couldn't mint the session; it can absolutely keep the one we just delivered.
+▸ **Step five.** The iframe redeems the code: `fetch('/auth/consume?code=…', { credentials: 'include' })`. The server deletes the code on first read, pulls the parked cookie value out of the store, and responds with `Set-Cookie` — the same session, now written into *this* context — and *this* cookie carries `Partitioned`. It lands in the partition we said was empty five minutes ago. CHIPS couldn't mint the session; it can absolutely keep the one we just delivered.
 
 The popup closes. The user saw a flash for under a second. The iframe reloads, signed in.
 
@@ -140,6 +142,8 @@ The bridge route mints a code only *after* your auth library confirms a real ses
 ### 15.2 · Invariant 2 — the code is a receipt, not a key
 
 ▸ The code itself: 256 bits of CSPRNG output — `randomBytes(32)`, one entropy site, never hand-rolled. ▸ Single use — delete-on-read in memory, atomic `GETDEL` in KV. ▸ And a TTL capped at sixty seconds — and if you configure a longer one, construction *throws*. No silent clamp. That last bit is deliberate: a config that quietly extends sixty seconds to ten minutes is exactly how "short-lived" stops being true without anyone noticing.
+
+▸ And be honest with yourself about what sits in that store: the session cookie's value. The actual token, for up to sixty seconds. Which means the transfer store has to be trusted exactly like your session database — same network boundary, same access rules. The TTL cap and delete-on-read aren't pedantry; they're what keeps that window small. Encrypting the parked value with a server-side key is a follow-up I haven't shipped yet — I'd rather say that than pretend it's there.
 
 ▸ So: first consume, 302 and a cookie. Second consume of the same code — 4xx, no cookie. A leaked or replayed code is inert.
 
@@ -184,6 +188,8 @@ If you adopt the pattern, run that live check in *your* browser matrix. CHIPS is
 ## 16 · Where the library lives
 
 Now the "two libraries" promise. Here's the entire configuration. Where does the auth library live in it? Two values: `verifySession` and `cookieName`. The store, the origin allowlist, the routes, the popup, the client helpers — none of it knows which library you use.
+
+This is also *why* the bridge copies the cookie instead of minting a fresh session on the far side. "Create a session for user X" is a deeply library-specific operation — Auth.js doesn't expose one for the JWT strategy, Better Auth has one but it's its own shape. "Copy the cookie your library already issued" works with any cookie-session library. The seam is two values precisely because the bridge moves a cookie, not an identity.
 
 Why does this matter? Auth.js — NextAuth — is effectively in maintenance mode, and the ecosystem's momentum has moved to Better Auth. If your auth library is a thing you might swap in two years, the piece that carries your session across contexts must not be the piece that pins you.
 
@@ -240,6 +246,8 @@ That's the bridge. The repo, the threat model, and both demos are at the QR. Que
 **Why cap the TTL at construction instead of clamping?** Because a clamp is silent and a throw is loud. Security config that fails quietly drifts.
 
 **What about the no-Fetch-Metadata fall-through?** Every supported browser sends `Sec-Fetch-*`; the fall-through exists for the Node bench and non-browser clients. It's covered by a test and may flip to fail-closed in a future major.
+
+**Logout — the session is now in two cookie jars.** The popup's first-party jar (the popup closed, the cookie didn't) and the iframe's partitioned jar hold the same session. Signing out in one context clears one cookie. With database sessions the server-side invalidation covers both; with JWT sessions both copies stay valid until expiry — same as any multi-tab JWT setup. If that matters to you, keep sessions server-side.
 
 **Does this need Next.js?** No. Two server routes, a popup page, a `postMessage` listener. Any framework with server routes.
 
