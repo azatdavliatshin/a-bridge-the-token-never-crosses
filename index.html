@@ -857,7 +857,7 @@ window.addEventListener("message", (event) => {
 		</ul>
 		<p class="tiny">each row ↔ a named, currently-green test in the reference implementation's threat model — link at the end</p>
 		<aside class="notes">
-		<p>Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin <i>and</i> source. No token in any URL — at roundtrip level. Same-origin-fetch-only redemption. In the reference implementation's threat model these are called invariants, and each one is backed by a negative test. If you have a popup auth scheme in production, go through these five tomorrow.</p>
+		<p>Here's the whole list on one slide. Take a photo. Five rules. Tomorrow, against whatever you already shipped.</p>
 	</aside>
 	</section>
 
@@ -913,7 +913,7 @@ middleware.ts                 # UX routing
 			</div>
 		</div>
 		<aside class="notes">
-		<p>Enough theory — what does it take to put this into a Next.js app? <code>npm install</code>, and six files. Four of them are one-liners. ▸ One config object, where the store, the allowed origins and the auth library live. ▸ Two routes — bridge and consume — plain Web-standard <code>Request → Response</code> functions. ▸ One popup page that runs top-level, posts the ticket and closes itself. ▸ One launcher in the iframe that opens the popup, redeems the ticket and reloads. ▸ And a middleware that only decides where an embedded, unauthenticated visitor lands. The numbers on the right are the steps of the bridge you saw earlier — every file maps to one of them.</p>
+		<p>Enough theory. <code>npm install</code>, six files. The numbers next to the files are the bridge steps you already saw.</p>
 	</aside>
 	</section>
 
@@ -937,8 +937,7 @@ export const { bridge, consume } = createAuthBridge({
 		</code></pre>
 		<p class="small"><span class="accent">Auth.js</span> — the store, origins, routes, popup and client are all library-agnostic</p>
 		<aside class="notes">
-		<p>Here's the config, and here's the "two libraries" promise. Where does the auth library live in it? ▸ Two values: <code>verifySession</code> and <code>cookieName</code>. The store, the origin allowlist, the routes, the popup, the client helpers — none of it knows which library you use.</p>
-		<p>This is also <i>why</i> the bridge copies the cookie instead of minting a fresh session on the far side. "Create a session for user X" is a deeply library-specific operation — Auth.js doesn't expose one for the JWT strategy, Better Auth has one but it's its own shape. "Copy the cookie your library already issued" works with any cookie-session library. The seam is two values precisely because the bridge moves a cookie, not an identity.</p>
+		<p>Two values: <code>verifySession</code> and <code>cookieName</code>. That's the whole library. Everything else doesn't know if this is Auth.js or not. We copy the cookie instead of creating a new session — that call is different in every library.</p>
 	</aside>
 	</section>
 	<section data-auto-animate>
@@ -961,7 +960,7 @@ export const { bridge, consume } = createAuthBridge({
 		</code></pre>
 		<p class="small"><span class="accent">Better Auth</span> — the two-line difference. Any other cookie-session library plugs into the same seam.</p>
 		<aside class="notes">
-		<p>Same config, Better Auth. Watch what moves. <code>verifySession</code> becomes <code>auth.api.getSession</code> with the request headers. <code>cookieName</code> becomes <code>getBetterAuthCookieName({ secure: true })</code> — derived, not hardcoded, because the <code>__Secure-</code> prefix rule bit me once; there's a <code>__Secure-__Secure-</code> bug in the changelog. Everything else is byte-identical. Why does this matter? Auth.js — NextAuth — is effectively in maintenance mode, and the ecosystem's momentum has moved to Better Auth. If your auth library is a thing you might swap in two years, the piece that carries your session across contexts must not be the piece that pins you.</p>
+		<p>Watch what moves — two lines. That's why this piece must not pin you to Auth.js.</p>
 	</aside>
 	</section>
 
@@ -980,7 +979,7 @@ export const GET = (req: Request) => consume(req);
 		</code></pre>
 		<p class="small muted">Both are plain <code class="inline">(Request) ⇒ Promise&lt;Response&gt;</code> — no Next.js types in the library, so the same handlers run anywhere with server routes.</p>
 		<aside class="notes">
-		<p>Two files, three lines. ▸ <code>bridge</code> is step three — verify the session, park the cookie, mint the ticket. ▸ <code>consume</code> is step five — redeem the ticket, set the partitioned cookie. Both are plain <code>(Request) =&gt; Promise&lt;Response&gt;</code>; there are no Next.js types in the library, so the same handlers run on anything with server routes.</p>
+		<p>Two files. <code>bridge</code> is step three. <code>consume</code> is step five.</p>
 	</aside>
 	</section>
 
@@ -1004,7 +1003,7 @@ export default function PopupPage() {
 		</code></pre>
 		<p class="small muted">Your auth library's normal sign-in runs on this page first (it's top-level, so it just works); <code class="inline">runPopupFlow</code> then calls <code class="inline">/auth/bridge</code> and posts <code class="inline">{ code }</code> to the opener.</p>
 		<aside class="notes">
-		<p>The popup page. Your auth library's normal sign-in happens on this page first — it's top-level, so it just works. Then ▸ <code>runPopupFlow</code> calls <code>/auth/bridge</code>, gets the ticket, and posts <code>{ code }</code> to the opener with an explicit <code>hostOrigin</code> as the target — never <code>"*"</code>. Then the window closes itself. The user saw it for under a second.</p>
+		<p>This is the flash. Sign-in runs here because it's top-level. Then <code>runPopupFlow</code> posts the ticket — never <code>*</code> — and the window closes.</p>
 	</aside>
 	</section>
 
@@ -1030,7 +1029,7 @@ export async function signInViaBridge() {
 		</code></pre>
 		<p class="small muted"><code class="inline">OpenAuthPopupError.reason</code>: <code class="inline">popup-blocked</code> · <code class="inline">popup-closed</code> · <code class="inline">timeout</code> · <code class="inline">auth-error</code></p>
 		<aside class="notes">
-		<p>And the opener side, in the iframe. ▸ <code>openAuthPopup</code> opens the popup and waits — checking origin <i>and</i> source on every message, resolving only on a trusted one; it rejects with a reason you can branch on: popup blocked, popup closed, timeout, auth error. ▸ Then one <code>fetch</code> to <code>/auth/consume</code> with <code>credentials: "include"</code> — that's the same-origin fetch rule from earlier, and <code>include</code> is what commits the <code>Set-Cookie</code> under the right CHIPS partition. Reload, and the iframe is signed in.</p>
+		<p>Open, wait, fetch with <code>credentials: "include"</code>, reload. That fetch is Rule 5 — and <code>include</code> is what puts the cookie in the iframe's jar.</p>
 	</aside>
 	</section>
 
@@ -1055,7 +1054,7 @@ export function middleware(request: NextRequest) {
 		</code></pre>
 		<p class="small muted">The real gate is <code class="inline">verifySession</code> inside <code class="inline">/auth/bridge</code>. This only decides which page an embedded, unauthenticated visitor lands on.</p>
 		<aside class="notes">
-		<p>Last file, and the one to be careful about. The middleware imports from the <code>/middleware</code> subpath because the package root reaches <code>node:crypto</code> and won't bundle for the Edge runtime. It looks at whether the session cookie is <i>present</i> — not whether it's valid — and rewrites an embedded, unauthenticated request to the popup entry page. ▸ That is UX routing, not a security boundary. The real gate is <code>verifySession</code> inside <code>/auth/bridge</code>, and nothing in the middleware is trusted for anything else.</p>
+		<p>Cookie <i>present</i> is not cookie <i>valid</i>. This only sends people to the popup. The real gate is <code>verifySession</code> on <code>/auth/bridge</code>.</p>
 	</aside>
 	</section>
 </section>

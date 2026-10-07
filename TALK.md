@@ -166,7 +166,7 @@ The ticket was already one-time and sixty seconds. And that was not enough. Thin
 
 ### 16.6 · The checklist
 
-Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin *and* source. No token in any URL — at roundtrip level. Same-origin-fetch-only redemption. In the reference implementation's threat model these are called invariants, and each one is backed by a negative test. If you have a popup auth scheme in production, go through these five tomorrow.
+Here's the whole list on one slide. Take a photo. Five rules. Tomorrow, against whatever you already shipped.
 
 ### 16.7 · What the tests don't prove
 
@@ -178,33 +178,31 @@ If you adopt the pattern, run that live check in *your* browsers. CHIPS is Chrom
 
 ## 17 · Adding the bridge to a Next.js app
 
-Enough theory — what does it take to put this into a Next.js app? `npm install`, and six files. Four of them are one-liners. ▸ One config object, where the store, the allowed origins and the auth library live. ▸ Two routes — bridge and consume — plain Web-standard `Request → Response` functions. ▸ One popup page that runs top-level, posts the ticket and closes itself. ▸ One launcher in the iframe that opens the popup, redeems the ticket and reloads. ▸ And a middleware that only decides where an embedded, unauthenticated visitor lands. The numbers on the right are the steps of the bridge you saw earlier — every file maps to one of them.
+Enough theory. `npm install`, six files. The numbers next to the files are the bridge steps you already saw.
 
 ### 17.1 · The config — where the auth library lives
 
-Here's the config, and here's the "two libraries" promise. Where does the auth library live in it? ▸ Two values: `verifySession` and `cookieName`. The store, the origin allowlist, the routes, the popup, the client helpers — none of it knows which library you use.
-
-This is also *why* the bridge copies the cookie instead of minting a fresh session on the far side. "Create a session for user X" is a deeply library-specific operation — Auth.js doesn't expose one for the JWT strategy, Better Auth has one but it's its own shape. "Copy the cookie your library already issued" works with any cookie-session library. The seam is two values precisely because the bridge moves a cookie, not an identity.
+Two values: `verifySession` and `cookieName`. That's the whole library. Everything else doesn't know if this is Auth.js or not. We copy the cookie instead of creating a new session — that call is different in every library.
 
 ### 17.2 · Better Auth — the two lines
 
-Same config, Better Auth. Watch what moves. `verifySession` becomes `auth.api.getSession` with the request headers. `cookieName` becomes `getBetterAuthCookieName({ secure: true })` — derived, not hardcoded, because the `__Secure-` prefix rule bit me once; there's a `__Secure-__Secure-` bug in the changelog. Everything else is byte-identical. Why does this matter? Auth.js — NextAuth — is effectively in maintenance mode, and the ecosystem's momentum has moved to Better Auth. If your auth library is a thing you might swap in two years, the piece that carries your session across contexts must not be the piece that pins you.
+Watch what moves — two lines. That's why this piece must not pin you to Auth.js.
 
 ### 17.3 · The routes
 
-Two files, three lines. ▸ `bridge` is step three — verify the session, park the cookie, mint the ticket. ▸ `consume` is step five — redeem the ticket, set the partitioned cookie. Both are plain `(Request) => Promise<Response>`; there are no Next.js types in the library, so the same handlers run on anything with server routes.
+Two files. `bridge` is step three. `consume` is step five.
 
 ### 17.4 · The popup page
 
-The popup page. Your auth library's normal sign-in happens on this page first — it's top-level, so it just works. Then ▸ `runPopupFlow` calls `/auth/bridge`, gets the ticket, and posts `{ code }` to the opener with an explicit `hostOrigin` as the target — never `"*"`. Then the window closes itself. The user saw it for under a second.
+This is the flash. Sign-in runs here because it's top-level. Then `runPopupFlow` posts the ticket — never `*` — and the window closes.
 
 ### 17.5 · The launcher
 
-And the opener side, in the iframe. ▸ `openAuthPopup` opens the popup and waits — checking origin *and* source on every message, resolving only on a trusted one; it rejects with a reason you can branch on: popup blocked, popup closed, timeout, auth error. ▸ Then one `fetch` to `/auth/consume` with `credentials: "include"` — that's the same-origin fetch rule from earlier, and `include` is what commits the `Set-Cookie` under the right CHIPS partition. Reload, and the iframe is signed in.
+Open, wait, fetch with `credentials: "include"`, reload. That fetch is Rule 5 — and `include` is what puts the cookie in the iframe's jar.
 
 ### 17.6 · The middleware
 
-Last file, and the one to be careful about. The middleware imports from the `/middleware` subpath because the package root reaches `node:crypto` and won't bundle for the Edge runtime. It looks at whether the session cookie is *present* — not whether it's valid — and rewrites an embedded, unauthenticated request to the popup entry page. ▸ That is UX routing, not a security boundary. The real gate is `verifySession` inside `/auth/bridge`, and nothing in the middleware is trusted for anything else.
+Cookie *present* is not cookie *valid*. This only sends people to the popup. The real gate is `verifySession` on `/auth/bridge`.
 
 ## 18 · Where the same bridge goes next
 
