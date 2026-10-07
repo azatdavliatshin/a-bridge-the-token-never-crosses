@@ -149,6 +149,8 @@ The `postMessage` receiver. Two checks. `event.origin` must be in the allowlist 
 
 ▸ Wrong origin — dropped, obviously. ▸ But why the second check? Because of the same-origin racer. Another tab, another frame, *of your own origin*, can post to the opener. The origin check passes it — it's your origin! Pinning the source is the second lock. ▸ And a dropped message must not settle the flow — a later valid one still should. This is the one almost nobody tests.
 
+▸ One gotcha on this leg that cost me an afternoon: it's not navigation that severs `window.opener` — a popup can go to the IdP and back and keep it. What severs it is `Cross-Origin-Opener-Policy: same-origin`. If your app or your IdP sets that header on the popup, the opener is null, there's nobody to post the code to, and the bridge fails silently. Check it in two engines before you build on it.
+
 ### 16.4 · Invariant 4 — zero tokens in URLs, for the whole roundtrip
 
 No session token in any client-constructed URL, response body, or message payload. The *only* thing permitted in a URL is the opaque code, in `?code=`. A token in a URL lives forever — history, logs, referrers, screenshots.
@@ -193,31 +195,19 @@ Same config, Better Auth. Watch what moves. `verifySession` becomes `auth.api.ge
 
 For completeness, the rest of the wiring. Two route files, one line each — `bridge` and `consume` are plain `Request → Response` functions. A middleware that does *UX routing only* — it rewrites unauthenticated embedded requests to the popup entry page; it is not a security boundary, we covered that. It imports from the `/middleware` subpath because the package root reaches `node:crypto` and won't bundle for Edge. The popup page: `runPopupFlow`, then `window.close()`. And the launcher in the iframe: `openAuthPopup`, then `fetch` consume with `credentials: 'include'` — that's what commits the cookie under the right partition — then reload. There's no magic. The volume is small.
 
-## 18 · The afternoon I lost to `window.opener`
-
-One bug story, because it taught me the lesson I most want you to leave with.
-
-▸ There's a cold-start path I haven't shown: a first-time user with no app session yet, where the popup makes one silent `prompt=none` attempt against the IdP. That path *navigates* the popup — off to the IdP and back — before it can `postMessage` the code to its opener. I was *certain* this would break the bridge. My mental model said: navigate the popup, `window.opener` becomes null, the popup loses its reference to the iframe, the code has nowhere to go. So I built an elaborate fallback — stash the code server-side, poll for it from the opener.
-
-▸ Then I actually tested it. Chrome, and Safari in private mode. `window.opener` survived the entire redirect round-trip. The code posted fine. The fallback was dead code.
-
-▸ What I'd confused: it's not *navigation* that severs the opener relationship. It's COOP — `Cross-Origin-Opener-Policy: same-origin`. That header puts the page in a fresh browsing-context group and *that* nulls the opener. A plain redirect, no COOP, keeps it. I'd attributed to "navigation" a behaviour that belongs to a specific security header.
-
-▸ I deleted the fallback. ▸ And the lesson: when a cross-context assumption feels obvious, the browser is the only authority worth trusting. Verify it in two engines before you build around it. — And the practical corollary: if your IdP or your app *does* set COOP `same-origin`, *then* you have this problem, and now you know why.
-
-## 19 · Where the same bridge goes next
+## 18 · Where the same bridge goes next
 
 Back to the origin story. The other half of that task was iOS — a WKWebView that has no access to the device's passkeys, autofill, or the session the user already has in Safari. Same shape: a primary session in one context, a secondary context that needs its own. The same handle store, a different transport — the system auth session instead of a popup, and a URL callback instead of `postMessage`. That transport isn't my invention: it's RFC 8252, OAuth 2.0 for Native Apps — the system browser instead of a WebView, a one-time code coming back over a redirect. The bridge is what you get when you take that RFC seriously on both platforms. One shape, two transports. That's the next talk.
 
-## 20 · Back to the four constraints
+## 19 · Back to the four constraints
 
 The clipboard. Inherit the existing host SSO — yes, the popup inherits it. Silently — one sub-second flash, no prompt. No token where it can leak — only a sixty-second, single-use receipt ever crosses. No lock-in — two libraries, two live demos, two lines of difference.
 
-## 21 · Where the work ended up
+## 20 · Where the work ended up
 
 Three things I owe you. The popup-bridge pattern was co-developed with Kirill Evtushenko. Working it through — the invariants, the tests, the two libraries — turned into a package: `next-auth-bridge`, my generalisation of the pattern. It's version 0.3.1, a few months old, no meaningful adoption yet — a reference implementation, not battle-tested infrastructure; treat it as one way to express the idea. And it's a clean-room build — no employer code; everything you saw on screen is from the public repo and the two Keycloak demos.
 
-## 22 · Thanks
+## 21 · Thanks
 
 That's the bridge. The repo, the threat model, and both demos are at the QR — and RFC 8252, if you want to read where the native half comes from. Questions — and if nobody has one, I'll start with the one I always get: "why not just put a JWT in the URL?"
 

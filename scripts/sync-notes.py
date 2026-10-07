@@ -21,8 +21,8 @@ SLIDES = {
     "15": ("demo", None), "16": ("invariants", 0),
     **{f"16.{i}": ("invariants", i) for i in range(1, 8)},
     "17": ("seam", 0), **{f"17.{i}": ("seam", i) for i in range(1, 3)},
-    "18": ("opener", None), "19": ("grows", None), "20": ("constraints-done", None),
-    "21": ("credits", None), "22": ("thanks", None),
+    "18": ("grows", None), "19": ("constraints-done", None),
+    "20": ("credits", None), "21": ("thanks", None),
 }
 
 # --- parse TALK.md into {number: body} ---

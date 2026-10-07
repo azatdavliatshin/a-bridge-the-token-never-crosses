@@ -622,10 +622,12 @@ window.addEventListener("message", (event) => {
 			<li class="fragment">wrong origin → dropped</li>
 			<li class="fragment">right origin, wrong window — the <span class="accent">same-origin racer</span> → dropped</li>
 			<li class="fragment">a dropped message never settles the flow; a later valid one still does</li>
+			<li class="fragment"><span class="accent">gotcha:</span> <code class="inline">Cross-Origin-Opener-Policy: same-origin</code> on the popup nulls <code class="inline">window.opener</code> — no opener, no message, no bridge</li>
 		</ul>
 		<aside class="notes">
 		<p>The <code>postMessage</code> receiver. Two checks. <code>event.origin</code> must be in the allowlist — everyone does this one. <i>And</i> <code>event.source</code> must be the popup window you actually opened.</p>
 		<p>▸ Wrong origin — dropped, obviously. ▸ But why the second check? Because of the same-origin racer. Another tab, another frame, <i>of your own origin</i>, can post to the opener. The origin check passes it — it's your origin! Pinning the source is the second lock. ▸ And a dropped message must not settle the flow — a later valid one still should. This is the one almost nobody tests.</p>
+		<p>▸ One gotcha on this leg that cost me an afternoon: it's not navigation that severs <code>window.opener</code> — a popup can go to the IdP and back and keep it. What severs it is <code>Cross-Origin-Opener-Policy: same-origin</code>. If your app or your IdP sets that header on the popup, the opener is null, there's nobody to post the code to, and the bridge fails silently. Check it in two engines before you build on it.</p>
 	</aside>
 	</section>
 
@@ -810,26 +812,6 @@ window.location.reload();
 </section>
 
 <!-- ===================== BLOCK 5 — WRONG, AND WHERE IT GROWS ===================== -->
-
-<section id="opener">
-	<h2>The afternoon I lost to <code class="inline">window.opener</code></h2>
-	<div class="two-col">
-		<ul>
-			<li class="fragment" data-fragment-index="1"><span class="muted">assumption:</span> navigating the popup to the IdP and back nulls <code class="inline">window.opener</code> → built a polling fallback</li>
-			<li class="fragment" data-fragment-index="2"><span class="accent">reality:</span> <code class="inline">opener</code> survived the full redirect round-trip — Chrome and Safari private</li>
-			<li class="fragment" data-fragment-index="3"><span class="muted">what actually severs it:</span> <code class="inline">Cross-Origin-Opener-Policy: same-origin</code></li>
-			<li class="fragment" data-fragment-index="4">deleted the fallback</li>
-		</ul>
-	</div>
-	<p class="quote small fragment" data-fragment-index="5">When a cross-context assumption feels obvious, the browser is the only authority. Verify in two engines before you build around it.</p>
-	<aside class="notes">
-		<p>One bug story, because it taught me the lesson I most want you to leave with.</p>
-		<p>▸ There's a cold-start path I haven't shown: a first-time user with no app session yet, where the popup makes one silent <code>prompt=none</code> attempt against the IdP. That path <i>navigates</i> the popup — off to the IdP and back — before it can <code>postMessage</code> the code to its opener. I was <i>certain</i> this would break the bridge. My mental model said: navigate the popup, <code>window.opener</code> becomes null, the popup loses its reference to the iframe, the code has nowhere to go. So I built an elaborate fallback — stash the code server-side, poll for it from the opener.</p>
-		<p>▸ Then I actually tested it. Chrome, and Safari in private mode. <code>window.opener</code> survived the entire redirect round-trip. The code posted fine. The fallback was dead code.</p>
-		<p>▸ What I'd confused: it's not <i>navigation</i> that severs the opener relationship. It's COOP — <code>Cross-Origin-Opener-Policy: same-origin</code>. That header puts the page in a fresh browsing-context group and <i>that</i> nulls the opener. A plain redirect, no COOP, keeps it. I'd attributed to "navigation" a behaviour that belongs to a specific security header.</p>
-		<p>▸ I deleted the fallback. ▸ And the lesson: when a cross-context assumption feels obvious, the browser is the only authority worth trusting. Verify it in two engines before you build around it. — And the practical corollary: if your IdP or your app <i>does</i> set COOP <code>same-origin</code>, <i>then</i> you have this problem, and now you know why.</p>
-	</aside>
-</section>
 
 <section id="grows">
 	<h2>Where the same bridge goes next</h2>
