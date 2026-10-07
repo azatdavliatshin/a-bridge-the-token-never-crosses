@@ -559,7 +559,6 @@
 			<li class="todo">the code is a receipt, not a key</li>
 			<li class="todo">trust the sender twice</li>
 			<li class="todo">zero tokens in URLs — for the whole roundtrip</li>
-			<li class="todo">redirect hygiene</li>
 			<li class="todo">only a same-origin <em>fetch</em> may redeem</li>
 		</ul>
 		<p class="tiny">Each row = one property + one negative test in the reference implementation's threat model</p>
@@ -681,12 +680,11 @@ window.addEventListener("message", (event) => {
 			<li class="done">one-time · ≤ 60 s · 256-bit</li>
 			<li class="done">origin <em>and</em> source</li>
 			<li class="done">no token in any URL — checked at roundtrip level</li>
-			<li class="done">redirect hygiene</li>
 			<li class="done">same-origin-fetch-only redemption</li>
 		</ul>
 		<p class="tiny">each row ↔ a named, currently-green test in the reference implementation's threat model — link at the end</p>
 		<aside class="notes">
-		<p>Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin <i>and</i> source. No token in any URL — at roundtrip level. Redirect hygiene — <code>?next=</code> sanitised, no open redirect, no auth loop; it didn't get its own slide, it's one function. Same-origin-fetch-only redemption. If you have a popup auth scheme in production, go through these six tomorrow.</p>
+		<p>Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin <i>and</i> source. No token in any URL — at roundtrip level. Same-origin-fetch-only redemption. If you have a popup auth scheme in production, go through these five tomorrow.</p>
 	</aside>
 	</section>
 

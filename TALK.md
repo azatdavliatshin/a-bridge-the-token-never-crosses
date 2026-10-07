@@ -167,7 +167,7 @@ One honest note: a request with *no* Fetch Metadata at all falls through to the 
 
 ### 16.6 · The checklist
 
-Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin *and* source. No token in any URL — at roundtrip level. Redirect hygiene — `?next=` sanitised, no open redirect, no auth loop; it didn't get its own slide, it's one function. Same-origin-fetch-only redemption. If you have a popup auth scheme in production, go through these six tomorrow.
+Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin *and* source. No token in any URL — at roundtrip level. Same-origin-fetch-only redemption. If you have a popup auth scheme in production, go through these five tomorrow.
 
 ### 16.7 · What the tests don't prove
 
