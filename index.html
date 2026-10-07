@@ -161,12 +161,49 @@
 
 <section id="origin">
 	<p class="kicker">Origin story</p>
-	<p class="big">One codebase. Two contexts. Same bug.</p>
-	<ul>
-		<li class="fragment">an iframe inside SharePoint / Teams — can't see the host's session</li>
-		<li class="fragment">a WKWebView on iOS — isolated from the device's passkeys, autofill and Safari session</li>
-		<li class="fragment accent">a primary session lives next door; a secondary context needs its own — without asking the user again</li>
-	</ul>
+	<h2>One codebase. Two contexts. Same bug.</h2>
+	<svg class="diagram" viewBox="0 0 1000 360" style="max-height:420px">
+		<defs>
+			<marker id="ah-o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#8b8f98"/></marker>
+		</defs>
+		<!-- LEFT: browser with iframe -->
+		<g class="fragment" data-fragment-index="1">
+			<rect class="box" x="30" y="20" width="440" height="300" rx="14"/>
+			<rect x="30" y="20" width="440" height="44" rx="14" fill="rgba(255,255,255,0.08)"/>
+			<circle cx="54" cy="42" r="6" fill="#8b8f98"/><circle cx="74" cy="42" r="6" fill="#8b8f98"/><circle cx="94" cy="42" r="6" fill="#8b8f98"/>
+			<text x="120" y="50" class="label muted">host · SharePoint</text>
+			<text x="455" y="50" text-anchor="end" class="label acc">signed in ✓</text>
+			<!-- host session jar -->
+			<rect class="jar full" x="60" y="100" width="70" height="60" rx="10"/>
+			<text x="95" y="138" text-anchor="middle" class="label acc" style="font-size:16px">session</text>
+			<!-- iframe -->
+			<rect class="box" x="170" y="90" width="270" height="200" rx="10" stroke-dasharray="8 6"/>
+			<text x="305" y="120" text-anchor="middle" class="label muted">&lt;iframe&gt; your app</text>
+			<text x="305" y="200" text-anchor="middle" class="label" style="font-size:26px">Sign in</text>
+			<text x="305" y="265" text-anchor="middle" class="label muted">who are you?</text>
+			<!-- blocked arrow -->
+			<line x1="135" y1="130" x2="165" y2="130" stroke="#8b8f98" stroke-width="3" marker-end="url(#ah-o)"/>
+			<text x="150" y="118" text-anchor="middle" class="label bad" style="font-size:30px; font-weight:700">✕</text>
+		</g>
+		<!-- RIGHT: phone with WKWebView -->
+		<g class="fragment" data-fragment-index="2">
+			<rect class="box" x="640" y="10" width="200" height="340" rx="28"/>
+			<rect x="705" y="22" width="70" height="8" rx="4" fill="#8b8f98"/>
+			<text x="740" y="60" text-anchor="middle" class="label muted">wrapped PWA</text>
+			<rect class="box" x="660" y="80" width="160" height="240" rx="10" stroke-dasharray="8 6"/>
+			<text x="740" y="112" text-anchor="middle" class="label muted">WKWebView</text>
+			<text x="740" y="200" text-anchor="middle" class="label" style="font-size:26px">Sign in</text>
+			<text x="740" y="265" text-anchor="middle" class="label muted">who are you?</text>
+			<!-- device credentials outside -->
+			<rect class="jar full" x="868" y="96" width="122" height="66" rx="10"/>
+			<text x="929" y="124" text-anchor="middle" class="label acc" style="font-size:16px">passkeys</text>
+			<text x="929" y="148" text-anchor="middle" class="label acc" style="font-size:16px">Safari session</text>
+			<line x1="864" y1="130" x2="845" y2="130" stroke="#8b8f98" stroke-width="3" marker-end="url(#ah-o)"/>
+			<text x="854" y="118" text-anchor="middle" class="label bad" style="font-size:30px; font-weight:700">✕</text>
+			<text x="929" y="190" text-anchor="middle" class="label muted" style="font-size:15px">device level</text>
+		</g>
+	</svg>
+	<p class="fragment accent small" data-fragment-index="3" style="text-align:center; margin:0">a primary session lives next door — a secondary context needs its own, without asking the user again</p>
 	<aside class="notes">
 		<p>This came out of a real project. An enterprise AI assistant for a large pharma company — one Next.js codebase, two ways of reaching users.</p>
 		<p>▸ Inside SharePoint and Teams assistant ran  inside iframe. The user was signed in on the host — SharePoint knew who they were. But inside our iframe, they were anonymous. Our app couldn't see the host's session at all.</p>
