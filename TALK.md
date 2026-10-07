@@ -17,8 +17,6 @@ Before we start, a disclaimer. This talk might cause an uncontrolled desire for 
 
 I'm Azat. I'm a software architect and tech lead, and I've been writing JavaScript for a bit over ten years. One thing up front: tonight is about a pattern, not a product. If you walk out of here and hand-roll your own version — that's a win, as long as it passes the checklist I'll give you later.
 
-*[your joke line]*
-
 ▸ *(the ad block appears)* — "Vibe-coded your JS app and not sure it's safe? Better call Azat." One line, no more.
 
 ## 4 · Origin story
