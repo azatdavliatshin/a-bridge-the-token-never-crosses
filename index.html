@@ -137,7 +137,7 @@
 	<div class="bridge-line"></div>
 	<p class="small">Azat Davliatshin · YerevanJS #1</p>
 	<aside class="notes">
-		<p>Hi. Ok, let's start.<br>The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but the title is literally the whole talk. I'm going to carry a user's session across an origin boundary — from a page that has it to an iframe that doesn't — and the one thing that will never make the trip is the session token itself. Sounds like a magic? Follow me, and by the end you'll know exactly what <i>does</i> cross, and why that turns out to be enough.</p>
+		<p>Hi. Ok, let's start.<br>The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but the title is literally the whole talk. I'm going to carry a user's session across an origin boundary — from a page that has it to an iframe that doesn't — and the one thing that will never make the trip is the session token itself. Sounds like magic? Follow me, and by the end you'll know exactly what <i>does</i> cross, and why that turns out to be enough.</p>
 	</aside>
 </section>
 
@@ -220,12 +220,12 @@
 			<text x="929" y="190" text-anchor="middle" class="label muted" style="font-size:15px">device level</text>
 		</g>
 	</svg>
-	<p class="fragment accent small" data-fragment-index="3" style="text-align:center; margin:0">a primary session lives next door — a secondary context needs its own, without asking the user again</p>
+	<p class="fragment accent small" data-fragment-index="3" style="text-align:center; margin:0">session lives next door — the app is anonymous, and we must not ask them to log in again</p>
 	<aside class="notes">
 		<p>This came out of a real project. An enterprise AI assistant for a large pharma company — one Next.js codebase, two ways of reaching users.</p>
-		<p>▸ Inside SharePoint and Teams assistant ran  inside iframe. The user was signed in on the host — SharePoint knew who they were. But inside our iframe, they were anonymous. Our app couldn't see the host's session at all.</p>
-		<p>▸ On iOS it shipped as a wrapped PWA — a WKWebView. For people who don't know what it is, it's like iframe inside RN app. And a WKWebView is an isolated web process: its own cookie store, and no access to the device's credential store. Passkeys live at the device level — in the Keychain, behind the platform authenticator — and the WebView simply can't reach them. Same for autofill, same for the login the user already has in Safari. All out of reach.</p>
-		<p>Two platforms, two separate bug reports. And it took me a while to notice that it was the same bug. ▸ In both cases there's a <i>primary</i> session that lives in one browsing context, and a <i>secondary</i> context that needs a session of its own — without asking the user to sign in again.</p>
+		<p>▸ Inside SharePoint and Teams the assistant ran inside an iframe. The user was signed in on the host — SharePoint knew who they were. But inside our iframe, they were anonymous. Our app couldn't see the host's session at all.</p>
+		<p>▸ Same app on iOS, inside a WebView. The user is already signed in in Safari, passkeys are on the phone — and the WebView can't see any of that.</p>
+		<p>Two platforms, two separate bug reports. And it took me a while to notice that it was the same bug. ▸ Session lives next door, our app is anonymous, and we must not ask them to log in again.</p>
 		<p>Once you see it as one shape, the fix is one shape too.</p>
 	</aside>
 </section>
@@ -245,13 +245,13 @@
 <section id="takeaways">
 	<h2>What you'll leave with</h2>
 	<ul>
-		<li class="fragment">a mental model: <span class="accent">a one-time code across a trust boundary</span></li>
-		<li class="fragment">an invariant checklist for <em>any</em> popup/iframe auth scheme</li>
+		<li class="fragment">a mental model: <span class="accent">a one-time ticket across a gap you don't trust</span></li>
+		<li class="fragment">five rules to check <em>any</em> popup/iframe auth scheme against</li>
 		<li class="fragment">where CHIPS helps — and where it doesn't</li>
 		<li class="fragment">working wiring for Auth.js and Better Auth</li>
 	</ul>
 	<aside class="notes">
-		<p>Four things. ▸ A mental model — cross-context auth is a one-time code across a trust boundary, and everything else is transport detail. ▸ An invariant checklist you can hold up against <i>any</i> popup-or-iframe auth scheme. ▸ A clear picture of where CHIPS — partitioned cookies — helps (besides wathching movies), and where it doesn't. ▸ And working wiring for both Auth.js and Better Auth, so you can see the pattern is not tied to a library.</p>
+		<p>Four things. ▸ A mental model — a one-time ticket across a gap you don't trust. Everything else is transport. ▸ Five rules you can hold up against <i>any</i> popup-or-iframe auth scheme. ▸ Where CHIPS — partitioned cookies — helps, and where it doesn't. ▸ And working wiring for both Auth.js and Better Auth, so you can see the pattern is not tied to a library.</p>
 	</aside>
 </section>
 
@@ -270,7 +270,7 @@
 		<text x="420" y="306" style="fill:#0f1115;font-weight:600">Continue →</text>
 	</svg>
 	<aside class="notes">
-		<p>Here's the situation. Your Next.js app lives inside somebody else's page. SharePoint web part, Teams tab, Salesforce Lightning component, ServiceNow, Confluence — chose your fighter. The host already has the user signed in against a shared identity provider — in the Microsoft world that's Entra.</p>
+		<p>Here's the situation. Your Next.js app lives inside somebody else's page. SharePoint web part, Teams tab, Salesforce Lightning component, ServiceNow, Confluence — choose your fighter. The host already has the user signed in against a shared identity provider — in the Microsoft world that's Entra.</p>
 		<p>Ten years ago this was boring. The iframe just saw the same cookies as the host, and life went on.</p>
 	</aside>
 </section>
@@ -310,7 +310,7 @@
 	<aside class="notes">
 		<p>What changed is that your cookie became a <i>third-party</i> cookie — and to see why that's fatal, look at what the browser is actually fighting. ▸ A third-party cookie is the primitive of cross-site tracking: one ad pixel embedded on a thousand sites, one cookie, one profile of you. Browsers decided to kill that.</p>
 		<p>▸ And here's the problem for us: your embedded app, to the browser, is the same shape. A foreign origin, inside someone else's page, asking for its cookies. ▸ The browser can't tell the two apart, so the fix was blunt — no cookies for foreign origins inside a page. We're collateral damage of anti-tracking.</p>
-		<p>▸ Safari went first with ITP in 2017 and a full block by 2020. Firefox partitions everything by default since 2022. Chrome announced, delayed, trialled, pivoted, and in the end kept them — but blocks them in incognito and under enterprise policy, and the enterprise browser matrix is exactly where this app lives. So the practical truth is simple: you cannot rely on third-party cookies today. Full stop. And every fix that tries to "get the cookie back" is fighting the browser.</p>
+		<p>▸ Safari blocked this years ago — ITP in 2017, a full block by 2020. Firefox partitions by default. Chrome kept third-party cookies — except incognito and enterprise policy, which is exactly where this app lives. You cannot rely on them. Full stop. And every fix that tries to "get the cookie back" is fighting the browser.</p>
 	</aside>
 </section>
 
@@ -381,12 +381,12 @@
 		</svg>
 		<div>
 			<p class="big fragment">…not a cookie your frame <span class="accent">already has</span>.</p>
-			<p class="fragment">Your partition starts empty. CHIPS gives you a place to <em>store</em> a session in the embedded context — it does nothing to <em>mint</em> one.</p>
+			<p class="fragment">Your partition starts empty. CHIPS gives you a place to <em>store</em> a session in the embedded context — it does nothing to <em>create</em> one.</p>
 			<p class="fragment accent">We will use it — on the far side of the bridge.</p>
 		</div>
 	</div>
 	<aside class="notes">
-		<p>Back to CHIPS, because this is the one that matters. A partitioned cookie is a cookie your frame <i>can keep</i>. ▸ It is not a cookie your frame <i>already has</i>. ▸ Your partition — keyed by your origin plus the host's top-level site — starts empty. CHIPS gives you a place to store a session in the embedded context. It does nothing to mint one.</p>
+		<p>Back to CHIPS, because this is the one that matters. A partitioned cookie is a cookie your frame <i>can keep</i>. ▸ It is not a cookie your frame <i>already has</i>. ▸ Your partition — keyed by your origin plus the host's top-level site — starts empty. CHIPS gives you a place to store a session in the embedded context. It does nothing to create one.</p>
 		<p>▸ Hold onto that jar, because we <i>will</i> use it — on the far side of the bridge.</p>
 	</aside>
 </section>
@@ -500,14 +500,7 @@
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong>Open a popup — on <em>your</em> origin, top-level</strong><br><span class="muted">the host never runs your code</span></p>
 		<aside class="notes">
-		<p>Let me walk the flow. Four lanes: the iframe — that's your app, embedded; the popup — also your app, but top-level; your app's server; and the identity provider.</p>
-		<p>▸ <b>Step one.</b> The iframe opens a popup to <code>/auth/popup</code> — on <i>your</i> origin, not the host's. This matters: the host never runs any of your code. That's why the same pattern ports to SharePoint, Teams, Salesforce, whatever.</p>
-		<p>▸ <b>Step two.</b> In that popup, your auth library does its completely normal OAuth sign-in. Nothing custom. Because the popup is top-level, the IdP sees its own first-party cookies, finds the live session, and returns an authorization code with no prompt. PKCE, state — all handled by the library exactly as always. Your server completes the exchange and sets a session cookie — in the popup's first-party jar. So far the only new thing is <i>where</i> this runs.</p>
-		<p>▸ <b>Step three.</b> This is where the title happens. The popup calls <code>POST /auth/bridge</code>. The request carries the popup's session cookie — that's just the browser doing its normal thing. The server verifies that there really is a session, and only then does two things: it takes the session cookie's value out of that request and <i>parks it server-side</i> — in a transfer store, Redis or KV, for at most sixty seconds, readable exactly once — and it mints a one-time code that points at that parked entry. Two hundred fifty-six bits from a CSPRNG. It returns <code>{ code }</code> — and nothing else.</p>
-		<p>So where is the session right now? In two places. Still in the popup's own cookie jar, where it always was. And parked on the server, under a key that's worthless to anyone who can't redeem it in the next sixty seconds. Notice what the popup does <i>not</i> get: the token. It never holds it in JavaScript, never puts it in a URL, never puts it in a message. It gets a claim ticket.</p>
-		<p>▸ <b>Step four.</b> The popup <code>postMessage</code>s that code to the iframe — with an explicit target origin, never <code>*</code>. The iframe checks the sender's origin <i>and</i> the sender's window identity. Why both — in a few minutes.</p>
-		<p>▸ <b>Step five.</b> The iframe redeems the code: <code>fetch('/auth/consume?code=…', { credentials: 'include' })</code>. The server deletes the code on first read, pulls the parked cookie value out of the store, and responds with <code>Set-Cookie</code> — the same session, now written into <i>this</i> context — and <i>this</i> cookie carries <code>Partitioned</code>. It lands in the partition we said was empty five minutes ago. CHIPS couldn't mint the session; it can absolutely keep the one we just delivered.</p>
-		<p>The popup closes. The user saw a flash for under a second. The iframe reloads, signed in.</p>
+		
 	</aside>
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
@@ -551,7 +544,9 @@
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong>Normal OAuth sign-in, top-level</strong><br><span class="muted">the IdP sees first-party cookies → code, no prompt → session cookie in the popup's jar</span></p>
-		<aside class="notes"></aside>
+		<aside class="notes">
+		<p>In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is <i>where</i> this runs.</p>
+	</aside>
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 3 of 5</p>
@@ -594,7 +589,10 @@
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">POST /auth/bridge</code> → verify session → park the cookie → mint a ticket</strong><br><span class="muted">🎫 = 256-bit · one-time · ≤ 60 s — the token stays on the server</span></p>
-		<aside class="notes"></aside>
+		<aside class="notes">
+		<p>This is where the title happens.</p>
+		<p>The popup calls <code>POST /auth/bridge</code>. The server checks there is a real session, parks it for sixty seconds, and returns a one-time ticket. The popup never gets the token — only the ticket.</p>
+	</aside>
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 4 of 5</p>
@@ -637,7 +635,9 @@
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">postMessage({ code }, appOrigin)</code></strong><br><span class="muted">only the ticket crosses — explicit target origin, never <code class="inline">*</code></span></p>
-		<aside class="notes"></aside>
+		<aside class="notes">
+		<p>The popup <code>postMessage</code>s that ticket to the iframe — with an explicit target origin, never <code>*</code>. The iframe checks the sender's origin <i>and</i> the sender's window. Why both — in a few minutes.</p>
+	</aside>
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 5 of 5</p>
@@ -680,19 +680,22 @@
 		<g class="act"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sa5)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa5)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">fetch /auth/consume?code=…</code> → <code class="inline">Set-Cookie … Partitioned</code></strong><br><span class="muted">the jar that was empty is full — CHIPS keeps the session we delivered</span></p>
-		<aside class="notes"></aside>
+		<aside class="notes">
+		<p>The iframe redeems the ticket: <code>fetch('/auth/consume?code=…', { credentials: 'include' })</code>. The server deletes it on first read and answers with <code>Set-Cookie</code> — <code>Partitioned</code> — into the jar we said was empty. CHIPS couldn't create the session; it can keep the one we just delivered.</p>
+		<p>The popup closes. The user saw a flash for under a second. The iframe reloads, signed in.</p>
+	</aside>
 	</section>
 </section>
 
 <section id="shape" class="center-slide">
-	<p class="quote" style="text-align:left">A server-side handle store mediates a<br>
-	<span class="accent">one-time-code exchange across a trust boundary</span>.<br><br>
+	<p class="quote" style="text-align:left">Same trick as OAuth: a short-lived code<br>
+	crosses the <span class="accent">untrusted bit</span>.<br>
+	The real session is swapped for it on the server.<br><br>
 	Everything else is transport.</p>
 	<p class="small muted">The user sees a popup flash for under a second.</p>
-	<p class="tiny">You already know this figure: it is the OAuth <em>authorization code</em> — RFC 6749 §4.1 — with a different boundary. For native apps, RFC 8252 draws the same line.</p>
+	<p class="tiny">We just moved the boundary — not browser to IdP, but popup to iframe. Native apps do this too.</p>
 	<aside class="notes">
-		<p>Compressed to one sentence: a server-side handle store mediates a one-time-code exchange across a trust boundary. Everything else is transport.</p>
-		<p>And if that figure feels familiar — it should. It's the OAuth authorization code: a short-lived, single-use code crosses the untrusted leg, and the real credential is exchanged for it on the back end. RFC 6749, section 4.1. We've just moved the boundary from "browser ↔ IdP" to "top-level ↔ iframe". RFC 8252 does the same move for native apps, and we'll meet it again at the end. Remember that sentence — we'll see the <i>same</i> shape with a different transport.</p>
+		<p>Same trick as OAuth: a short-lived code crosses the untrusted bit, the real session is swapped for it on the server. We just moved the boundary — not browser to IdP, but popup to iframe. Native apps do this too; I'll come back to that.</p>
 	</aside>
 </section>
 
@@ -724,22 +727,22 @@
 
 <section id="invariants">
 	<section>
-		<h2>Remove one condition and the bridge becomes a hole</h2>
+		<h2>Five rules. Remove one — the bridge becomes a hole</h2>
 		<ul class="checklist">
 			<li class="todo">verify the session first</li>
-			<li class="todo">the code is a receipt, not a key</li>
+			<li class="todo">the ticket is not the key</li>
 			<li class="todo">trust the sender twice</li>
 			<li class="todo">zero tokens in URLs — for the whole roundtrip</li>
 			<li class="todo">only a same-origin <em>fetch</em> may redeem</li>
 		</ul>
-		<p class="tiny">Each row = one property + one negative test in the reference implementation's threat model</p>
+		<p class="tiny">Each rule = one property + one negative test in the reference implementation's threat model</p>
 		<aside class="notes">
-		<p>Now the part I actually care about. Everything I just showed is held together by a handful of invariants, and if you remove <i>any one</i> of them, the bridge becomes a hole. I want to go through them one at a time, each with the question "what breaks without it?" — because this list works against any popup-and-iframe scheme, not just mine. In the reference implementation's threat model each of these is a numbered row, and each row is backed by a currently-green negative test.</p>
+		<p>Now the part I actually care about: five rules. Remove <i>any one</i> of them and the bridge becomes a hole. I'll go through them with one question: what breaks without it? This list works against any popup-and-iframe scheme, not just mine.</p>
 	</aside>
 	</section>
 
 	<section data-auto-animate>
-		<p class="kicker">Invariant 1</p>
+		<p class="kicker">Rule 1 of 5</p>
 		<h3>Verify the session <span class="accent">first</span></h3>
 		<pre data-id="code"><code class="language-ts" data-trim data-line-numbers="|6-9">
 // bridge-route.ts — the real boundary
@@ -754,14 +757,14 @@ if (!session)
 		</code></pre>
 		<p class="small fragment"><span class="cross">✕</span>without it: anyone who can spoof an "I'm in an iframe" header gets a code for free</p>
 		<aside class="notes">
-		<p>The bridge route mints a code only <i>after</i> your auth library confirms a real session. Not on a header, not on a "I'm inside an iframe" signal, not on anything the client says about itself. No session — 401, nothing minted.</p>
-		<p>▸ What breaks without it: anyone who can spoof a context header gets a code for free, and a code is a session. Middleware is routing. The server-side session check is the boundary. I'll say that twice because it's the one that gets skipped under deadline: middleware is routing; the server check is the boundary.</p>
+		<p>The bridge route issues a ticket only <i>after</i> your auth library confirms a real session. Not on a header, not on a "I'm inside an iframe" signal, not on anything the client says about itself. No session — 401, nothing issued.</p>
+		<p>▸ What breaks without it: anyone who can spoof a context header gets a ticket for free, and a ticket is a session. I'll say this twice because it's the one that gets skipped under deadline: middleware is routing; the server check is the boundary.</p>
 	</aside>
 	</section>
 
 	<section>
-		<p class="kicker">Invariant 2</p>
-		<h3>The code is a receipt, not a key</h3>
+		<p class="kicker">Rule 2 of 5</p>
+		<h3>The ticket is not the key</h3>
 		<ul>
 			<li class="fragment">256 bits of CSPRNG — <code class="inline">randomBytes(32).toString("hex")</code></li>
 			<li class="fragment">one-time: delete-on-read / atomic <code class="inline">GETDEL</code></li>
@@ -773,14 +776,12 @@ if (!session)
 			<div class="card"><span class="danger">2nd consume</span> → 4xx, no cookie</div>
 		</div>
 		<aside class="notes">
-		<p>▸ The code itself: 256 bits of CSPRNG output — <code>randomBytes(32)</code>, one entropy site, never hand-rolled. ▸ Single use — delete-on-read in memory, atomic <code>GETDEL</code> in KV. ▸ And a TTL capped at sixty seconds — and if you configure a longer one, construction <i>throws</i>. No silent clamp. That last bit is deliberate: a config that quietly extends sixty seconds to ten minutes is exactly how "short-lived" stops being true without anyone noticing.</p>
-		<p>▸ And be honest with yourself about what sits in that store: the session cookie's value. The actual token, for up to sixty seconds. Which means the transfer store has to be trusted exactly like your session database — same network boundary, same access rules. The TTL cap and delete-on-read aren't pedantry; they're what keeps that window small. Encrypting the parked value with a server-side key is a follow-up I haven't shipped yet — I'd rather say that than pretend it's there.</p>
-		<p>▸ So: first consume, 302 and a cookie. Second consume of the same code — 4xx, no cookie. A leaked or replayed code is inert.</p>
+		<p>The ticket is not the key. Two hundred fifty-six random bits, one use, sixty seconds — if you configure a longer TTL, construction <i>throws</i>. Be honest about what sits in that store: the real session cookie, for up to sixty seconds. Treat the store like your session database. First consume, a cookie. Second consume of the same ticket — 4xx, nothing. A leaked ticket is inert.</p>
 	</aside>
 	</section>
 
 	<section>
-		<p class="kicker">Invariant 3</p>
+		<p class="kicker">Rule 3 of 5</p>
 		<h3>Trust the sender <span class="accent">twice</span></h3>
 		<pre><code class="language-ts" data-trim>
 window.addEventListener("message", (event) => {
@@ -803,7 +804,7 @@ window.addEventListener("message", (event) => {
 	</section>
 
 	<section>
-		<p class="kicker">Invariant 4</p>
+		<p class="kicker">Rule 4 of 5</p>
 		<h3>Zero tokens in URLs — for the <span class="accent">whole roundtrip</span></h3>
 		<table>
 			<tr><th>client-constructed URL</th><th>carries</th></tr>
@@ -815,14 +816,14 @@ window.addEventListener("message", (event) => {
 		</table>
 		<p class="small fragment">per-component tests pass while the <em>composition</em> leaks → the e2e test sweeps every URL the client builds</p>
 		<aside class="notes">
-		<p>No session token in any client-constructed URL, response body, or message payload. The <i>only</i> thing permitted in a URL is the opaque code, in <code>?code=</code>. A token in a URL lives forever — history, logs, referrers, screenshots.</p>
-		<p>▸ The subtle part is the phrase "whole roundtrip". Every component can pass its own test while the <i>composition</i> leaks — one helper builds a URL from another's output. So the end-to-end test sweeps every URL the client builds across the whole flow, not per component.</p>
+		<p>No session token in any URL, response body, or message. The <i>only</i> thing allowed in a URL is the ticket, in <code>?code=</code>. A token in a URL lives forever — history, logs, referrers, screenshots.</p>
+		<p>▸ "Whole roundtrip" matters: each piece can look fine while together they leak. So the end-to-end test sweeps every URL the client builds, not per component.</p>
 	</aside>
 	</section>
 
 
 	<section>
-		<p class="kicker">Invariant 5 · added after shipping (v0.3.1)</p>
+		<p class="kicker">Rule 5 of 5 · added after shipping (v0.3.1)</p>
 		<h3>Only a same-origin <span class="accent">fetch</span> may redeem</h3>
 		<div class="two-col">
 			<div>
@@ -840,9 +841,8 @@ window.addEventListener("message", (event) => {
 		</div>
 		<aside class="notes">
 		<p>This one I added <i>after</i> shipping, so it gets its own story.</p>
-		<p>The code was already one-time and sixty seconds. And that was not enough. Think about login CSRF: I, the attacker, sign in to the app with <i>my</i> account, mint a code for <i>my</i> session — legitimately — and send you a link to <code>/auth/consume?code=…</code>. You click. The code is valid. You're now signed in as me, and whatever you type into the app lands in my account.</p>
-		<p>▸ The fix is Fetch Metadata. The consume route accepts only <code>Sec-Fetch-Site: same-origin</code> and <code>Sec-Fetch-Dest: empty</code> — that is, a <code>fetch()</code> from the app's own page. ▸ A top-level navigation, an <code>&lt;img&gt;</code> load, a cross-site fetch — all 4xx. The store isn't even touched, so the real code survives for the real opener. And the rejection is byte-identical to a forged-code rejection — no oracle. Browsers set these headers; page script can't set or strip them.</p>
-		<p>One honest note: a request with <i>no</i> Fetch Metadata at all falls through to the Origin check. Every supported browser sends it, so you can't trigger that from a browser; it exists so the test bench and non-browser clients don't break. A future major may close it. The proper structural fix — binding the code to the window that opened the popup, PKCE-style — is the planned follow-up.</p>
+		<p>The ticket was already one-time and sixty seconds. And that was not enough. Think about login CSRF: I, the attacker, sign in with <i>my</i> account, mint a ticket for <i>my</i> session — legitimately — and send you a link to <code>/auth/consume?code=…</code>. You click. The ticket is valid. You're now signed in as me, and whatever you type into the app lands in my account.</p>
+		<p>▸ The fix is Fetch Metadata. The consume route accepts only a <code>fetch()</code> from the app's own page — <code>Sec-Fetch-Site: same-origin</code>, <code>Sec-Fetch-Dest: empty</code>. A top-level navigation, an <code>&lt;img&gt;</code> load, a cross-site fetch — all 4xx. The store isn't touched, so the real ticket survives for the real opener. Browsers set these headers; page script can't fake them.</p>
 	</aside>
 	</section>
 
@@ -857,7 +857,7 @@ window.addEventListener("message", (event) => {
 		</ul>
 		<p class="tiny">each row ↔ a named, currently-green test in the reference implementation's threat model — link at the end</p>
 		<aside class="notes">
-		<p>Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin <i>and</i> source. No token in any URL — at roundtrip level. Same-origin-fetch-only redemption. If you have a popup auth scheme in production, go through these five tomorrow.</p>
+		<p>Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin <i>and</i> source. No token in any URL — at roundtrip level. Same-origin-fetch-only redemption. In the reference implementation's threat model these are called invariants, and each one is backed by a negative test. If you have a popup auth scheme in production, go through these five tomorrow.</p>
 	</aside>
 	</section>
 
@@ -879,8 +879,8 @@ window.addEventListener("message", (event) => {
 		</div>
 		<p class="tiny">CHIPS: Chrome/Edge 114+ · Firefox 130+ · Safari 18+</p>
 		<aside class="notes">
-		<p>And the honest boundary. The Node test suite proves the <code>Partitioned</code> attribute is <i>emitted</i>, that data flows end-to-end, and every negative case I just listed. It does <i>not</i> prove that a real browser <i>isolates</i> the partition — that's a property of the browser's CHIPS implementation, and you can only check it in a browser. I did: two live origins, positive and negative case, written down in the repo. Also: that a credentialed <code>fetch</code> — not a navigation — commits the cookie under the right top-level site. That was an open question until I tried it.</p>
-		<p>If you adopt the pattern, run that live check in <i>your</i> browser matrix. CHIPS is Chrome and Edge 114, Firefox 130, Safari 18.</p>
+		<p>And the honest boundary. The Node tests prove we emit <code>Partitioned</code>, that data flows, and every negative case I just listed. They do <i>not</i> prove a real browser <i>isolates</i> the partition — I had to check that in a browser. I did: two live origins, written down in the repo. Also that <code>fetch</code> — not a navigation — actually sets the cookie in the iframe's jar.</p>
+		<p>If you adopt the pattern, run that live check in <i>your</i> browsers. CHIPS is Chrome and Edge 114, Firefox 130, Safari 18.</p>
 	</aside>
 	</section>
 </section>
@@ -976,7 +976,7 @@ window.location.reload();
 			</code></pre>
 		</div>
 		<aside class="notes">
-		<p>For completeness, the rest of the wiring. Two route files, one line each — <code>bridge</code> and <code>consume</code> are plain <code>Request → Response</code> functions. A middleware that does <i>UX routing only</i> — it rewrites unauthenticated embedded requests to the popup entry page; it is not a security boundary, we covered that. It imports from the <code>/middleware</code> subpath because the package root reaches <code>node:crypto</code> and won't bundle for Edge. The popup page: <code>runPopupFlow</code>, then <code>window.close()</code>. And the launcher in the iframe: <code>openAuthPopup</code>, then <code>fetch</code> consume with <code>credentials: 'include'</code> — that's what commits the cookie under the right partition — then reload. There's no magic. The volume is small.</p>
+		<p>Two routes. A popup page. A few lines in the iframe. That's the whole wiring.</p>
 	</aside>
 	</section>
 
@@ -988,11 +988,11 @@ window.location.reload();
 	<h2>Where the same bridge goes next</h2>
 	<div class="two-col">
 		<div class="card"><p><strong>Web ↔ web</strong></p><p class="small">iframe · popup · <code class="inline">postMessage</code> · partitioned cookie</p></div>
-		<div class="card hl"><p><strong>Native ↔ web</strong></p><p class="small">WKWebView is isolated from the device's credential store — passkeys, autofill, Safari session<br>same handle store · <code class="inline">ASWebAuthenticationSession</code> transport<br><span class="muted">the playbook: RFC 8252, OAuth 2.0 for Native Apps</span></p></div>
+		<div class="card hl"><p><strong>Native ↔ web</strong></p><p class="small">WebView can't see passkeys, autofill, or the Safari session next door<br>same store · <code class="inline">ASWebAuthenticationSession</code> transport<br><span class="muted">the playbook: RFC 8252, OAuth 2.0 for Native Apps</span></p></div>
 	</div>
 	<p class="big accent" style="margin-top:0.8em">One shape, two transports.</p>
 	<aside class="notes">
-		<p>Back to the origin story. The other half of that task was iOS — a WKWebView that has no access to the device's passkeys, autofill, or the session the user already has in Safari. Same shape: a primary session in one context, a secondary context that needs its own. The same handle store, a different transport — the system auth session instead of a popup, and a URL callback instead of <code>postMessage</code>. That transport isn't my invention: it's RFC 8252, OAuth 2.0 for Native Apps — the system browser instead of a WebView, a one-time code coming back over a redirect. The bridge is what you get when you take that RFC seriously on both platforms. One shape, two transports. That's the next talk.</p>
+		<p>Back to the origin story. The other half of that task was iOS — a WebView that can't see the device's passkeys, autofill, or the Safari login sitting next door. Same shape: session lives next door, our app needs its own. Same store, a different transport — the system browser instead of a popup, a URL callback instead of <code>postMessage</code>. That's RFC 8252, OAuth for native apps. The bridge is what you get when you take that RFC seriously on both platforms. One shape, two transports. That's the next talk.</p>
 	</aside>
 </section>
 
@@ -1045,7 +1045,7 @@ window.location.reload();
 	</div>
 	<svg width="0" height="0" style="position:absolute"><defs><marker id="ah-w2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker></defs></svg>
 	<aside class="notes">
-		<p>The clipboard. Inherit the existing host SSO — yes, the popup inherits it. Silently — one sub-second flash, no prompt. No token where it can leak — only a sixty-second, single-use receipt ever crosses. No lock-in — two libraries, two live demos, two lines of difference.</p>
+		<p>The clipboard. Inherit the existing host SSO — yes, the popup inherits it. Silently — one sub-second flash, no prompt. No token where it can leak — only a sixty-second, single-use ticket ever crosses. No lock-in — two libraries, two live demos, two lines of difference.</p>
 	</aside>
 </section>
 
@@ -1057,7 +1057,7 @@ window.location.reload();
 		<li>clean-room: no employer code; everything on screen is from the public repo and the two Keycloak demos</li>
 	</ul>
 	<aside class="notes">
-		<p>Three things I owe you. The popup-bridge pattern was co-developed with Kirill Evtushenko. Working it through — the invariants, the tests, the two libraries — turned into a package: <code>next-auth-bridge</code>, my generalisation of the pattern. It's version 0.3.1, a few months old, no meaningful adoption yet — a reference implementation, not battle-tested infrastructure; treat it as one way to express the idea. And it's a clean-room build — no employer code; everything you saw on screen is from the public repo and the two Keycloak demos.</p>
+		<p>Three things I owe you. The popup-bridge pattern was co-developed with Kirill Evtushenko. Working it through — the rules, the tests, the two libraries — turned into a package: <code>next-auth-bridge</code>, my generalisation of the pattern. It's version 0.3.1, a few months old, no meaningful adoption yet — a reference implementation, not battle-tested infrastructure; treat it as one way to express the idea. And it's a clean-room build — no employer code; everything you saw on screen is from the public repo and the two Keycloak demos.</p>
 	</aside>
 </section>
 
