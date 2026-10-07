@@ -102,7 +102,7 @@
 		.reveal svg.scene g.act path { stroke: var(--accent); }
 		.reveal svg.scene g.act text { fill: var(--accent); font-weight: 600; }
 		.reveal svg.scene g.done path { stroke: var(--muted); opacity: 0.45; }
-		.reveal svg.scene g.done text { fill: var(--muted); opacity: 0.6; }
+		.reveal svg.scene g.done text { display: none; }
 		.reveal svg.scene g.todo { opacity: 0; }
 
 		/* --- diagram --- */
@@ -492,11 +492,11 @@
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
 		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
 		<!-- arrows -->
-		<g class="act"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sa1)"/><text x="395" y="140" class="label" style="font-size:16px">① open</text></g>
-		<g class="todo"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="690" y="250" class="label" style="font-size:16px">② OAuth</text></g>
-		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="705" y="80" class="label" style="font-size:16px">③</text></g>
-		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd1)"/><text x="380" y="230" class="label" style="font-size:16px">④ postMessage</text></g>
-		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="520" y="395" class="label" style="font-size:16px">⑤ consume</text></g>
+		<g class="act"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sa1)"/><text x="330" y="122" class="label" style="font-size:16px">① open popup</text></g>
+		<g class="todo"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
+		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="712" y="78" class="label" style="font-size:16px">③ bridge</text></g>
+		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd1)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
+		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong>Open a popup — on <em>your</em> origin, top-level</strong><br><span class="muted">the host never runs your code</span></p>
 		<aside class="notes">
@@ -544,11 +544,11 @@
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
 		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="395" y="140" class="label" style="font-size:16px">① open</text></g>
-		<g class="act"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sa2)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa2)"/><text x="690" y="250" class="label" style="font-size:16px">② OAuth</text></g>
-		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="705" y="80" class="label" style="font-size:16px">③</text></g>
-		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="380" y="230" class="label" style="font-size:16px">④ postMessage</text></g>
-		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="520" y="395" class="label" style="font-size:16px">⑤ consume</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="330" y="122" class="label" style="font-size:16px">① open popup</text></g>
+		<g class="act"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sa2)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa2)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
+		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="712" y="78" class="label" style="font-size:16px">③ bridge</text></g>
+		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
+		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong>Normal OAuth sign-in, top-level</strong><br><span class="muted">the IdP sees first-party cookies → code, no prompt → session cookie in the popup's jar</span></p>
 		<aside class="notes"></aside>
@@ -587,11 +587,11 @@
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
 		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="395" y="140" class="label" style="font-size:16px">① open</text></g>
-		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="690" y="250" class="label" style="font-size:16px">② OAuth</text></g>
-		<g class="act"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sa3)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa3)"/><text x="705" y="80" class="label" style="font-size:16px">③</text></g>
-		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="380" y="230" class="label" style="font-size:16px">④ postMessage</text></g>
-		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="520" y="395" class="label" style="font-size:16px">⑤ consume</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="330" y="122" class="label" style="font-size:16px">① open popup</text></g>
+		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
+		<g class="act"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sa3)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa3)"/><text x="712" y="78" class="label" style="font-size:16px">③ bridge</text></g>
+		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
+		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">POST /auth/bridge</code> → verify session → park the cookie → mint a ticket</strong><br><span class="muted">🎫 = 256-bit · one-time · ≤ 60 s — the token stays on the server</span></p>
 		<aside class="notes"></aside>
@@ -630,11 +630,11 @@
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
 		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd4)"/><text x="395" y="140" class="label" style="font-size:16px">① open</text></g>
-		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="690" y="250" class="label" style="font-size:16px">② OAuth</text></g>
-		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="705" y="80" class="label" style="font-size:16px">③</text></g>
-		<g class="act"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sa4)"/><text x="380" y="230" class="label" style="font-size:16px">④ postMessage</text></g>
-		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="520" y="395" class="label" style="font-size:16px">⑤ consume</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd4)"/><text x="330" y="122" class="label" style="font-size:16px">① open popup</text></g>
+		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
+		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="712" y="78" class="label" style="font-size:16px">③ bridge</text></g>
+		<g class="act"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sa4)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
+		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">postMessage({ code }, appOrigin)</code></strong><br><span class="muted">only the ticket crosses — explicit target origin, never <code class="inline">*</code></span></p>
 		<aside class="notes"></aside>
@@ -673,11 +673,11 @@
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
 		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="395" y="140" class="label" style="font-size:16px">① open</text></g>
-		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="690" y="250" class="label" style="font-size:16px">② OAuth</text></g>
-		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="705" y="80" class="label" style="font-size:16px">③</text></g>
-		<g class="done"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="380" y="230" class="label" style="font-size:16px">④ postMessage</text></g>
-		<g class="act"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sa5)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa5)"/><text x="520" y="395" class="label" style="font-size:16px">⑤ consume</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="330" y="122" class="label" style="font-size:16px">① open popup</text></g>
+		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
+		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="712" y="78" class="label" style="font-size:16px">③ bridge</text></g>
+		<g class="done"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
+		<g class="act"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sa5)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa5)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">fetch /auth/consume?code=…</code> → <code class="inline">Set-Cookie … Partitioned</code></strong><br><span class="muted">the jar that was empty is full — CHIPS keeps the session we delivered</span></p>
 		<aside class="notes"></aside>
