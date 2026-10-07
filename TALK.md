@@ -232,6 +232,8 @@ That's the bridge. The repo, the threat model, and both demos are at the QR — 
 
 **Logout — the session is now in two cookie jars.** The popup's first-party jar (the popup closed, the cookie didn't) and the iframe's partitioned jar hold the same session. Signing out in one context clears one cookie. With database sessions the server-side invalidation covers both; with JWT sessions both copies stay valid until expiry — same as any multi-tab JWT setup. If that matters to you, keep sessions server-side.
 
+**Who sets COOP, and what if the IdP does?** Nobody by default — it's a response header your own server (Next.js headers, `helmet`, CDN config) or the IdP's pages add. Check that `/auth/popup` is served without `Cross-Origin-Opener-Policy: same-origin` (`same-origin-allow-popups` is fine), and look at the IdP's headers once in Network. If the IdP sets `same-origin`, `window.opener` is gone on the way back and the bridge needs a fallback: the popup parks the ticket server-side and the opener polls for it.
+
 **Does this need Next.js?** No. Two server routes, a popup page, a `postMessage` listener. Any framework with server routes.
 
 **Auth.js status?** Effectively maintenance mode in 2026; momentum has moved to Better Auth. Which is exactly why the seam is two values and not a plugin.
