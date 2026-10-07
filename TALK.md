@@ -19,7 +19,7 @@ I'm Azat. I'm a software architect and tech lead, and I've been writing JavaScri
 
 *[your joke line]*
 
-▸ *(the ad block appears)* — one line about it, no more.
+▸ *(the ad block appears)* — "Vibe-coded your JS app and not sure it's safe? Better call Azat." One line, no more.
 
 ## 4 · Origin story
 
