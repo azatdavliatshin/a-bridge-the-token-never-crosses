@@ -148,7 +148,7 @@ The `postMessage` receiver. Two checks. `event.origin` must be in the allowlist 
 
 ▸ Wrong origin — dropped, obviously. ▸ But why the second check? Because of the same-origin racer. Another tab, another frame, *of your own origin*, can post to the opener. The origin check passes it — it's your origin! Pinning the source is the second lock. ▸ And a dropped message must not settle the flow — a later valid one still should. This is the one almost nobody tests.
 
-▸ One gotcha on this leg that cost me an afternoon: it's not navigation that severs `window.opener` — a popup can go to the IdP and back and keep it. What severs it is `Cross-Origin-Opener-Policy: same-origin`. If your app or your IdP sets that header on the popup, the opener is null, there's nobody to post the code to, and the bridge fails silently. Check it in two engines before you build on it.
+▸ I lost an afternoon to this. I thought: popup goes to the IdP, `window.opener` dies, ticket has nowhere to go. Wrong. Redirects keep the opener. What kills it is a header — `Cross-Origin-Opener-Policy: same-origin`. Then opener is null, nobody to post to, and it fails silently.
 
 ### 16.4 · Rule 4 — zero tokens in URLs, for the whole roundtrip
 
@@ -176,21 +176,35 @@ If you adopt the pattern, run that live check in *your* browsers. CHIPS is Chrom
 
 ---
 
-## 17 · Where the library lives
+## 17 · Adding the bridge to a Next.js app
 
-Now the "two libraries" promise. Here's the entire configuration. Where does the auth library live in it? Two values: `verifySession` and `cookieName`. The store, the origin allowlist, the routes, the popup, the client helpers — none of it knows which library you use.
+Enough theory — what does it take to put this into a Next.js app? `npm install`, and six files. Four of them are one-liners. ▸ One config object, where the store, the allowed origins and the auth library live. ▸ Two routes — bridge and consume — plain Web-standard `Request → Response` functions. ▸ One popup page that runs top-level, posts the ticket and closes itself. ▸ One launcher in the iframe that opens the popup, redeems the ticket and reloads. ▸ And a middleware that only decides where an embedded, unauthenticated visitor lands. The numbers on the right are the steps of the bridge you saw earlier — every file maps to one of them.
+
+### 17.1 · The config — where the auth library lives
+
+Here's the config, and here's the "two libraries" promise. Where does the auth library live in it? ▸ Two values: `verifySession` and `cookieName`. The store, the origin allowlist, the routes, the popup, the client helpers — none of it knows which library you use.
 
 This is also *why* the bridge copies the cookie instead of minting a fresh session on the far side. "Create a session for user X" is a deeply library-specific operation — Auth.js doesn't expose one for the JWT strategy, Better Auth has one but it's its own shape. "Copy the cookie your library already issued" works with any cookie-session library. The seam is two values precisely because the bridge moves a cookie, not an identity.
 
-Why does this matter? Auth.js — NextAuth — is effectively in maintenance mode, and the ecosystem's momentum has moved to Better Auth. If your auth library is a thing you might swap in two years, the piece that carries your session across contexts must not be the piece that pins you.
+### 17.2 · Better Auth — the two lines
 
-### 17.1 · Better Auth — the two lines
+Same config, Better Auth. Watch what moves. `verifySession` becomes `auth.api.getSession` with the request headers. `cookieName` becomes `getBetterAuthCookieName({ secure: true })` — derived, not hardcoded, because the `__Secure-` prefix rule bit me once; there's a `__Secure-__Secure-` bug in the changelog. Everything else is byte-identical. Why does this matter? Auth.js — NextAuth — is effectively in maintenance mode, and the ecosystem's momentum has moved to Better Auth. If your auth library is a thing you might swap in two years, the piece that carries your session across contexts must not be the piece that pins you.
 
-Same config, Better Auth. Watch what moves. `verifySession` becomes `auth.api.getSession` with the request headers. `cookieName` becomes `getBetterAuthCookieName({ secure: true })` — derived, not hardcoded, because the `__Secure-` prefix rule bit me once; there's a `__Secure-__Secure-` bug in the changelog. Everything else is byte-identical. Any other cookie-session library plugs into the same two values.
+### 17.3 · The routes
 
-### 17.2 · Wiring in 20 lines
+Two files, three lines. ▸ `bridge` is step three — verify the session, park the cookie, mint the ticket. ▸ `consume` is step five — redeem the ticket, set the partitioned cookie. Both are plain `(Request) => Promise<Response>`; there are no Next.js types in the library, so the same handlers run on anything with server routes.
 
-Two routes. A popup page. A few lines in the iframe. That's the whole wiring.
+### 17.4 · The popup page
+
+The popup page. Your auth library's normal sign-in happens on this page first — it's top-level, so it just works. Then ▸ `runPopupFlow` calls `/auth/bridge`, gets the ticket, and posts `{ code }` to the opener with an explicit `hostOrigin` as the target — never `"*"`. Then the window closes itself. The user saw it for under a second.
+
+### 17.5 · The launcher
+
+And the opener side, in the iframe. ▸ `openAuthPopup` opens the popup and waits — checking origin *and* source on every message, resolving only on a trusted one; it rejects with a reason you can branch on: popup blocked, popup closed, timeout, auth error. ▸ Then one `fetch` to `/auth/consume` with `credentials: "include"` — that's the same-origin fetch rule from earlier, and `include` is what commits the `Set-Cookie` under the right CHIPS partition. Reload, and the iframe is signed in.
+
+### 17.6 · The middleware
+
+Last file, and the one to be careful about. The middleware imports from the `/middleware` subpath because the package root reaches `node:crypto` and won't bundle for the Edge runtime. It looks at whether the session cookie is *present* — not whether it's valid — and rewrites an embedded, unauthenticated request to the popup entry page. ▸ That is UX routing, not a security boundary. The real gate is `verifySession` inside `/auth/bridge`, and nothing in the middleware is trusted for anything else.
 
 ## 18 · Where the same bridge goes next
 

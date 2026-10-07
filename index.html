@@ -460,7 +460,7 @@
 <section id="flow">
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 1 of 5</p>
-	<svg class="diagram scene" viewBox="0 0 1000 470" style="max-height:500px">
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:500px">
 		<defs>
 			<marker id="sa1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
 			<marker id="sd1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
@@ -492,9 +492,9 @@
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
 		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
 		<!-- arrows -->
-		<g class="act"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sa1)"/><text x="330" y="122" class="label" style="font-size:16px">① open popup</text></g>
+		<g class="act"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sa1)"/><text x="300" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="todo"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="712" y="78" class="label" style="font-size:16px">③ bridge</text></g>
+		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
 		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd1)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
@@ -505,7 +505,7 @@
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 2 of 5</p>
-	<svg class="diagram scene" viewBox="0 0 1000 470" style="max-height:500px">
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:500px">
 		<defs>
 			<marker id="sa2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
 			<marker id="sd2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
@@ -537,9 +537,9 @@
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
 		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="330" y="122" class="label" style="font-size:16px">① open popup</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="300" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="act"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sa2)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa2)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="712" y="78" class="label" style="font-size:16px">③ bridge</text></g>
+		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
 		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
@@ -550,7 +550,7 @@
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 3 of 5</p>
-	<svg class="diagram scene" viewBox="0 0 1000 470" style="max-height:500px">
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:500px">
 		<defs>
 			<marker id="sa3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
 			<marker id="sd3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
@@ -582,9 +582,9 @@
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
 		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="330" y="122" class="label" style="font-size:16px">① open popup</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="300" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="act"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sa3)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa3)"/><text x="712" y="78" class="label" style="font-size:16px">③ bridge</text></g>
+		<g class="act"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sa3)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa3)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
 		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
@@ -596,7 +596,7 @@
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 4 of 5</p>
-	<svg class="diagram scene" viewBox="0 0 1000 470" style="max-height:500px">
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:500px">
 		<defs>
 			<marker id="sa4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
 			<marker id="sd4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
@@ -628,9 +628,9 @@
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
 		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd4)"/><text x="330" y="122" class="label" style="font-size:16px">① open popup</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd4)"/><text x="300" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="712" y="78" class="label" style="font-size:16px">③ bridge</text></g>
+		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
 		<g class="act"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sa4)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
@@ -641,7 +641,7 @@
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 5 of 5</p>
-	<svg class="diagram scene" viewBox="0 0 1000 470" style="max-height:500px">
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:500px">
 		<defs>
 			<marker id="sa5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
 			<marker id="sd5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
@@ -673,9 +673,9 @@
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
 		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="330" y="122" class="label" style="font-size:16px">① open popup</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="300" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="712" y="78" class="label" style="font-size:16px">③ bridge</text></g>
+		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
 		<g class="done"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
 		<g class="act"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sa5)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa5)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
@@ -799,7 +799,7 @@ window.addEventListener("message", (event) => {
 		<aside class="notes">
 		<p>The <code>postMessage</code> receiver. Two checks. <code>event.origin</code> must be in the allowlist — everyone does this one. <i>And</i> <code>event.source</code> must be the popup window you actually opened.</p>
 		<p>▸ Wrong origin — dropped, obviously. ▸ But why the second check? Because of the same-origin racer. Another tab, another frame, <i>of your own origin</i>, can post to the opener. The origin check passes it — it's your origin! Pinning the source is the second lock. ▸ And a dropped message must not settle the flow — a later valid one still should. This is the one almost nobody tests.</p>
-		<p>▸ One gotcha on this leg that cost me an afternoon: it's not navigation that severs <code>window.opener</code> — a popup can go to the IdP and back and keep it. What severs it is <code>Cross-Origin-Opener-Policy: same-origin</code>. If your app or your IdP sets that header on the popup, the opener is null, there's nobody to post the code to, and the bridge fails silently. Check it in two engines before you build on it.</p>
+		<p>▸ I lost an afternoon to this. I thought: popup goes to the IdP, <code>window.opener</code> dies, ticket has nowhere to go. Wrong. Redirects keep the opener. What kills it is a header — <code>Cross-Origin-Opener-Policy: same-origin</code>. Then opener is null, nobody to post to, and it fails silently.</p>
 	</aside>
 	</section>
 
@@ -888,101 +888,177 @@ window.addEventListener("message", (event) => {
 <!-- ===================== BLOCK 4 — ONE SEAM, TWO LIBRARIES ===================== -->
 
 <section id="seam">
+	<section>
+		<h2>Adding the bridge to a Next.js app</h2>
+		<div class="two-col" style="align-items:flex-start">
+			<pre style="font-size:0.58em; flex:1"><code class="language-bash" data-trim>
+npm i next-auth-bridge
+
+lib/auth-bridge.ts            # the config
+app/auth/bridge/route.ts      # ③ mint
+app/auth/consume/route.ts     # ⑤ redeem
+app/auth/popup/page.tsx       # ①② popup
+components/SignIn.tsx         # ④ launcher
+middleware.ts                 # UX routing
+			</code></pre>
+			<div style="flex:1">
+				<p class="small">Six files. Four of them are one-liners.</p>
+				<ul class="small">
+					<li class="fragment">one <strong>config</strong> — store, origins, and the auth-library seam</li>
+					<li class="fragment">two <strong>routes</strong> — bridge and consume, Web-standard <code class="inline">Request → Response</code></li>
+					<li class="fragment">one <strong>popup page</strong> — runs top-level, posts the ticket, closes</li>
+					<li class="fragment">one <strong>launcher</strong> — opens the popup, redeems the ticket, reloads</li>
+					<li class="fragment">one <strong>middleware</strong> — sends embedded, unauthenticated users to the popup entry</li>
+				</ul>
+			</div>
+		</div>
+		<aside class="notes">
+		<p>Enough theory — what does it take to put this into a Next.js app? <code>npm install</code>, and six files. Four of them are one-liners. ▸ One config object, where the store, the allowed origins and the auth library live. ▸ Two routes — bridge and consume — plain Web-standard <code>Request → Response</code> functions. ▸ One popup page that runs top-level, posts the ticket and closes itself. ▸ One launcher in the iframe that opens the popup, redeems the ticket and reloads. ▸ And a middleware that only decides where an embedded, unauthenticated visitor lands. The numbers on the right are the steps of the bridge you saw earlier — every file maps to one of them.</p>
+	</aside>
+	</section>
+
 	<section data-auto-animate>
-		<h2>Where the library lives</h2>
+		<p class="kicker">1 · the config — <code class="inline">lib/auth-bridge.ts</code></p>
+		<h3>Where the auth library lives</h3>
 		<pre data-id="cfg"><code class="language-ts" data-trim data-line-numbers="|6-9">
 import { createAuthBridge } from "next-auth-bridge";
 import { createKVTransferStore } from "next-auth-bridge/store/kv";
-import { auth } from "@/auth";
+import { auth } from "@/auth";                 // your Auth.js instance
 
 export const { bridge, consume } = createAuthBridge({
   // ── the entire per-library surface ──────────────
   verifySession: () => auth(),
   // cookieName: defaults to Auth.js's session cookie
   // ────────────────────────────────────────────────
-  store: createKVTransferStore(),
+  store: createKVTransferStore(),              // Upstash / Vercel KV
   allowedOrigins: [HOST_SHELL_ORIGIN, APP_ORIGIN],
   secure: true,
 });
 		</code></pre>
-		<p class="small"><span class="accent">Auth.js</span> — store, origins, routes, popup, client: all library-agnostic</p>
+		<p class="small"><span class="accent">Auth.js</span> — the store, origins, routes, popup and client are all library-agnostic</p>
 		<aside class="notes">
-		<p>Now the "two libraries" promise. Here's the entire configuration. Where does the auth library live in it? Two values: <code>verifySession</code> and <code>cookieName</code>. The store, the origin allowlist, the routes, the popup, the client helpers — none of it knows which library you use.</p>
+		<p>Here's the config, and here's the "two libraries" promise. Where does the auth library live in it? ▸ Two values: <code>verifySession</code> and <code>cookieName</code>. The store, the origin allowlist, the routes, the popup, the client helpers — none of it knows which library you use.</p>
 		<p>This is also <i>why</i> the bridge copies the cookie instead of minting a fresh session on the far side. "Create a session for user X" is a deeply library-specific operation — Auth.js doesn't expose one for the JWT strategy, Better Auth has one but it's its own shape. "Copy the cookie your library already issued" works with any cookie-session library. The seam is two values precisely because the bridge moves a cookie, not an identity.</p>
-		<p>Why does this matter? Auth.js — NextAuth — is effectively in maintenance mode, and the ecosystem's momentum has moved to Better Auth. If your auth library is a thing you might swap in two years, the piece that carries your session across contexts must not be the piece that pins you.</p>
 	</aside>
 	</section>
 	<section data-auto-animate>
-		<h2>Where the library lives</h2>
+		<p class="kicker">1 · the config — <code class="inline">lib/auth-bridge.ts</code></p>
+		<h3>Where the auth library lives</h3>
 		<pre data-id="cfg"><code class="language-ts" data-trim data-line-numbers="7-8">
 import { createAuthBridge, getBetterAuthCookieName } from "next-auth-bridge";
 import { createKVTransferStore } from "next-auth-bridge/store/kv";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth";             // your Better Auth instance
 
 export const { bridge, consume } = createAuthBridge({
   // ── the entire per-library surface ──────────────
   verifySession: async () => auth.api.getSession({ headers: await headers() }),
   cookieName: getBetterAuthCookieName({ secure: true }),
   // ────────────────────────────────────────────────
-  store: createKVTransferStore(),
+  store: createKVTransferStore(),              // Upstash / Vercel KV
   allowedOrigins: [HOST_SHELL_ORIGIN, APP_ORIGIN],
   secure: true,
 });
 		</code></pre>
 		<p class="small"><span class="accent">Better Auth</span> — the two-line difference. Any other cookie-session library plugs into the same seam.</p>
 		<aside class="notes">
-		<p>Same config, Better Auth. Watch what moves. <code>verifySession</code> becomes <code>auth.api.getSession</code> with the request headers. <code>cookieName</code> becomes <code>getBetterAuthCookieName({ secure: true })</code> — derived, not hardcoded, because the <code>__Secure-</code> prefix rule bit me once; there's a <code>__Secure-__Secure-</code> bug in the changelog. Everything else is byte-identical. Any other cookie-session library plugs into the same two values.</p>
+		<p>Same config, Better Auth. Watch what moves. <code>verifySession</code> becomes <code>auth.api.getSession</code> with the request headers. <code>cookieName</code> becomes <code>getBetterAuthCookieName({ secure: true })</code> — derived, not hardcoded, because the <code>__Secure-</code> prefix rule bit me once; there's a <code>__Secure-__Secure-</code> bug in the changelog. Everything else is byte-identical. Why does this matter? Auth.js — NextAuth — is effectively in maintenance mode, and the ecosystem's momentum has moved to Better Auth. If your auth library is a thing you might swap in two years, the piece that carries your session across contexts must not be the piece that pins you.</p>
 	</aside>
 	</section>
 
 	<section>
-		<h2>Wiring in 20 lines</h2>
-		<div class="two-col">
-			<pre style="font-size:0.46em"><code class="language-ts" data-trim>
-// app/auth/bridge/route.ts
-export const GET  = (r: Request) => bridge(r);
-export const POST = (r: Request) => bridge(r);
+		<p class="kicker">2 · the routes — server side</p>
+		<h3>Two files, three lines</h3>
+		<pre><code class="language-ts" data-trim data-line-numbers="|1-4|6-8">
+// app/auth/bridge/route.ts      ③ verify → park cookie → mint ticket
+import { bridge } from "@/lib/auth-bridge";
+export const GET  = (req: Request) => bridge(req);
+export const POST = (req: Request) => bridge(req);
 
-// app/auth/consume/route.ts
-export const GET = (r: Request) => consume(r);
-
-// middleware.ts — UX routing only
-import { createBridgeMiddleware }
-  from "next-auth-bridge/middleware"; // Edge-safe subpath
-const route = createBridgeMiddleware({
-  popupEntryPath: "/auth/popup",
-  isAuthenticated: (req) =>
-    !!req.headers.get("cookie")?.includes(SESSION_COOKIE),
-});
-			</code></pre>
-			<pre style="font-size:0.46em"><code class="language-tsx" data-trim>
-// app/auth/popup/page.tsx — runs top-level
-useEffect(() => {
-  void runPopupFlow({ opener: window.opener,
-                      hostOrigin: APP_ORIGIN })
-    .then(() => window.close());
-}, []);
-
-// the launcher, in the iframe
-const { code } = await openAuthPopup({
-  allowedOrigins: [APP_ORIGIN],
-  popupUrl: "/auth/popup",
-  timeoutMs: 60_000,
-});
-await fetch(`/auth/consume?code=${code}`, {
-  credentials: "include", // → right CHIPS partition
-});
-window.location.reload();
-			</code></pre>
-		</div>
+// app/auth/consume/route.ts     ⑤ redeem ticket → Set-Cookie … Partitioned
+import { consume } from "@/lib/auth-bridge";
+export const GET = (req: Request) => consume(req);
+		</code></pre>
+		<p class="small muted">Both are plain <code class="inline">(Request) ⇒ Promise&lt;Response&gt;</code> — no Next.js types in the library, so the same handlers run anywhere with server routes.</p>
 		<aside class="notes">
-		<p>Two routes. A popup page. A few lines in the iframe. That's the whole wiring.</p>
+		<p>Two files, three lines. ▸ <code>bridge</code> is step three — verify the session, park the cookie, mint the ticket. ▸ <code>consume</code> is step five — redeem the ticket, set the partitioned cookie. Both are plain <code>(Request) =&gt; Promise&lt;Response&gt;</code>; there are no Next.js types in the library, so the same handlers run on anything with server routes.</p>
 	</aside>
 	</section>
 
-</section>
+	<section>
+		<p class="kicker">3 · the popup — <code class="inline">app/auth/popup/page.tsx</code></p>
+		<h3>Runs top-level, posts the ticket, closes</h3>
+		<pre><code class="language-tsx" data-trim data-line-numbers="|7-10">
+"use client";
+import { useEffect } from "react";
+import { runPopupFlow } from "next-auth-bridge";
 
-<!-- ===================== BLOCK 5 — WRONG, AND WHERE IT GROWS ===================== -->
+export default function PopupPage() {
+  useEffect(() => {
+    void runPopupFlow({
+      opener: window.opener,
+      hostOrigin: process.env.NEXT_PUBLIC_APP_ORIGIN!,   // explicit targetOrigin, never "*"
+    }).then(() => window.close());
+  }, []);
+  return &lt;p&gt;Completing sign-in…&lt;/p&gt;;
+}
+		</code></pre>
+		<p class="small muted">Your auth library's normal sign-in runs on this page first (it's top-level, so it just works); <code class="inline">runPopupFlow</code> then calls <code class="inline">/auth/bridge</code> and posts <code class="inline">{ code }</code> to the opener.</p>
+		<aside class="notes">
+		<p>The popup page. Your auth library's normal sign-in happens on this page first — it's top-level, so it just works. Then ▸ <code>runPopupFlow</code> calls <code>/auth/bridge</code>, gets the ticket, and posts <code>{ code }</code> to the opener with an explicit <code>hostOrigin</code> as the target — never <code>"*"</code>. Then the window closes itself. The user saw it for under a second.</p>
+	</aside>
+	</section>
+
+	<section>
+		<p class="kicker">4 · the launcher — in the iframe</p>
+		<h3>Open, wait for the ticket, redeem, reload</h3>
+		<pre><code class="language-tsx" data-trim data-line-numbers="|5-9|11-14">
+"use client";
+import { openAuthPopup, OpenAuthPopupError } from "next-auth-bridge";
+
+export async function signInViaBridge() {
+  const { code } = await openAuthPopup({        // ① opens /auth/popup
+    allowedOrigins: [APP_ORIGIN],               // ④ checks origin + source
+    popupUrl: "/auth/popup",
+    timeoutMs: 60_000,
+  });
+
+  await fetch(`/auth/consume?code=${code}`, {   // ⑤ same-origin fetch only
+    credentials: "include",                     //    → commits the Partitioned cookie
+  });
+  window.location.reload();                     // the iframe is signed in
+}
+		</code></pre>
+		<p class="small muted"><code class="inline">OpenAuthPopupError.reason</code>: <code class="inline">popup-blocked</code> · <code class="inline">popup-closed</code> · <code class="inline">timeout</code> · <code class="inline">auth-error</code></p>
+		<aside class="notes">
+		<p>And the opener side, in the iframe. ▸ <code>openAuthPopup</code> opens the popup and waits — checking origin <i>and</i> source on every message, resolving only on a trusted one; it rejects with a reason you can branch on: popup blocked, popup closed, timeout, auth error. ▸ Then one <code>fetch</code> to <code>/auth/consume</code> with <code>credentials: "include"</code> — that's the same-origin fetch rule from earlier, and <code>include</code> is what commits the <code>Set-Cookie</code> under the right CHIPS partition. Reload, and the iframe is signed in.</p>
+	</aside>
+	</section>
+
+	<section>
+		<p class="kicker">5 · the middleware — UX routing only</p>
+		<h3>Not a security boundary</h3>
+		<pre><code class="language-ts" data-trim data-line-numbers="|1|4-8">
+import { createBridgeMiddleware } from "next-auth-bridge/middleware"; // Edge-safe subpath
+import { NextResponse, type NextRequest } from "next/server";
+
+const route = createBridgeMiddleware({
+  popupEntryPath: "/auth/popup",
+  isAuthenticated: (req) =>                     // presence of the cookie, not verification
+    !!req.headers.get("cookie")?.includes(SESSION_COOKIE),
+});
+
+export function middleware(request: NextRequest) {
+  const decision = route(request);
+  if (decision?.action === "rewrite") return NextResponse.rewrite(decision.destination);
+  return NextResponse.next();
+}
+		</code></pre>
+		<p class="small muted">The real gate is <code class="inline">verifySession</code> inside <code class="inline">/auth/bridge</code>. This only decides which page an embedded, unauthenticated visitor lands on.</p>
+		<aside class="notes">
+		<p>Last file, and the one to be careful about. The middleware imports from the <code>/middleware</code> subpath because the package root reaches <code>node:crypto</code> and won't bundle for the Edge runtime. It looks at whether the session cookie is <i>present</i> — not whether it's valid — and rewrites an embedded, unauthenticated request to the popup entry page. ▸ That is UX routing, not a security boundary. The real gate is <code>verifySession</code> inside <code>/auth/bridge</code>, and nothing in the middleware is trusted for anything else.</p>
+	</aside>
+	</section>
+</section>
 
 <section id="grows">
 	<h2>Where the same bridge goes next</h2>
