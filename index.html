@@ -105,6 +105,11 @@
 		.reveal svg.scene g.done text { display: none; }
 		.reveal svg.scene g.todo { opacity: 0; }
 
+		.reveal .tracker { display: flex; gap: 0.5em; justify-content: center; margin: 0.15em 0 0; }
+		.reveal .trk { font-size: 0.42em; letter-spacing: 0.02em; padding: 0.25em 0.7em; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); color: var(--muted); }
+		.reveal .trk.done { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+		.reveal .trk.now { border-color: var(--accent); color: var(--fg); border-style: dashed; }
+
 		/* --- diagram --- */
 		.reveal svg.diagram { width: 100%; height: auto; font-family: var(--r-main-font); }
 		.reveal svg.diagram text { fill: var(--fg); font-size: 22px; }
@@ -458,7 +463,7 @@
 <section id="flow">
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 1 of 5</p>
-	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:500px">
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:470px">
 		<defs>
 			<marker id="sa1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
 			<marker id="sd1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
@@ -496,6 +501,8 @@
 		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd1)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
+
+		<div class="tracker"><span class="trk todo">inherit host SSO</span><span class="trk todo">silently</span><span class="trk todo">no token leaks</span><span class="trk todo">no lock-in</span></div>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong>Open a popup — on <em>your</em> origin, top-level</strong><br><span class="muted">the host never runs your code</span></p>
 		<aside class="notes">
 		<p>Let me walk the flow. Four lanes: the iframe — your app, embedded; the popup — also your app, but top-level; your app's server; and the identity provider.</p>
@@ -504,7 +511,7 @@
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 2 of 5</p>
-	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:500px">
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:470px">
 		<defs>
 			<marker id="sa2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
 			<marker id="sd2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
@@ -542,14 +549,16 @@
 		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
+
+		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk todo">no token leaks</span><span class="trk todo">no lock-in</span></div>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong>Normal OAuth sign-in, top-level</strong><br><span class="muted">the IdP sees first-party cookies → code, no prompt → session cookie in the popup's jar</span></p>
 		<aside class="notes">
-		<p>In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is <i>where</i> this runs.</p>
+		<p>In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is <i>where</i> this runs. Look at the clipboard at the bottom: two of the four are already green — we inherited the host SSO, and nobody was prompted.</p>
 	</aside>
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 3 of 5</p>
-	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:500px">
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:470px">
 		<defs>
 			<marker id="sa3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
 			<marker id="sd3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
@@ -587,6 +596,8 @@
 		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
+
+		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk now">… no token leaks</span><span class="trk todo">no lock-in</span></div>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">POST /auth/bridge</code> → verify session → park the cookie → mint a ticket</strong><br><span class="muted">🎫 = 256-bit · one-time · ≤ 60 s — the token stays on the server</span></p>
 		<aside class="notes">
 		<p>This is where the title happens.</p>
@@ -595,7 +606,7 @@
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 4 of 5</p>
-	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:500px">
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:470px">
 		<defs>
 			<marker id="sa4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
 			<marker id="sd4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
@@ -633,6 +644,8 @@
 		<g class="act"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sa4)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
+
+		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk now">… no token leaks</span><span class="trk todo">no lock-in</span></div>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">postMessage({ code }, appOrigin)</code></strong><br><span class="muted">only the ticket crosses — explicit target origin, never <code class="inline">*</code></span></p>
 		<aside class="notes">
 		<p>The popup <code>postMessage</code>s that ticket to the iframe — with an explicit target origin, never <code>*</code>. The iframe checks the sender's origin <i>and</i> the sender's window. Why both — in a few minutes.</p>
@@ -640,7 +653,7 @@
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 5 of 5</p>
-	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:500px">
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:470px">
 		<defs>
 			<marker id="sa5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
 			<marker id="sd5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
@@ -678,10 +691,12 @@
 		<g class="done"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
 		<g class="act"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sa5)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa5)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
 	</svg>
+
+		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk done">✓ no token leaks</span><span class="trk todo">no lock-in</span></div>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">fetch /auth/consume?code=…</code> → <code class="inline">Set-Cookie … Partitioned</code></strong><br><span class="muted">the jar that was empty is full — CHIPS keeps the session we delivered</span></p>
 		<aside class="notes">
 		<p>The iframe redeems the ticket: <code>fetch('/auth/consume?code=…', { credentials: 'include' })</code>. The server deletes it on first read and answers with <code>Set-Cookie</code> — <code>Partitioned</code> — into the jar we said was empty. CHIPS couldn't create the session; it can keep the one we just delivered.</p>
-		<p>The popup closes. The user saw a flash for under a second. The iframe reloads, signed in.</p>
+		<p>The popup closes. The user saw a flash for under a second. The iframe reloads, signed in. And the third item on the clipboard turns green: the token never left the server side — only the ticket crossed.</p>
 	</aside>
 	</section>
 </section>
@@ -935,6 +950,7 @@ export const { bridge, consume } = createAuthBridge({
 });
 		</code></pre>
 		<p class="small"><span class="accent">Auth.js</span> — the store, origins, routes, popup and client are all library-agnostic</p>
+		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk done">✓ no token leaks</span><span class="trk now">… no lock-in</span></div>
 		<aside class="notes">
 		<p>Two values: <code>verifySession</code> and <code>cookieName</code>. That's the whole library. Everything else doesn't know if this is Auth.js or not. We copy the cookie instead of creating a new session — that call is different in every library.</p>
 	</aside>
@@ -958,8 +974,9 @@ export const { bridge, consume } = createAuthBridge({
 });
 		</code></pre>
 		<p class="small"><span class="accent">Better Auth</span> — the two-line difference. Any other cookie-session library plugs into the same seam.</p>
+		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk done">✓ no token leaks</span><span class="trk done">✓ no lock-in</span></div>
 		<aside class="notes">
-		<p>Watch what moves — two lines. That's why this piece must not pin you to Auth.js.</p>
+		<p>Watch what moves — two lines. That's why this piece must not pin you to Auth.js. And that's the last item on the clipboard: no lock-in. All four green.</p>
 	</aside>
 	</section>
 

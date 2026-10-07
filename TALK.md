@@ -95,7 +95,7 @@ Let me walk the flow. Four lanes: the iframe — your app, embedded; the popup �
 The iframe opens a popup to `/auth/popup` — on *your* origin, not the host's. The host never runs any of your code. That's why the same pattern ports to SharePoint, Teams, Salesforce, whatever.
 
 ### 13.2 · Step two
-In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is *where* this runs.
+In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is *where* this runs. Look at the clipboard at the bottom: two of the four are already green — we inherited the host SSO, and nobody was prompted.
 
 ### 13.3 · Step three
 This is where the title happens.
@@ -108,7 +108,7 @@ The popup `postMessage`s that ticket to the iframe — with an explicit target o
 ### 13.5 · Step five
 The iframe redeems the ticket: `fetch('/auth/consume?code=…', { credentials: 'include' })`. The server deletes it on first read and answers with `Set-Cookie` — `Partitioned` — into the jar we said was empty. CHIPS couldn't create the session; it can keep the one we just delivered.
 
-The popup closes. The user saw a flash for under a second. The iframe reloads, signed in.
+The popup closes. The user saw a flash for under a second. The iframe reloads, signed in. And the third item on the clipboard turns green: the token never left the server side — only the ticket crossed.
 
 ## 14 · The whole shape
 
@@ -184,7 +184,7 @@ Two values: `verifySession` and `cookieName`. That's the whole library. Everythi
 
 ### 17.2 · Better Auth — the two lines
 
-Watch what moves — two lines. That's why this piece must not pin you to Auth.js.
+Watch what moves — two lines. That's why this piece must not pin you to Auth.js. And that's the last item on the clipboard: no lock-in. All four green.
 
 ### 17.3 · The routes
 
