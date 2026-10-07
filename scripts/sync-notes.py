@@ -14,15 +14,15 @@ page = (ROOT / "index.html").read_text(encoding="utf-8")
 
 # section number -> (section id, vertical index or None)
 SLIDES = {
-    "1": ("title", None), "2": ("about", None), "3": ("origin", None), "4": ("bridge-meme", None),
-    "5": ("takeaways", None), "6": ("setup", None), "7": ("why-banned", None), "8": ("what-changed", None),
-    "9": ("fixes", 0), "9.1": ("fixes", 1), "9.2": ("fixes", 2), "9.3": ("fixes", 3), "9.4": ("fixes", 4),
-    "10": ("constraints", None), "11": ("realisation", None), "12": ("flow", None), "13": ("shape", None),
-    "14": ("demo", None), "15": ("invariants", 0),
-    **{f"15.{i}": ("invariants", i) for i in range(1, 9)},
-    "16": ("seam", 0), **{f"16.{i}": ("seam", i) for i in range(1, 4)},
-    "17": ("opener", None), "18": ("grows", None), "19": ("constraints-done", None),
-    "20": ("credits", None), "21": ("thanks", None),
+    "1": ("title", None), "2": ("disclaimer", None), "3": ("about", None), "4": ("origin", None), "5": ("bridge-meme", None),
+    "6": ("takeaways", None), "7": ("setup", None), "8": ("why-banned", None), "9": ("what-changed", None),
+    "10": ("fixes", 0), "10.1": ("fixes", 1), "10.2": ("fixes", 2), "10.3": ("fixes", 3), "10.4": ("fixes", 4),
+    "11": ("constraints", None), "12": ("realisation", None), "13": ("flow", None), "14": ("shape", None),
+    "15": ("demo", None), "16": ("invariants", 0),
+    **{f"16.{i}": ("invariants", i) for i in range(1, 9)},
+    "17": ("seam", 0), **{f"17.{i}": ("seam", i) for i in range(1, 4)},
+    "18": ("opener", None), "19": ("grows", None), "20": ("constraints-done", None),
+    "21": ("credits", None), "22": ("thanks", None),
 }
 
 # --- parse TALK.md into {number: body} ---
