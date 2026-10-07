@@ -11,7 +11,7 @@ The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but 
 
 ## 2 · Disclaimer *(joke)*
 
-Before we start, a disclaimer. This talk might cause an uncontrolled desire for snacks. We'll be talking about cookies and chips for twenty-five minutes, and none of them are edible. *(beat)*
+Before we start, a disclaimer. This talk might cause an uncontrolled desire for snacks — we'll be talking about cookies and chips for twenty-five minutes, and none of them are edible. ▸ …and diabetes. *(beat)*
 
 ## 3 · Who's talking
 
