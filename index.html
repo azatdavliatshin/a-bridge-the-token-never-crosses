@@ -498,7 +498,8 @@
 	</svg>
 		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong>Open a popup — on <em>your</em> origin, top-level</strong><br><span class="muted">the host never runs your code</span></p>
 		<aside class="notes">
-		
+		<p>Let me walk the flow. Four lanes: the iframe — your app, embedded; the popup — also your app, but top-level; your app's server; and the identity provider.</p>
+		<p>The iframe opens a popup to <code>/auth/popup</code> — on <i>your</i> origin, not the host's. The host never runs any of your code. That's why the same pattern ports to SharePoint, Teams, Salesforce, whatever.</p>
 	</aside>
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
