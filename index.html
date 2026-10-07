@@ -95,6 +95,10 @@
 		.reveal .fix-why { font-size: 0.55em; margin: 0; line-height: 1.35; color: var(--muted); }
 		.reveal .fix-why .cross { color: var(--danger); }
 
+		.reveal .fix-card.done, .reveal .want-badge { }
+		.reveal .want-badge { position: absolute; top: 0.35em; right: 0.5em; color: var(--accent); font-weight: 800; font-size: 1.1em; }
+		.reveal .fix-card { position: relative; }
+
 		/* --- diagram --- */
 		.reveal svg.diagram { width: 100%; height: auto; font-family: var(--r-main-font); }
 		.reveal svg.diagram text { fill: var(--fg); font-size: 22px; }
@@ -383,12 +387,53 @@
 
 <section id="constraints">
 	<h2>What we actually want</h2>
-	<ul class="checklist">
-		<li class="todo">inherit the <em>existing</em> host SSO</li>
-		<li class="todo">silently — no second prompt</li>
-		<li class="todo">no session token anywhere it can leak</li>
-		<li class="todo">no vendor lock-in</li>
-	</ul>
+	<div class="fix-grid">
+		<div class="fix-card fragment" data-fragment-index="1">
+			<svg viewBox="0 0 200 120" class="diagram fix-pic">
+				<rect class="jar full" x="15" y="35" width="60" height="50" rx="8"/>
+				<text x="45" y="65" text-anchor="middle" class="label acc" style="font-size:12px">host SSO</text>
+				<line x1="82" y1="60" x2="118" y2="60" stroke="var(--accent)" stroke-width="3" marker-end="url(#ah-w)"/>
+				<rect class="box" x="125" y="25" width="60" height="70" rx="8" stroke-dasharray="6 4"/>
+				<text x="155" y="64" text-anchor="middle" class="label" style="font-size:12px">your app</text>
+			</svg>
+			<p class="fix-title">Inherit the <em>existing</em> host SSO</p>
+			<p class="fix-why">not a new login — the session the user already has</p>
+		</div>
+		<div class="fix-card fragment" data-fragment-index="2">
+			<svg viewBox="0 0 200 120" class="diagram fix-pic">
+				<rect x="30" y="25" width="140" height="70" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+				<text x="100" y="52" text-anchor="middle" style="fill:#111; font-size:11px; font-weight:600">Allow cookies?</text>
+				<rect x="44" y="64" width="50" height="16" rx="4" fill="#e5e7eb"/><rect x="106" y="64" width="50" height="16" rx="4" fill="#2563eb"/>
+				<line x1="25" y1="20" x2="175" y2="100" stroke="var(--danger)" stroke-width="6" stroke-linecap="round"/>
+				<line x1="175" y1="20" x2="25" y2="100" stroke="var(--danger)" stroke-width="6" stroke-linecap="round"/>
+			</svg>
+			<p class="fix-title">Silently</p>
+			<p class="fix-why">no second prompt, no permission dialog</p>
+		</div>
+		<div class="fix-card fragment" data-fragment-index="3">
+			<svg viewBox="0 0 200 120" class="diagram fix-pic">
+				<rect x="15" y="40" width="170" height="36" rx="18" fill="rgba(255,255,255,0.08)" stroke="var(--muted)" stroke-width="2"/>
+				<text x="30" y="64" class="label muted" style="font-size:12px">https://app/…?token=</text>
+				<rect x="140" y="47" width="38" height="22" rx="5" fill="var(--danger)"/>
+				<text x="159" y="63" text-anchor="middle" style="fill:#fff; font-size:11px; font-weight:700">eyJ…</text>
+				<text x="100" y="105" text-anchor="middle" class="label bad" style="font-size:13px">never in a URL · message · JS</text>
+			</svg>
+			<p class="fix-title">No token where it can leak</p>
+			<p class="fix-why">not in a URL, not in a message payload, not in JavaScript</p>
+		</div>
+		<div class="fix-card fragment" data-fragment-index="4">
+			<svg viewBox="0 0 200 120" class="diagram fix-pic">
+				<rect x="70" y="50" width="60" height="50" rx="8" fill="rgba(255,255,255,0.08)" stroke="var(--fg)" stroke-width="3"/>
+				<path d="M82 50 v-14 a18 18 0 0 1 36 0 v4" fill="none" stroke="var(--fg)" stroke-width="3"/>
+				<circle cx="100" cy="72" r="5" fill="var(--fg)"/><rect x="98" y="74" width="4" height="12" fill="var(--fg)"/>
+				<rect x="138" y="62" width="48" height="22" rx="4" fill="var(--accent)"/><text x="162" y="77" text-anchor="middle" style="fill:#0f1115; font-size:11px; font-weight:700">YOURS</text>
+			</svg>
+			<p class="fix-title">No vendor lock-in</p>
+			<p class="fix-why">your auth library, your identity provider, your keys</p>
+		</div>
+	</div>
+	<svg width="0" height="0" style="position:absolute"><defs><marker id="ah-w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker></defs></svg>
+	<p class="tiny" style="text-align:center">keep these four on your clipboard — we check them off at the end</p>
 	<aside class="notes">
 		<p>So here's the spec. Inherit the <i>existing</i> host SSO — not a new login. Silently — no prompt. No session token anywhere it can leak. And no vendor lock-in. Keep these four on your mental clipboard. We'll check them off at the end.</p>
 	</aside>
@@ -829,12 +874,52 @@ window.location.reload();
 
 <section id="constraints-done">
 	<h2>Back to the four constraints</h2>
-	<ul class="checklist">
-		<li class="done">inherit the <em>existing</em> host SSO</li>
-		<li class="done">silently — no second prompt</li>
-		<li class="done">no session token anywhere it can leak</li>
-		<li class="done">no vendor lock-in — two libraries, two live demos</li>
-	</ul>
+	<div class="fix-grid">
+		<div class="fix-card" data-fragment-index="1">
+			<svg viewBox="0 0 200 120" class="diagram fix-pic">
+				<rect class="jar full" x="15" y="35" width="60" height="50" rx="8"/>
+				<text x="45" y="65" text-anchor="middle" class="label acc" style="font-size:12px">host SSO</text>
+				<line x1="82" y1="60" x2="118" y2="60" stroke="var(--accent)" stroke-width="3" marker-end="url(#ah-w2)"/>
+				<rect class="box" x="125" y="25" width="60" height="70" rx="8" stroke-dasharray="6 4"/>
+				<text x="155" y="64" text-anchor="middle" class="label" style="font-size:12px">your app</text>
+			</svg>
+			<span class="want-badge">✓</span><p class="fix-title">Inherit the <em>existing</em> host SSO</p>
+			<p class="fix-why">the popup inherits it</p>
+		</div>
+		<div class="fix-card" data-fragment-index="2">
+			<svg viewBox="0 0 200 120" class="diagram fix-pic">
+				<rect x="30" y="25" width="140" height="70" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+				<text x="100" y="52" text-anchor="middle" style="fill:#111; font-size:11px; font-weight:600">Allow cookies?</text>
+				<rect x="44" y="64" width="50" height="16" rx="4" fill="#e5e7eb"/><rect x="106" y="64" width="50" height="16" rx="4" fill="#2563eb"/>
+				<line x1="25" y1="20" x2="175" y2="100" stroke="var(--danger)" stroke-width="6" stroke-linecap="round"/>
+				<line x1="175" y1="20" x2="25" y2="100" stroke="var(--danger)" stroke-width="6" stroke-linecap="round"/>
+			</svg>
+			<span class="want-badge">✓</span><p class="fix-title">Silently</p>
+			<p class="fix-why">one sub-second flash, no prompt</p>
+		</div>
+		<div class="fix-card" data-fragment-index="3">
+			<svg viewBox="0 0 200 120" class="diagram fix-pic">
+				<rect x="15" y="40" width="170" height="36" rx="18" fill="rgba(255,255,255,0.08)" stroke="var(--muted)" stroke-width="2"/>
+				<text x="30" y="64" class="label muted" style="font-size:12px">https://app/…?token=</text>
+				<rect x="140" y="47" width="38" height="22" rx="5" fill="var(--danger)"/>
+				<text x="159" y="63" text-anchor="middle" style="fill:#fff; font-size:11px; font-weight:700">eyJ…</text>
+				<text x="100" y="105" text-anchor="middle" class="label bad" style="font-size:13px">never in a URL · message · JS</text>
+			</svg>
+			<span class="want-badge">✓</span><p class="fix-title">No token where it can leak</p>
+			<p class="fix-why">only a 60-second, single-use ticket ever crosses</p>
+		</div>
+		<div class="fix-card" data-fragment-index="4">
+			<svg viewBox="0 0 200 120" class="diagram fix-pic">
+				<rect x="70" y="50" width="60" height="50" rx="8" fill="rgba(255,255,255,0.08)" stroke="var(--fg)" stroke-width="3"/>
+				<path d="M82 50 v-14 a18 18 0 0 1 36 0 v4" fill="none" stroke="var(--fg)" stroke-width="3"/>
+				<circle cx="100" cy="72" r="5" fill="var(--fg)"/><rect x="98" y="74" width="4" height="12" fill="var(--fg)"/>
+				<rect x="138" y="62" width="48" height="22" rx="4" fill="var(--accent)"/><text x="162" y="77" text-anchor="middle" style="fill:#0f1115; font-size:11px; font-weight:700">YOURS</text>
+			</svg>
+			<span class="want-badge">✓</span><p class="fix-title">No vendor lock-in</p>
+			<p class="fix-why">two libraries, two live demos, two lines</p>
+		</div>
+	</div>
+	<svg width="0" height="0" style="position:absolute"><defs><marker id="ah-w2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker></defs></svg>
 	<aside class="notes">
 		<p>The clipboard. Inherit the existing host SSO — yes, the popup inherits it. Silently — one sub-second flash, no prompt. No token where it can leak — only a sixty-second, single-use receipt ever crosses. No lock-in — two libraries, two live demos, two lines of difference.</p>
 	</aside>
