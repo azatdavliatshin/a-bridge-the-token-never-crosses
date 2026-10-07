@@ -1,6 +1,6 @@
 # A Bridge the Token Never Crosses — speaker script
 
-> Full spoken text, slide by slide. ~3,600 words ≈ 26–28 min at a calm pace, plus the demo. Sections marked **[cut-candidate]** are the first to go if the rehearsal runs long; dropping all of them lands at ~22 min. Slide numbers are the horizontal slide count as the deck's corner shows it (reveal's URL hash is zero-based, so slide N is `#/N-1`); vertical sub-slides are N.1, N.2… **▸ = click (next fragment appears)**; a slide with no ▸ has no fragments.
+> Full spoken text, slide by slide. ~3,600 words ≈ 26–28 min at a calm pace, plus the demo. Slide numbers are the horizontal slide count as the deck's corner shows it (reveal's URL hash is zero-based, so slide N is `#/N-1`); vertical sub-slides are N.1, N.2… **▸ = click (next fragment appears)**; a slide with no ▸ has no fragments.
 
 ---
 
@@ -155,11 +155,7 @@ No session token in any client-constructed URL, response body, or message payloa
 
 ▸ The subtle part is the phrase "whole roundtrip". Every component can pass its own test while the *composition* leaks — one helper builds a URL from another's output. So the end-to-end test sweeps every URL the client builds across the whole flow, not per component.
 
-### 16.5 · Invariant 5 — redirect hygiene **[cut-candidate]**
-
-The `?next=` parameter after sign-in. One function, `sanitizeNext`: anything under `/auth` or `/api/auth` is rejected — that's the auth-loop case; absolute URLs, protocol-relative `//evil`, and — the one you'd miss — backslash `/\evil`, which some parsers normalise to a protocol-relative URL. All fall back to `/`. Open redirect and auth loop, closed in one place.
-
-### 16.6 · Invariant 6 — only a same-origin fetch may redeem
+### 16.5 · Invariant 5 — only a same-origin fetch may redeem
 
 This one I added *after* shipping, so it gets its own story.
 
@@ -169,11 +165,11 @@ The code was already one-time and sixty seconds. And that was not enough. Think 
 
 One honest note: a request with *no* Fetch Metadata at all falls through to the Origin check. Every supported browser sends it, so you can't trigger that from a browser; it exists so the test bench and non-browser clients don't break. A future major may close it. The proper structural fix — binding the code to the window that opened the popup, PKCE-style — is the planned follow-up.
 
-### 16.7 · The checklist
+### 16.6 · The checklist
 
-Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin *and* source. No token in any URL — at roundtrip level. Redirect hygiene. Same-origin-fetch-only redemption. If you have a popup auth scheme in production, go through these six tomorrow.
+Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin *and* source. No token in any URL — at roundtrip level. Redirect hygiene — `?next=` sanitised, no open redirect, no auth loop; it didn't get its own slide, it's one function. Same-origin-fetch-only redemption. If you have a popup auth scheme in production, go through these six tomorrow.
 
-### 16.8 · What the tests don't prove
+### 16.7 · What the tests don't prove
 
 And the honest boundary. The Node test suite proves the `Partitioned` attribute is *emitted*, that data flows end-to-end, and every negative case I just listed. It does *not* prove that a real browser *isolates* the partition — that's a property of the browser's CHIPS implementation, and you can only check it in a browser. I did: two live origins, positive and negative case, written down in the repo. Also: that a credentialed `fetch` — not a navigation — commits the cookie under the right top-level site. That was an open question until I tried it.
 
@@ -193,21 +189,15 @@ Why does this matter? Auth.js — NextAuth — is effectively in maintenance mod
 
 Same config, Better Auth. Watch what moves. `verifySession` becomes `auth.api.getSession` with the request headers. `cookieName` becomes `getBetterAuthCookieName({ secure: true })` — derived, not hardcoded, because the `__Secure-` prefix rule bit me once; there's a `__Secure-__Secure-` bug in the changelog. Everything else is byte-identical. Any other cookie-session library plugs into the same two values.
 
-### 17.2 · Wiring in 20 lines **[go fast]**
+### 17.2 · Wiring in 20 lines
 
 For completeness, the rest of the wiring. Two route files, one line each — `bridge` and `consume` are plain `Request → Response` functions. A middleware that does *UX routing only* — it rewrites unauthenticated embedded requests to the popup entry page; it is not a security boundary, we covered that. It imports from the `/middleware` subpath because the package root reaches `node:crypto` and won't bundle for Edge. The popup page: `runPopupFlow`, then `window.close()`. And the launcher in the iframe: `openAuthPopup`, then `fetch` consume with `credentials: 'include'` — that's what commits the cookie under the right partition — then reload. There's no magic. The volume is small.
-
-### 17.3 · Cold start **[cut-candidate]**
-
-One more case: a first-time user with no app session at all, but a live host SSO. ▸ The demo apps' popup handles it with exactly one `prompt=none` attempt against the shared IdP, ▸ with a one-shot guard so it can't loop. ▸ If it comes back `login_required`, you get a "sign in on the host first" notice — never an interactive login inside the popup. ▸ Scoping note: this only works when host and app share an identity provider — Entra in Microsoft 365, Keycloak in my demos. The warm handoff is the fully general core; this is a nice extra.
-
----
 
 ## 18 · The afternoon I lost to `window.opener`
 
 One bug story, because it taught me the lesson I most want you to leave with.
 
-▸ The cold-start path *navigates* the popup — off to the IdP and back — before it can `postMessage` the code to its opener. I was *certain* this would break the bridge. My mental model said: navigate the popup, `window.opener` becomes null, the popup loses its reference to the iframe, the code has nowhere to go. So I built an elaborate fallback — stash the code server-side, poll for it from the opener.
+▸ There's a cold-start path I haven't shown: a first-time user with no app session yet, where the popup makes one silent `prompt=none` attempt against the IdP. That path *navigates* the popup — off to the IdP and back — before it can `postMessage` the code to its opener. I was *certain* this would break the bridge. My mental model said: navigate the popup, `window.opener` becomes null, the popup loses its reference to the iframe, the code has nowhere to go. So I built an elaborate fallback — stash the code server-side, poll for it from the opener.
 
 ▸ Then I actually tested it. Chrome, and Safari in private mode. `window.opener` survived the entire redirect round-trip. The code posted fine. The fallback was dead code.
 

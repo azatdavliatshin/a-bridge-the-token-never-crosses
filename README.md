@@ -8,5 +8,5 @@ Slides for the YerevanJS #1 talk. reveal.js 5.2.1, single `index.html`, no build
 - Identity: all colours are CSS variables at the top of `index.html` (`--accent`, `--bg`, `--fg`); swap when the YerevanJS theme is ready.
 - Placeholder to fill: the joke line on the "Who's talking" slide.
 - `assets/qr-ad.png` (ad block on "Who's talking") points at the LinkedIn profile for now; once the consulting post is live, regenerate: `python3 -c "import qrcode; qrcode.make('<POST URL>').save('assets/qr-ad.png')"` (`pip install qrcode[pil]`).
-- Appendix slides live after "Thanks" — jump with `#/appendix-jwt`, `#/appendix-chips`, `#/appendix-store`, `#/appendix-fetchmeta`, `#/appendix-authjs`.
+- Appendix slides are hidden from the flow (`data-visibility="hidden"` on `#appendix`); remove that attribute to bring them back. Ids: `#/appendix-jwt`, `#/appendix-chips`, `#/appendix-store`, `#/appendix-fetchmeta`, `#/appendix-authjs`.
 - Full speaker script: `TALK.md`. Outline with per-slide notes and timing: `talent-visa/05-build-projects/auth-bridge-talk-yerevanjs-outline.md`.

@@ -19,8 +19,8 @@ SLIDES = {
     "9": ("fixes", None), "10": ("chips-jar", None),
     "11": ("constraints", None), "12": ("realisation", None), "13": ("flow", None), "14": ("shape", None),
     "15": ("demo", None), "16": ("invariants", 0),
-    **{f"16.{i}": ("invariants", i) for i in range(1, 9)},
-    "17": ("seam", 0), **{f"17.{i}": ("seam", i) for i in range(1, 4)},
+    **{f"16.{i}": ("invariants", i) for i in range(1, 8)},
+    "17": ("seam", 0), **{f"17.{i}": ("seam", i) for i in range(1, 3)},
     "18": ("opener", None), "19": ("grows", None), "20": ("constraints-done", None),
     "21": ("credits", None), "22": ("thanks", None),
 }

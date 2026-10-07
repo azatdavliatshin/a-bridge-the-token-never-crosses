@@ -648,24 +648,9 @@ window.addEventListener("message", (event) => {
 	</aside>
 	</section>
 
-	<section>
-		<p class="kicker">Invariant 5</p>
-		<h3>Redirect hygiene</h3>
-		<table>
-			<tr><th><code class="inline">?next=</code></th><th>→</th></tr>
-			<tr><td><code class="inline">/dashboard</code></td><td class="ok">/dashboard</td></tr>
-			<tr><td><code class="inline">/auth/popup</code> · <code class="inline">/api/auth/…</code></td><td class="danger">/ (auth loop)</td></tr>
-			<tr><td><code class="inline">https://evil.example</code></td><td class="danger">/</td></tr>
-			<tr><td><code class="inline">//evil.example</code></td><td class="danger">/</td></tr>
-			<tr><td><code class="inline">/\evil.example</code></td><td class="danger">/ — the one you'd miss</td></tr>
-		</table>
-		<aside class="notes">
-		<p>The <code>?next=</code> parameter after sign-in. One function, <code>sanitizeNext</code>: anything under <code>/auth</code> or <code>/api/auth</code> is rejected — that's the auth-loop case; absolute URLs, protocol-relative <code>//evil</code>, and — the one you'd miss — backslash <code>/\evil</code>, which some parsers normalise to a protocol-relative URL. All fall back to <code>/</code>. Open redirect and auth loop, closed in one place.</p>
-	</aside>
-	</section>
 
 	<section>
-		<p class="kicker">Invariant 6 · added after shipping (v0.3.1)</p>
+		<p class="kicker">Invariant 5 · added after shipping (v0.3.1)</p>
 		<h3>Only a same-origin <span class="accent">fetch</span> may redeem</h3>
 		<div class="two-col">
 			<div>
@@ -701,7 +686,7 @@ window.addEventListener("message", (event) => {
 		</ul>
 		<p class="tiny">each row ↔ a named, currently-green test in the reference implementation's threat model — link at the end</p>
 		<aside class="notes">
-		<p>Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin <i>and</i> source. No token in any URL — at roundtrip level. Redirect hygiene. Same-origin-fetch-only redemption. If you have a popup auth scheme in production, go through these six tomorrow.</p>
+		<p>Here's the whole list on one slide. Take a photo. Session first. One-time, sixty seconds, 256 bits. Origin <i>and</i> source. No token in any URL — at roundtrip level. Redirect hygiene — <code>?next=</code> sanitised, no open redirect, no auth loop; it didn't get its own slide, it's one function. Same-origin-fetch-only redemption. If you have a popup auth scheme in production, go through these six tomorrow.</p>
 	</aside>
 	</section>
 
@@ -824,18 +809,6 @@ window.location.reload();
 	</aside>
 	</section>
 
-	<section>
-		<h2>Cold start: one silent attempt</h2>
-		<ul>
-			<li class="fragment">popup finds no app session → <em>one</em> <code class="inline">prompt=none</code> attempt against the shared IdP</li>
-			<li class="fragment">one-shot guard — no redirect loops</li>
-			<li class="fragment"><code class="inline">login_required</code> → "sign in on the host first" — never an interactive login in the popup</li>
-			<li class="fragment muted">works only when host and app share an IdP (Entra in M365, Keycloak in the demos) — the warm handoff is the general core</li>
-		</ul>
-		<aside class="notes">
-		<p>One more case: a first-time user with no app session at all, but a live host SSO. ▸ The demo apps' popup handles it with exactly one <code>prompt=none</code> attempt against the shared IdP, ▸ with a one-shot guard so it can't loop. ▸ If it comes back <code>login_required</code>, you get a "sign in on the host first" notice — never an interactive login inside the popup. ▸ Scoping note: this only works when host and app share an identity provider — Entra in Microsoft 365, Keycloak in my demos. The warm handoff is the fully general core; this is a nice extra.</p>
-	</aside>
-	</section>
 </section>
 
 <!-- ===================== BLOCK 5 — WRONG, AND WHERE IT GROWS ===================== -->
@@ -853,7 +826,7 @@ window.location.reload();
 	<p class="quote small fragment" data-fragment-index="5">When a cross-context assumption feels obvious, the browser is the only authority. Verify in two engines before you build around it.</p>
 	<aside class="notes">
 		<p>One bug story, because it taught me the lesson I most want you to leave with.</p>
-		<p>▸ The cold-start path <i>navigates</i> the popup — off to the IdP and back — before it can <code>postMessage</code> the code to its opener. I was <i>certain</i> this would break the bridge. My mental model said: navigate the popup, <code>window.opener</code> becomes null, the popup loses its reference to the iframe, the code has nowhere to go. So I built an elaborate fallback — stash the code server-side, poll for it from the opener.</p>
+		<p>▸ There's a cold-start path I haven't shown: a first-time user with no app session yet, where the popup makes one silent <code>prompt=none</code> attempt against the IdP. That path <i>navigates</i> the popup — off to the IdP and back — before it can <code>postMessage</code> the code to its opener. I was <i>certain</i> this would break the bridge. My mental model said: navigate the popup, <code>window.opener</code> becomes null, the popup loses its reference to the iframe, the code has nowhere to go. So I built an elaborate fallback — stash the code server-side, poll for it from the opener.</p>
 		<p>▸ Then I actually tested it. Chrome, and Safari in private mode. <code>window.opener</code> survived the entire redirect round-trip. The code posted fine. The fallback was dead code.</p>
 		<p>▸ What I'd confused: it's not <i>navigation</i> that severs the opener relationship. It's COOP — <code>Cross-Origin-Opener-Policy: same-origin</code>. That header puts the page in a fresh browsing-context group and <i>that</i> nulls the opener. A plain redirect, no COOP, keeps it. I'd attributed to "navigation" a behaviour that belongs to a specific security header.</p>
 		<p>▸ I deleted the fallback. ▸ And the lesson: when a cross-context assumption feels obvious, the browser is the only authority worth trusting. Verify it in two engines before you build around it. — And the practical corollary: if your IdP or your app <i>does</i> set COOP <code>same-origin</code>, <i>then</i> you have this problem, and now you know why.</p>
@@ -954,7 +927,7 @@ window.location.reload();
 
 <!-- ===================== APPENDIX ===================== -->
 
-<section id="appendix">
+<section id="appendix" data-visibility="hidden">
 	<section class="center-slide"><h2 class="muted">Appendix</h2></section>
 	<section id="appendix-jwt">
 		<h3>Why not a JWT in the URL / in <code class="inline">postMessage</code>?</h3>
