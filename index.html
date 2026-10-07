@@ -289,7 +289,7 @@
 			<text x="825" y="279" text-anchor="middle" class="label muted">someone else's page</text>
 		</g>
 	</svg>
-	<p class="tiny fragment" data-fragment-index="4" style="text-align:center">Safari — ITP 2017, full block 2020 · Firefox — partitioned by default 2022 · Chrome — kept, but blocked in incognito &amp; by enterprise policy</p>
+	<p class="small fragment" data-fragment-index="4" style="text-align:center"><span class="accent">Safari</span> ITP 2017 → full block 2020 &nbsp;·&nbsp; <span class="accent">Firefox</span> partitioned by default 2022 &nbsp;·&nbsp; <span class="accent">Chrome</span> kept — but blocked in incognito &amp; by enterprise policy</p>
 	<aside class="notes">
 		<p>What changed is that your cookie became a <i>third-party</i> cookie — and to see why that's fatal, look at what the browser is actually fighting. ▸ A third-party cookie is the primitive of cross-site tracking: one ad pixel embedded on a thousand sites, one cookie, one profile of you. Browsers decided to kill that.</p>
 		<p>▸ And here's the problem for us: your embedded app, to the browser, is the same shape. A foreign origin, inside someone else's page, asking for its cookies. ▸ The browser can't tell the two apart, so the fix was blunt — no cookies for foreign origins inside a page. We're collateral damage of anti-tracking.</p>
