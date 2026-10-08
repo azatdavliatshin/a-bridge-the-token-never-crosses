@@ -15,14 +15,14 @@ page = (ROOT / "index.html").read_text(encoding="utf-8")
 # section number -> (section id, vertical index or None)
 SLIDES = {
     "1": ("title", None), "2": ("disclaimer", None), "3": ("about", None), "4": ("origin", None), "5": ("bridge-meme", None),
-    "6": ("takeaways", None), "7": ("setup", None), "8": ("why-banned", None),
-    "9": ("fixes", None), "10": ("chips-jar", None),
-    "11": ("constraints", None), "12": ("realisation", None), **{f"13.{i}": ("flow", i-1) for i in range(1, 6)}, "14": ("shape", None),
-    "15": ("demo", None), "16": ("invariants", 0),
-    **{f"16.{i}": ("invariants", 2*i) for i in range(1, 6)}, "16.6": ("invariants", 11), "16.7": ("invariants", 12),
-    "17": ("seam", 0), **{f"17.{i}": ("seam", i) for i in range(1, 8)},
-    "18": ("grows", None), "19": ("constraints-done", None),
-    "20": ("credits", None), "21": ("thanks", None),
+    "6": ("takeaways", None), "7": ("party", None), "8": ("setup", None), "9": ("why-banned", None),
+    "10": ("fixes", None), "11": ("chips-jar", None),
+    "12": ("constraints", None), "13": ("realisation", None), **{f"14.{i}": ("flow", i-1) for i in range(1, 6)}, "15": ("shape", None),
+    "16": ("demo", None), "17": ("invariants", 0),
+    **{f"17.{i}": ("invariants", 2*i) for i in range(1, 6)}, "17.6": ("invariants", 11), "17.7": ("invariants", 12),
+    "18": ("seam", 0), **{f"18.{i}": ("seam", i) for i in range(1, 8)},
+    "19": ("grows", None), "20": ("constraints-done", None),
+    "21": ("credits", None), "22": ("thanks", None),
 }
 
 # --- parse TALK.md into {number: body} ---

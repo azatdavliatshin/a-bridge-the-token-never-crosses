@@ -41,13 +41,17 @@ Four things. ▸ A mental model — a one-time ticket across a gap you don't tru
 
 ---
 
-## 7 · The setup
+## 7 · Same cookie, different page
+
+Before the problem itself, one definition — because the whole talk stands on it: "first-party" and "third-party" are not kinds of cookies. They're a property of the *page*. ▸ Open `app.example` in a tab — that's the address bar — and the cookie your server set for `app.example` is first-party. The browser sends it. ▸ Now open `host.example`, which loads `app.example` in an iframe. Same cookie, same server, same user. But the address bar says `host.example`, so to the browser that cookie is now third-party — and it's blocked. ▸ Nothing about the cookie changed. The context did. Keep that in mind: in a minute I'll say "your cookie became a third-party cookie", and I'll mean you didn't do anything — the browser re-classified it based on who's in the address bar.
+
+## 8 · The setup
 
 Here's the situation. Your Next.js app lives inside somebody else's page. SharePoint web part, Teams tab, Salesforce Lightning component, ServiceNow, Confluence — choose your fighter. The host already has the user signed in against a shared identity provider — in the Microsoft world that's Entra.
 
-Ten years ago this was boring. The iframe just saw the same cookies as the host, and life went on.
+Ten years ago this was boring. The iframe just saw the same cookies as the host, and life went on. Now you know why it doesn't: that cookie is third-party here.
 
-## 8 · Your cookie became a third-party cookie
+## 9 · Your cookie became a third-party cookie
 
 What changed is that your cookie became a *third-party* cookie — and to see why that's fatal, look at what the browser is actually fighting. ▸ A third-party cookie is the primitive of cross-site tracking: one ad pixel embedded on a thousand sites, one cookie, one profile of you. Browsers decided to kill that.
 
@@ -55,7 +59,7 @@ What changed is that your cookie became a *third-party* cookie — and to see wh
 
 ▸ Safari blocked this years ago — ITP in 2017, a full block by 2020. Firefox partitions by default. Chrome kept third-party cookies — except incognito and enterprise policy, which is exactly where this app lives. You cannot rely on them. Full stop. And every fix that tries to "get the cookie back" is fighting the browser.
 
-## 9 · Four obvious fixes
+## 10 · Four obvious fixes
 
 So what do people try? Four things, and each one breaks either the UX or the architecture.
 
@@ -67,19 +71,19 @@ So what do people try? Four things, and each one breaks either the UX or the arc
 
 ▸ **CHIPS.** Cookies with the `Partitioned` attribute. Someone on the team reads the spec and says "we just set `Partitioned` and we're done". Hold that thought — next slide.
 
-## 10 · CHIPS: a cookie your frame can keep
+## 11 · CHIPS: a cookie your frame can keep
 
 Back to CHIPS, because this is the one that matters. A partitioned cookie is a cookie your frame *can keep*. ▸ It is not a cookie your frame *already has*. ▸ Your partition — keyed by your origin plus the host's top-level site — starts empty. CHIPS gives you a place to store a session in the embedded context. It does nothing to create one.
 
 ▸ Hold onto that jar, because we *will* use it — on the far side of the bridge.
 
-## 11 · What we actually want
+## 12 · What we actually want
 
 So here's the spec. Inherit the *existing* host SSO — not a new login. Silently — no prompt. No session token anywhere it can leak. And no vendor lock-in. Keep these four on your mental clipboard. We'll check them off at the end.
 
 ---
 
-## 12 · The one realisation
+## 13 · The one realisation
 
 Everything that follows comes from one sentence.
 
@@ -87,34 +91,34 @@ The iframe is the wrong place to do OAuth. A popup runs in the *top-level* brows
 
 That's it. That's the trick. Everything else is making it safe.
 
-## 13 · The bridge, step by step
+## 14 · The bridge, step by step
 
-### 13.1 · Step one
+### 14.1 · Step one
 Let me walk the flow. Four lanes: the iframe — your app, embedded; the popup — also your app, but top-level; your app's server; and the identity provider.
 
 The iframe opens a popup to `/auth/popup` — on *your* origin, not the host's. The host never runs any of your code. That's why the same pattern ports to SharePoint, Teams, Salesforce, whatever.
 
-### 13.2 · Step two
+### 14.2 · Step two
 In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is *where* this runs. Look at the clipboard at the bottom: two of the four are already green — we inherited the host SSO, and nobody was prompted.
 
-### 13.3 · Step three
+### 14.3 · Step three
 This is where the title happens.
 
 The popup calls `POST /auth/bridge`. The server checks there is a real session, parks it for sixty seconds, and returns a one-time ticket. The popup never gets the token — only the ticket.
 
-### 13.4 · Step four
+### 14.4 · Step four
 The popup `postMessage`s that ticket to the iframe — with an explicit target origin, never `*`. The iframe checks the sender's origin *and* the sender's window. Why both — in a few minutes.
 
-### 13.5 · Step five
+### 14.5 · Step five
 The iframe redeems the ticket: `fetch('/auth/consume?code=…', { credentials: 'include' })`. The server deletes it on first read and answers with `Set-Cookie` — `Partitioned` — into the jar we said was empty. CHIPS couldn't create the session; it can keep the one we just delivered.
 
 The popup closes. The user saw a flash for under a second. The iframe reloads, signed in. And the third item on the clipboard turns green: the token never left the server side — only the ticket crossed.
 
-## 14 · The whole shape
+## 15 · The whole shape
 
 Same trick as OAuth: a short-lived code crosses the untrusted bit, the real session is swapped for it on the server. We just moved the boundary — not browser to IdP, but popup to iframe. Native apps do this too; I'll come back to that.
 
-## 15 · Demo
+## 16 · Demo
 
 Let me show you it's real. *(live)*
 
@@ -126,21 +130,21 @@ Second deployment — same flow, same bridge, but the app underneath is Better A
 
 ---
 
-## 16 · Five rules
+## 17 · Five rules
 
 Now the part I actually care about: five rules. Remove *any one* of them and the bridge becomes a hole. I'll go through them with one question: what breaks without it? This list works against any popup-and-iframe scheme, not just mine.
 
-### 16.1 · Rule 1 — verify the session first
+### 17.1 · Rule 1 — verify the session first
 
 The bridge route issues a ticket only *after* your auth library confirms a real session. Not on a header, not on a "I'm inside an iframe" signal, not on anything the client says about itself. No session — 401, nothing issued.
 
 ▸ What breaks without it: anyone who can spoof a context header gets a ticket for free, and a ticket is a session. I'll say this twice because it's the one that gets skipped under deadline: middleware is routing; the server check is the boundary.
 
-### 16.2 · Rule 2 — the ticket is not the key
+### 17.2 · Rule 2 — the ticket is not the key
 
 The ticket is not the key. Two hundred fifty-six random bits, one use, sixty seconds — if you configure a longer TTL, construction *throws*. Be honest about what sits in that store: the real session cookie, for up to sixty seconds. Treat the store like your session database. First consume, a cookie. Second consume of the same ticket — 4xx, nothing. A leaked ticket is inert.
 
-### 16.3 · Rule 3 — trust the sender twice
+### 17.3 · Rule 3 — trust the sender twice
 
 The `postMessage` receiver. Two checks. `event.origin` must be in the allowlist — everyone does this one. *And* `event.source` must be the popup window you actually opened.
 
@@ -148,13 +152,13 @@ The `postMessage` receiver. Two checks. `event.origin` must be in the allowlist 
 
 ▸ I lost an afternoon to this. I thought: popup goes to the IdP, `window.opener` dies, ticket has nowhere to go. Wrong. Redirects keep the opener. What kills it is a header — `Cross-Origin-Opener-Policy: same-origin`. Then opener is null, nobody to post to, and it fails silently.
 
-### 16.4 · Rule 4 — zero tokens in URLs, for the whole roundtrip
+### 17.4 · Rule 4 — zero tokens in URLs, for the whole roundtrip
 
 No session token in any URL, response body, or message. The *only* thing allowed in a URL is the ticket, in `?code=`. A token in a URL lives forever — history, logs, referrers, screenshots.
 
 ▸ "Whole roundtrip" matters: each piece can look fine while together they leak. So the end-to-end test sweeps every URL the client builds, not per component.
 
-### 16.5 · Rule 5 — only a same-origin fetch may redeem
+### 17.5 · Rule 5 — only a same-origin fetch may redeem
 
 This one I added *after* shipping, so it gets its own story.
 
@@ -162,11 +166,11 @@ The ticket was already one-time and sixty seconds. And that was not enough. Thin
 
 ▸ The fix is Fetch Metadata. The consume route accepts only a `fetch()` from the app's own page — `Sec-Fetch-Site: same-origin`, `Sec-Fetch-Dest: empty`. A top-level navigation, an `<img>` load, a cross-site fetch — all 4xx. The store isn't touched, so the real ticket survives for the real opener. Browsers set these headers; page script can't fake them.
 
-### 16.6 · The checklist
+### 17.6 · The checklist
 
 Here's the whole list on one slide. Take a photo. Five rules. Tomorrow, against whatever you already shipped.
 
-### 16.7 · What the tests don't prove
+### 17.7 · What the tests don't prove
 
 And the honest boundary. The Node tests prove we emit `Partitioned`, that data flows, and every negative case I just listed. They do *not* prove a real browser *isolates* the partition — I had to check that in a browser. I did: two live origins, written down in the repo. Also that `fetch` — not a navigation — actually sets the cookie in the iframe's jar.
 
@@ -174,51 +178,51 @@ If you adopt the pattern, run that live check in *your* browsers. CHIPS is Chrom
 
 ---
 
-## 17 · The reference implementation
+## 18 · The reference implementation
 
 Here's the repo I've been calling "the reference implementation": `next-auth-bridge`, on npm and GitHub, MIT. It's the pattern you just saw, with the five rules written down as a threat model and a negative test behind each one. It runs on Auth.js and on Better Auth, and the two live demos are deployed from it. The QR is the same one you'll see at the end, so no need to scan yet. Now — how do you put it into a Next.js app?
 
-### 17.1 · Adding the bridge to a Next.js app
+### 18.1 · Adding the bridge to a Next.js app
 
 Enough theory. `npm install`, six files. The numbers next to the files are the bridge steps you already saw.
 
-### 17.2 · The config — where the auth library lives
+### 18.2 · The config — where the auth library lives
 
 Two values: `verifySession` and `cookieName`. That's the whole library. Everything else doesn't know if this is Auth.js or not. We copy the cookie instead of creating a new session — that call is different in every library.
 
-### 17.3 · Better Auth — the two lines
+### 18.3 · Better Auth — the two lines
 
 Watch what moves — two lines. That's why this piece must not pin you to Auth.js. And that's the last item on the clipboard: no lock-in. All four green.
 
-### 17.4 · The routes
+### 18.4 · The routes
 
 Two files. `bridge` is step three. `consume` is step five.
 
-### 17.5 · The popup page
+### 18.5 · The popup page
 
 This is the flash. Sign-in runs here because it's top-level. Then `runPopupFlow` posts the ticket — never `*` — and the window closes.
 
-### 17.6 · The launcher
+### 18.6 · The launcher
 
 Open, wait, fetch with `credentials: "include"`, reload. That fetch is Rule 5 — and `include` is what puts the cookie in the iframe's jar.
 
-### 17.7 · The middleware
+### 18.7 · The middleware
 
 Cookie *present* is not cookie *valid*. This only sends people to the popup. The real gate is `verifySession` on `/auth/bridge`.
 
-## 18 · Where the same bridge goes next
+## 19 · Where the same bridge goes next
 
 Back to the origin story. The other half of that task was iOS — a WebView that can't see the device's passkeys, autofill, or the Safari login sitting next door. Same shape: session lives next door, our app needs its own. Same store, a different transport — the system browser instead of a popup, a URL callback instead of `postMessage`. That's RFC 8252, OAuth for native apps. The bridge is what you get when you take that RFC seriously on both platforms. One shape, two transports. That's the next talk.
 
-## 19 · Back to the four constraints
+## 20 · Back to the four constraints
 
 The clipboard. Inherit the existing host SSO — yes, the popup inherits it. Silently — one sub-second flash, no prompt. No token where it can leak — only a sixty-second, single-use ticket ever crosses. No lock-in — two libraries, two live demos, two lines of difference.
 
-## 20 · Where the work ended up
+## 21 · Where the work ended up
 
 Three things I owe you. The popup-bridge pattern was co-developed with Kirill Evtushenko. Working it through — the rules, the tests, the two libraries — turned into a package: `next-auth-bridge`, my generalisation of the pattern. It's version 0.3.1, a few months old, no meaningful adoption yet — a reference implementation, not battle-tested infrastructure; treat it as one way to express the idea. And it's a clean-room build — no employer code; everything you saw on screen is from the public repo and the two Keycloak demos.
 
-## 21 · Thanks
+## 22 · Thanks
 
 That's the bridge. The repo, the threat model, and both demos are at the QR — and RFC 8252, if you want to read where the native half comes from. Questions — and if nobody has one, I'll start with the one I always get: "why not just put a JWT in the URL?"
 

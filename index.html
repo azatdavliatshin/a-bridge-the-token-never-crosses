@@ -263,6 +263,45 @@
 
 <!-- ===================== BLOCK 1 — THE PROBLEM ===================== -->
 
+<section id="party">
+	<h2>Same cookie. Different page.</h2>
+	<svg class="diagram" viewBox="0 0 1000 400" style="max-height:440px">
+		<defs><marker id="ah-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker></defs>
+		<!-- LEFT: first-party -->
+		<g class="fragment" data-fragment-index="1">
+			<rect class="box" x="20" y="20" width="460" height="330" rx="14"/>
+			<rect x="20" y="20" width="460" height="44" rx="14" fill="rgba(255,255,255,0.08)"/>
+			<circle cx="44" cy="42" r="6" fill="var(--muted)"/><circle cx="64" cy="42" r="6" fill="var(--muted)"/><circle cx="84" cy="42" r="6" fill="var(--muted)"/>
+			<rect x="104" y="28" width="340" height="28" rx="14" fill="rgba(255,255,255,0.08)"/>
+			<text x="124" y="48" class="label acc" style="font-weight:600">app.example</text>
+			<text x="250" y="130" text-anchor="middle" class="label">your app, top-level</text>
+			<text x="250" y="215" text-anchor="middle" style="font-size:64px">🍪</text>
+			<text x="250" y="270" text-anchor="middle" class="label muted">cookie for app.example</text>
+			<text x="250" y="325" text-anchor="middle" class="label acc" style="font-weight:600">first-party → sent</text>
+		</g>
+		<!-- RIGHT: third-party -->
+		<g class="fragment" data-fragment-index="2">
+			<rect class="box" x="520" y="20" width="460" height="330" rx="14"/>
+			<rect x="520" y="20" width="460" height="44" rx="14" fill="rgba(255,255,255,0.08)"/>
+			<circle cx="544" cy="42" r="6" fill="var(--muted)"/><circle cx="564" cy="42" r="6" fill="var(--muted)"/><circle cx="584" cy="42" r="6" fill="var(--muted)"/>
+			<rect x="604" y="28" width="340" height="28" rx="14" fill="rgba(255,255,255,0.08)"/>
+			<text x="624" y="48" class="label bad" style="font-weight:600">host.example</text>
+			<rect class="box" x="570" y="90" width="360" height="200" rx="10" stroke-dasharray="8 6"/>
+			<text x="750" y="120" text-anchor="middle" class="label muted">&lt;iframe&gt; app.example</text>
+			<text x="750" y="205" text-anchor="middle" style="font-size:64px">🍪</text>
+			<text x="750" y="213" text-anchor="middle" class="label bad" style="font-size:80px; font-weight:800; opacity:0.9">✕</text>
+			<text x="750" y="265" text-anchor="middle" class="label muted">the same cookie</text>
+			<text x="750" y="325" text-anchor="middle" class="label bad" style="font-weight:600">third-party → blocked</text>
+		</g>
+		<g class="fragment" data-fragment-index="3">
+			<text x="500" y="385" text-anchor="middle" class="label" style="font-size:22px">"party" is decided by the address bar, not by the cookie</text>
+		</g>
+	</svg>
+	<aside class="notes">
+		<p>Before the problem itself, one definition — because the whole talk stands on it: "first-party" and "third-party" are not kinds of cookies. They're a property of the <i>page</i>. ▸ Open <code>app.example</code> in a tab — that's the address bar — and the cookie your server set for <code>app.example</code> is first-party. The browser sends it. ▸ Now open <code>host.example</code>, which loads <code>app.example</code> in an iframe. Same cookie, same server, same user. But the address bar says <code>host.example</code>, so to the browser that cookie is now third-party — and it's blocked. ▸ Nothing about the cookie changed. The context did. Keep that in mind: in a minute I'll say "your cookie became a third-party cookie", and I'll mean you didn't do anything — the browser re-classified it based on who's in the address bar.</p>
+	</aside>
+</section>
+
 <section id="setup">
 	<h2>Your Next.js app, inside somebody else's page</h2>
 	<svg class="diagram" viewBox="0 0 1000 420">
@@ -277,7 +316,7 @@
 	</svg>
 	<aside class="notes">
 		<p>Here's the situation. Your Next.js app lives inside somebody else's page. SharePoint web part, Teams tab, Salesforce Lightning component, ServiceNow, Confluence — choose your fighter. The host already has the user signed in against a shared identity provider — in the Microsoft world that's Entra.</p>
-		<p>Ten years ago this was boring. The iframe just saw the same cookies as the host, and life went on.</p>
+		<p>Ten years ago this was boring. The iframe just saw the same cookies as the host, and life went on. Now you know why it doesn't: that cookie is third-party here.</p>
 	</aside>
 </section>
 
