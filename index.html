@@ -110,6 +110,9 @@
 		.reveal .trk.done { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 		.reveal .trk.now { border-color: var(--accent); color: var(--fg); border-style: dashed; }
 
+		.reveal .rule-title h1 { font-size: 2.4em; line-height: 1.15; max-width: 22ch; margin: 0 auto; }
+		.reveal .rule-title .kicker { font-size: 0.9em; margin-bottom: 0.5em; }
+
 		/* --- diagram --- */
 		.reveal svg.diagram { width: 100%; height: auto; font-family: var(--r-main-font); }
 		.reveal svg.diagram text { fill: var(--fg); font-size: 22px; }
@@ -755,6 +758,11 @@
 	</aside>
 	</section>
 
+	<section class="center-slide rule-title">
+		<p class="kicker">Rule 1 of 5</p>
+		<h1>Verify the session <span class="accent">first</span></h1>
+		<aside class="notes"></aside>
+	</section>
 	<section data-auto-animate>
 		<p class="kicker">Rule 1 of 5</p>
 		<h3>Verify the session <span class="accent">first</span></h3>
@@ -776,6 +784,11 @@ if (!session)
 	</aside>
 	</section>
 
+	<section class="center-slide rule-title">
+		<p class="kicker">Rule 2 of 5</p>
+		<h1>The ticket is not the key</h1>
+		<aside class="notes"></aside>
+	</section>
 	<section>
 		<p class="kicker">Rule 2 of 5</p>
 		<h3>The ticket is not the key</h3>
@@ -794,6 +807,11 @@ if (!session)
 	</aside>
 	</section>
 
+	<section class="center-slide rule-title">
+		<p class="kicker">Rule 3 of 5</p>
+		<h1>Trust the sender <span class="accent">twice</span></h1>
+		<aside class="notes"></aside>
+	</section>
 	<section>
 		<p class="kicker">Rule 3 of 5</p>
 		<h3>Trust the sender <span class="accent">twice</span></h3>
@@ -817,6 +835,11 @@ window.addEventListener("message", (event) => {
 	</aside>
 	</section>
 
+	<section class="center-slide rule-title">
+		<p class="kicker">Rule 4 of 5</p>
+		<h1>Zero tokens in URLs — for the <span class="accent">whole roundtrip</span></h1>
+		<aside class="notes"></aside>
+	</section>
 	<section>
 		<p class="kicker">Rule 4 of 5</p>
 		<h3>Zero tokens in URLs — for the <span class="accent">whole roundtrip</span></h3>
@@ -836,6 +859,11 @@ window.addEventListener("message", (event) => {
 	</section>
 
 
+	<section class="center-slide rule-title">
+		<p class="kicker">Rule 5 of 5 · added after shipping (v0.3.1)</p>
+		<h1>Only a same-origin <span class="accent">fetch</span> may redeem</h1>
+		<aside class="notes"></aside>
+	</section>
 	<section>
 		<p class="kicker">Rule 5 of 5 · added after shipping (v0.3.1)</p>
 		<h3>Only a same-origin <span class="accent">fetch</span> may redeem</h3>
