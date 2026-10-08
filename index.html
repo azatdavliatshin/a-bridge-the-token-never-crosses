@@ -731,10 +731,10 @@
 		</div>
 	</div>
 	<p class="small muted" style="margin-top:1em">Two Vercel origins + self-hosted Keycloak — the cross-site handoff is real, not faked on one origin.<br>
-	Both run on an open-source reference implementation of the pattern — more on it at the end.</p>
+	Both run on an open-source reference implementation of the pattern — we'll meet it properly in a few minutes.</p>
 	<aside class="notes">
 		<p>Let me show you it's real. <i>(live)</i></p>
-		<p>Two deployments, two Vercel origins, one self-hosted Keycloak — so the cross-site handoff is genuine, not faked on a single origin. Both run on an open-source reference implementation of the pattern that I wrote; I'll come back to it at the end — for now it's just "the repo". I sign in on the host… and the embedded app signs itself in. Open DevTools, Application, Cookies — there's the session cookie, and there's the <code>Partitioned</code> column.</p>
+		<p>Two deployments, two Vercel origins, one self-hosted Keycloak — so the cross-site handoff is genuine, not faked on a single origin. Both run on an open-source reference implementation of the pattern that I wrote; we'll meet it properly in a few minutes — for now it's just "the repo". I sign in on the host… and the embedded app signs itself in. Open DevTools, Application, Cookies — there's the session cookie, and there's the <code>Partitioned</code> column.</p>
 		<p>Second deployment — same flow, same bridge, but the app underneath is Better Auth instead of Auth.js. Hold that thought; we'll come back to it.</p>
 		<p><i>(If the network is dead: narrate it over the diagram — "this is where the popup would flash" — and move on. Don't fight it.)</i></p>
 	</aside>
@@ -930,6 +930,21 @@ window.addEventListener("message", (event) => {
 <!-- ===================== BLOCK 4 — ONE SEAM, TWO LIBRARIES ===================== -->
 
 <section id="seam">
+	<section id="repo">
+		<p class="kicker">The reference implementation</p>
+		<h2><code class="inline">next-auth-bridge</code></h2>
+		<div class="two-col" style="align-items:center">
+			<img src="assets/repo.png" alt="" onerror="this.style.visibility='hidden'" style="flex:1.6; min-width:0; max-height:420px; object-fit:contain; border-radius:10px;">
+			<div style="flex:0 0 260px; text-align:center">
+				<img src="assets/qr-repo.png" alt="" style="width:220px; height:220px; background:#fff; border-radius:8px; display:block; margin:0 auto 0.4em;">
+				<p class="tiny">github.com/azatdavliatshin/<br>next-auth-bridge</p>
+				<p class="tiny" style="margin-top:0.6em; color:var(--fg)">MIT · Auth.js + Better Auth<br>threat model · a negative test per rule</p>
+			</div>
+		</div>
+		<aside class="notes">
+		<p>Here's the repo I've been calling "the reference implementation": <code>next-auth-bridge</code>, on npm and GitHub, MIT. It's the pattern you just saw, with the five rules written down as a threat model and a negative test behind each one. It runs on Auth.js and on Better Auth, and the two live demos are deployed from it. The QR is the same one you'll see at the end, so no need to scan yet. Now — how do you put it into a Next.js app?</p>
+	</aside>
+	</section>
 	<section>
 		<h2>Adding the bridge to a Next.js app</h2>
 		<div class="two-col" style="align-items:flex-start">

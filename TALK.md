@@ -118,7 +118,7 @@ Same trick as OAuth: a short-lived code crosses the untrusted bit, the real sess
 
 Let me show you it's real. *(live)*
 
-Two deployments, two Vercel origins, one self-hosted Keycloak — so the cross-site handoff is genuine, not faked on a single origin. Both run on an open-source reference implementation of the pattern that I wrote; I'll come back to it at the end — for now it's just "the repo". I sign in on the host… and the embedded app signs itself in. Open DevTools, Application, Cookies — there's the session cookie, and there's the `Partitioned` column.
+Two deployments, two Vercel origins, one self-hosted Keycloak — so the cross-site handoff is genuine, not faked on a single origin. Both run on an open-source reference implementation of the pattern that I wrote; we'll meet it properly in a few minutes — for now it's just "the repo". I sign in on the host… and the embedded app signs itself in. Open DevTools, Application, Cookies — there's the session cookie, and there's the `Partitioned` column.
 
 Second deployment — same flow, same bridge, but the app underneath is Better Auth instead of Auth.js. Hold that thought; we'll come back to it.
 
@@ -174,31 +174,35 @@ If you adopt the pattern, run that live check in *your* browsers. CHIPS is Chrom
 
 ---
 
-## 17 · Adding the bridge to a Next.js app
+## 17 · The reference implementation
+
+Here's the repo I've been calling "the reference implementation": `next-auth-bridge`, on npm and GitHub, MIT. It's the pattern you just saw, with the five rules written down as a threat model and a negative test behind each one. It runs on Auth.js and on Better Auth, and the two live demos are deployed from it. The QR is the same one you'll see at the end, so no need to scan yet. Now — how do you put it into a Next.js app?
+
+### 17.1 · Adding the bridge to a Next.js app
 
 Enough theory. `npm install`, six files. The numbers next to the files are the bridge steps you already saw.
 
-### 17.1 · The config — where the auth library lives
+### 17.2 · The config — where the auth library lives
 
 Two values: `verifySession` and `cookieName`. That's the whole library. Everything else doesn't know if this is Auth.js or not. We copy the cookie instead of creating a new session — that call is different in every library.
 
-### 17.2 · Better Auth — the two lines
+### 17.3 · Better Auth — the two lines
 
 Watch what moves — two lines. That's why this piece must not pin you to Auth.js. And that's the last item on the clipboard: no lock-in. All four green.
 
-### 17.3 · The routes
+### 17.4 · The routes
 
 Two files. `bridge` is step three. `consume` is step five.
 
-### 17.4 · The popup page
+### 17.5 · The popup page
 
 This is the flash. Sign-in runs here because it's top-level. Then `runPopupFlow` posts the ticket — never `*` — and the window closes.
 
-### 17.5 · The launcher
+### 17.6 · The launcher
 
 Open, wait, fetch with `credentials: "include"`, reload. That fetch is Rule 5 — and `include` is what puts the cookie in the iframe's jar.
 
-### 17.6 · The middleware
+### 17.7 · The middleware
 
 Cookie *present* is not cookie *valid*. This only sends people to the popup. The real gate is `verifySession` on `/auth/bridge`.
 
