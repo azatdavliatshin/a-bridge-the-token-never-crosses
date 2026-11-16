@@ -8,31 +8,82 @@
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
 	<link rel="stylesheet" href="dist/theme/black.css">
-	<link rel="stylesheet" href="plugin/highlight/monokai.css">
-
+	
 	<style>
-		/* ---- Identity knobs: change these when the YerevanJS theme lands ---- */
+		/* ---- Identity: every colour and font is a variable. Light is the default; html.theme-dark swaps the set (press T, or ?theme=dark). ---- */
+		@font-face { font-family: "Geist"; src: url(assets/fonts/Geist-Variable.woff2) format("woff2"); font-weight: 100 900; font-display: block; }
+		@font-face { font-family: "Geist Mono"; src: url(assets/fonts/GeistMono-Variable.woff2) format("woff2"); font-weight: 100 900; font-display: block; }
+		@font-face { font-family: "EB Garamond"; src: url(assets/fonts/EBGaramond-Variable.woff2) format("woff2"); font-weight: 400 800; font-style: normal; font-display: block; }
+		@font-face { font-family: "EB Garamond"; src: url(assets/fonts/EBGaramond-Italic-Variable.woff2) format("woff2"); font-weight: 400 800; font-style: italic; font-display: block; }
 		:root {
-			--accent: #5eead4;          /* single accent colour used everywhere */
-			--accent-dim: rgba(94, 234, 212, 0.18);
-			--bg: #0f1115;
-			--fg: #e8e8ea;
-			--muted: #b4b8c2;
-			--danger: #f87171;
-			--ok: #86efac;
+			--bg: #f7f7f4;
+			--fg: #26251e;
+			--fg-2: #55544d;
+			--muted: #6f6e68;
+			--surface: #f2f1ed;
+			--surface-2: #e6e5e0;
+			--line: #cdcdc9;
+			--line-strong: #a9a8a2;
+			--accent: #f54e00;            /* "look here" */
+			--accent-ink: #c23d00;        /* the accent at text sizes */
+			--accent-dim: rgba(245, 78, 0, 0.08);
+			--on-accent: #ffffff;
+			--ok: #34785c;                /* "passed / allowed" */
+			--danger: #cf2d56;            /* "blocked" */
+			--card-bg: #26251e;           /* inverted title cards */
+			--card-fg: #f7f7f4;
+			--card-muted: #a3a299;
+			--card-line: #4c4b42;
+			--card-accent: #ff6b2c;
+			--cookie: #e9c98b;
+			--cookie-line: #26251e;
+			--cookie-dot: #26251e;
+			--code-kw: #c23d00;
+			--code-str: #34785c;
+			--code-num: #9a6a1f;
+			--code-com: #6f6e68;
 			--r-background-color: var(--bg);
 			--r-main-color: var(--fg);
 			--r-heading-color: var(--fg);
-			--r-link-color: var(--accent);
-			--r-link-color-hover: #a7f3eb;
+			--r-link-color: var(--accent-ink);
+			--r-link-color-hover: var(--accent);
 			--r-selection-background-color: var(--accent-dim);
-			--r-main-font: -apple-system, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+			--r-selection-color: var(--fg);
+			--r-main-font: "Geist", -apple-system, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
 			--r-heading-font: var(--r-main-font);
-			--r-code-font: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+			--r-code-font: "Geist Mono", "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+			--serif: "EB Garamond", "Iowan Old Style", Palatino, Georgia, serif;
 			--r-main-font-size: 36px;
 			--r-heading1-size: 2.2em;
 			--r-heading2-size: 1.5em;
 			--r-heading3-size: 1.15em;
+		}
+		html.theme-dark {
+			--bg: #1b1a17;
+			--fg: #edece6;
+			--fg-2: #c6c5be;
+			--muted: #a09f97;
+			--surface: #252420;
+			--surface-2: #32312b;
+			--line: #403f38;
+			--line-strong: #75746c;
+			--accent: #ff6b2c;
+			--accent-ink: #ff8d5c;
+			--accent-dim: rgba(255, 107, 44, 0.11);
+			--on-accent: #1b1a17;
+			--ok: #72c7a3;
+			--danger: #f4728f;
+			--card-bg: #f2f1ed;
+			--card-fg: #26251e;
+			--card-muted: #6f6e68;
+			--card-line: #bdbcb6;
+			--card-accent: #f54e00;
+			--cookie-line: #edece6;
+			--cookie-dot: #3a2a12;
+			--code-kw: #ff8d5c;
+			--code-str: #72c7a3;
+			--code-num: #dcae62;
+			--code-com: #a09f97;
 		}
 		.reveal { font-weight: 400; }
 		.reveal h1, .reveal h2, .reveal h3 { text-transform: none; letter-spacing: -0.01em; font-weight: 650; }
@@ -59,12 +110,12 @@
 		.reveal .tick { color: var(--ok); font-weight: 700; margin-right: 0.3em; }
 		.reveal pre { width: 100%; box-shadow: none; font-size: 0.72em; }
 		.reveal pre code { padding: 0.8em 1em; border-radius: 8px; max-height: 560px; line-height: 1.45; }
-		.reveal code.inline { font-family: var(--r-code-font); font-size: 0.85em; background: rgba(255,255,255,0.06); padding: 0.05em 0.3em; border-radius: 4px; }
-		.reveal .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 0.6em 0.9em; font-size: 0.8em; }
+		.reveal code.inline { font-family: var(--r-code-font); font-size: 0.85em; background: var(--surface); padding: 0.05em 0.3em; border-radius: 4px; }
+		.reveal .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0.6em 0.9em; font-size: 0.8em; }
 		.reveal .card.hl { border-color: var(--accent); }
 		.reveal table { font-size: 0.65em; }
 		.reveal table th { color: var(--accent); font-weight: 600; }
-		.reveal table td, .reveal table th { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0.35em 0.7em; }
+		.reveal table td, .reveal table th { border-bottom: 1px solid var(--line); padding: 0.35em 0.7em; }
 		.reveal .checklist { list-style: none; margin-left: 0; font-size: 0.85em; }
 		.reveal .checklist li { padding: 0.25em 0 0.25em 1.6em; position: relative; }
 		.reveal .checklist li::before { content: "☐"; position: absolute; left: 0; color: var(--muted); }
@@ -84,7 +135,7 @@
 		.reveal .disclaimer-title { font-size: 4em; letter-spacing: 0.04em; white-space: nowrap; font-weight: 800; margin: 0 0 0.1em; line-height: 1; color: var(--accent); }
 
 		.reveal .fix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6em 1em; }
-		.reveal .fix-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 0.5em 0.8em; display: grid; grid-template-columns: 170px 1fr; grid-template-rows: auto auto; column-gap: 0.7em; align-items: center; }
+		.reveal .fix-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0.5em 0.8em; display: grid; grid-template-columns: 170px 1fr; grid-template-rows: auto auto; column-gap: 0.7em; align-items: center; }
 		.reveal svg.fix-pic { grid-row: 1 / span 2; width: 170px; height: auto; }
 		.reveal .fix-title { font-size: 0.75em; font-weight: 650; margin: 0 0 0.15em; }
 		.reveal .fix-why { font-size: 0.55em; margin: 0; line-height: 1.35; color: var(--muted); }
@@ -101,7 +152,7 @@
 		.reveal svg.scene g.todo { opacity: 0; }
 
 		.reveal .tracker { display: flex; gap: 0.5em; justify-content: center; margin: 0.15em 0 0; }
-		.reveal .trk { font-size: 0.42em; letter-spacing: 0.02em; padding: 0.25em 0.7em; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); color: var(--muted); }
+		.reveal .trk { font-size: 0.42em; letter-spacing: 0.02em; padding: 0.25em 0.7em; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
 		.reveal .trk.done { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 		.reveal .trk.now { border-color: var(--accent); color: var(--fg); border-style: dashed; }
 
@@ -112,7 +163,7 @@
 		.reveal svg.diagram { width: 100%; height: auto; font-family: var(--r-main-font); }
 		.reveal svg.diagram text { fill: var(--fg); font-size: 22px; }
 		.reveal svg.diagram .lane-title { font-size: 22px; font-weight: 600; }
-		.reveal svg.diagram .lane { stroke: rgba(255,255,255,0.14); stroke-width: 2; stroke-dasharray: 6 6; }
+		.reveal svg.diagram .lane { stroke: var(--line); stroke-width: 2; stroke-dasharray: 6 6; }
 		.reveal svg.diagram .arrow { stroke: var(--fg); stroke-width: 3; fill: none; marker-end: url(#ah); }
 		.reveal svg.diagram .arrow.acc { stroke: var(--accent); marker-end: url(#ah-acc); }
 		.reveal svg.diagram .arrow.bad { stroke: var(--danger); marker-end: url(#ah-bad); }
@@ -120,25 +171,118 @@
 		.reveal svg.diagram .label.acc { fill: var(--accent); }
 		.reveal svg.diagram .label.bad { fill: var(--danger); }
 		.reveal svg.diagram .label.muted { fill: var(--muted); }
-		.reveal svg.diagram .box { fill: rgba(255,255,255,0.05); stroke: rgba(255,255,255,0.2); stroke-width: 2; rx: 10; }
+		.reveal svg.diagram .box { fill: var(--surface); stroke: var(--line-strong); stroke-width: 2; rx: 10; }
 		.reveal svg.diagram .box.acc { stroke: var(--accent); fill: var(--accent-dim); }
 		.reveal svg.diagram .box.bad { stroke: var(--danger); }
-		.reveal svg.diagram .jar { fill: rgba(255,255,255,0.05); stroke: var(--muted); stroke-width: 3; }
+		.reveal svg.diagram .jar { fill: var(--surface); stroke: var(--muted); stroke-width: 3; }
 		.reveal svg.diagram .jar.full { fill: var(--accent-dim); stroke: var(--accent); }
 		.reveal svg.diagram .dim { opacity: 0.35; }
+
+		/* ================= theme A: parchment ================= */
+		.reveal { font-weight: 400; }
+		.reveal h1, .reveal h2, .reveal h3 { font-weight: 450; letter-spacing: -0.025em; }
+		.reveal h1 .accent, .reveal h2 .accent, .reveal h3 .accent, .reveal .big .accent { color: var(--accent); }
+		.reveal .accent { color: var(--accent-ink); }
+		.reveal .kicker { font-family: var(--r-code-font); font-size: 0.5em; font-weight: 500; letter-spacing: 0.09em; color: var(--accent-ink); }
+		.reveal .subtitle { color: var(--fg-2); }
+		.reveal strong, .reveal b { font-weight: 600; }
+		.reveal code.inline { background: var(--surface-2); border-radius: 4px; }
+		.reveal .card, .reveal .fix-card { border-radius: 4px; }
+		.reveal .tick, .reveal .want-badge { color: var(--ok); }
+		.reveal .checklist li.done::before { color: var(--ok); }
+		.reveal table th { color: var(--accent-ink); font-family: var(--r-code-font); font-weight: 500; font-size: 0.85em; letter-spacing: 0.04em; text-transform: uppercase; }
+		.reveal .quote { font-family: var(--serif); font-size: 1.45em; line-height: 1.22; letter-spacing: -0.01em; border-left: 3px solid var(--accent); padding-left: 0.6em; }
+		.reveal .quote .accent { color: var(--accent); font-style: italic; }
+		.reveal .bridge-line { background: var(--line-strong); height: 1px; width: 100%; }
+		.reveal .qr img { border: 1px solid var(--line); border-radius: 4px; }
+
+		/* diagrams */
+		.reveal svg.diagram .label.acc { fill: var(--accent-ink); }
+		.reveal svg.diagram .label.ok { fill: var(--ok); font-weight: 600; }
+		.reveal svg.diagram .box { fill: var(--surface); stroke-width: 1.5; }
+		.reveal svg.diagram .box.acc { fill: var(--accent-dim); stroke-width: 2.5; }
+		.reveal svg.diagram .jar { fill: var(--bg); stroke: var(--line-strong); stroke-width: 2; }
+		.reveal svg.diagram .jar.full { fill: var(--bg); stroke: var(--accent); stroke-width: 2.5; }
+		.reveal svg.diagram .lane { stroke-width: 1.5; }
+		.reveal svg.scene g.act path { stroke-width: 4.5; }
+		.reveal svg.scene g.act text { fill: var(--accent-ink); font-weight: 650; }
+		.reveal svg.scene g.done path { stroke: var(--line-strong); opacity: 1; stroke-width: 3; }
+
+		/* bridge steps */
+		.reveal h3.step-title { font-size: 0.95em; margin: 0 0 0.1em; white-space: nowrap; }
+		.reveal h3.step-title code.inline { font-size: 0.88em; background: none; padding: 0; }
+		.reveal .step-cap { text-align: center; font-size: 0.6em; color: var(--fg-2); margin: 0.35em 0 0; }
+		.reveal .tracker { margin-top: 0.1em; }
+		.reveal .trk { font-family: var(--r-code-font); font-size: 0.44em; border-radius: 4px; border: 1.5px solid var(--line); color: var(--muted); letter-spacing: 0; }
+		.reveal .trk.done { border-color: var(--ok); color: var(--ok); background: none; }
+		.reveal .trk.now { border-color: var(--fg); color: var(--fg); border-style: dashed; font-weight: 600; }
+
+		/* code */
+		.reveal pre code.hljs, .reveal pre code { background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; font-weight: 450; }
+		.reveal .hljs-keyword, .reveal .hljs-literal, .reveal .hljs-built_in.hljs-keyword { color: var(--code-kw); font-weight: 600; }
+		.reveal .hljs-string, .reveal .hljs-regexp, .reveal .hljs-template-variable { color: var(--code-str); }
+		.reveal .hljs-number { color: var(--code-num); }
+		.reveal .hljs-comment, .reveal .hljs-quote { color: var(--code-com); font-style: italic; font-weight: 400; }
+		.reveal .hljs-title, .reveal .hljs-built_in, .reveal .hljs-type, .reveal .hljs-attr, .reveal .hljs-property, .reveal .hljs-params, .reveal .hljs-variable, .reveal .hljs-subst { color: var(--fg); }
+		.reveal .hljs-ln-numbers { color: var(--line-strong); }
+		.reveal .hljs.has-highlights tr:not(.highlight-line) { opacity: 0.55; }
+		.reveal .hljs.has-highlights tr.highlight-line td { background: var(--accent-dim); }
+		.reveal .hljs.has-highlights tr.highlight-line td:first-child { box-shadow: inset 4px 0 0 var(--accent); }
+
+		/* title slide */
+		.reveal .title-slide h1 { font-weight: 400; font-size: 2.55em; line-height: 1; letter-spacing: -0.035em; margin: 0.45em 0 0; }
+		.reveal .title-slide .subtitle { font-family: var(--serif); font-style: italic; font-size: 1.05em; margin: 0.6em 0 0; }
+		.reveal .title-slide svg.motif { display: block; width: 100%; height: auto; margin: 1.1em 0 0; overflow: visible; }
+		.reveal .title-slide .motif-label { font-family: var(--r-code-font); font-size: 14px; letter-spacing: 0.04em; fill: var(--muted); }
+		.reveal .title-slide .who { font-family: var(--r-code-font); font-size: 0.53em; margin: 1.2em 0 0; }
+
+		/* inverted rule cards */
+		.reveal .rule-title { text-align: left; }
+		.reveal .rule-title .rt-strip { display: flex; justify-content: space-between; font-family: var(--r-code-font); font-size: 0.47em; letter-spacing: 0.09em; text-transform: uppercase; color: var(--card-muted); border-bottom: 1px solid var(--card-line); padding-bottom: 0.8em; }
+		.reveal .rule-title .rt-strip b { color: var(--card-fg); font-weight: 500; }
+		.reveal .rule-title h1 { color: var(--card-fg); font-weight: 600; font-size: 4.6em; line-height: 0.9; letter-spacing: -0.055em; text-transform: uppercase; max-width: none; margin: 0.28em 0 0 -0.04em; }
+		.reveal .rule-title.rt-long h1 { font-size: 3.3em; line-height: 0.93; }
+		.reveal .rule-title h1 .accent { color: var(--card-accent); }
+
+		/* footer */
+		.reveal .deck-foot { position: absolute; left: 4vw; right: 4vw; bottom: 1.1vh; z-index: 5; display: flex; justify-content: space-between; font-family: var(--r-code-font); font-size: 1.05vw; letter-spacing: 0.04em; color: var(--muted); pointer-events: none; }
+		.reveal .deck-foot.off { display: none; }
 	</style>
 </head>
 <body>
+<script>
+	/* theme: ?theme=dark|light wins, then the last choice on this machine, then light */
+	(function () {
+		var t = new URLSearchParams(location.search).get('theme');
+		if (!t) { try { t = localStorage.getItem('deck-theme'); } catch (e) {} }
+		if (t === 'dark') document.documentElement.classList.add('theme-dark');
+	})();
+</script>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+	<symbol id="g-cookie" viewBox="-24 -24 48 48"><circle r="21" fill="var(--cookie)" stroke="var(--cookie-line)" stroke-width="2.4"/><g fill="var(--cookie-dot)"><circle cx="-7" cy="-5" r="3.1"/><circle cx="6" cy="-9" r="2.6"/><circle cx="8" cy="6" r="3.3"/><circle cx="-5" cy="9" r="2.6"/></g></symbol>
+	<symbol id="g-ticket" viewBox="0 0 52 34"><path d="M0 0h52v11a6 6 0 0 0 0 12v11h-52v-11a6 6 0 0 0 0-12z" fill="var(--accent)"/><line x1="36" y1="5" x2="36" y2="29" stroke="var(--bg)" stroke-width="2" stroke-dasharray="3 3"/></symbol>
+</defs></svg>
 <div class="reveal">
+<div class="deck-foot" aria-hidden="true"><span>A Bridge the Token Never Crosses</span><span class="df-sec"></span><span class="df-num"></span></div>
 <div class="slides">
 
 <!-- ===================== BLOCK 0 — OPENING ===================== -->
 
-<section id="title" class="center-slide">
-	<h1>A Bridge the Token<br>Never Crosses</h1>
-	<p class="subtitle">Signing users into embedded apps<br>without third-party cookies</p>
-	<div class="bridge-line"></div>
-	<p class="small">Azat Davliatshin · YerevanJS #1</p>
+<section id="title" class="title-slide">
+	<p class="kicker">DevFest Armenia 2026</p>
+	<h1>A Bridge the Token<br><span class="accent">Never</span> Crosses</h1>
+	<p class="subtitle">Signing users into embedded apps without third-party cookies</p>
+	<svg class="motif" viewBox="0 0 1136 150" aria-hidden="true">
+		<path d="M40 112 Q568 -28 1096 112" fill="none" stroke="var(--fg)" stroke-width="2"/>
+		<g stroke="var(--line-strong)" stroke-width="1"><line x1="150" y1="85.9" x2="150" y2="112"/><line x1="260" y1="65.8" x2="260" y2="112"/><line x1="370" y1="51.7" x2="370" y2="112"/><line x1="480" y1="43.5" x2="480" y2="112"/><line x1="568" y1="42" x2="568" y2="112"/><line x1="656" y1="43.5" x2="656" y2="112"/><line x1="766" y1="51.7" x2="766" y2="112"/><line x1="876" y1="65.8" x2="876" y2="112"/><line x1="986" y1="85.9" x2="986" y2="112"/></g>
+		<line x1="0" y1="112" x2="1136" y2="112" stroke="var(--fg)" stroke-width="2"/>
+		<rect x="0" y="112" width="40" height="26" fill="var(--fg)"/><rect x="1096" y="112" width="40" height="26" fill="var(--fg)"/>
+		<use href="#g-cookie" x="2" y="68" width="36" height="36"/>
+		<use href="#g-ticket" x="546" y="24" width="44" height="28.8"/>
+		<text x="0" y="58" class="motif-label">TOKEN</text>
+		<text x="568" y="14" text-anchor="middle" class="motif-label">TICKET · 60 s</text>
+	</svg>
+	<p class="who">Azat Davliatshin <span class="muted">· Software Architect &amp; Tech Lead</span></p>
 	<aside class="notes">
 		<p>Hi. Ok, let's start.<br>The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but the title is literally the whole talk. I'm going to carry a user's session across an origin boundary — from a page that has it to an iframe that doesn't — and the one thing that will never make the trip is the session token itself. Sounds like magic? Follow me, and by the end you'll know exactly what <i>does</i> cross, and why that turns out to be enough.</p>
 	</aside>
@@ -181,10 +325,10 @@
 		<!-- LEFT: browser with iframe -->
 		<g class="fragment" data-fragment-index="1">
 			<rect class="box" x="30" y="20" width="440" height="300" rx="14"/>
-			<rect x="30" y="20" width="440" height="44" rx="14" fill="rgba(255,255,255,0.08)"/>
+			<rect x="30" y="20" width="440" height="44" rx="14" fill="var(--surface-2)"/>
 			<circle cx="54" cy="42" r="6" fill="var(--muted)"/><circle cx="74" cy="42" r="6" fill="var(--muted)"/><circle cx="94" cy="42" r="6" fill="var(--muted)"/>
 			<text x="120" y="50" class="label muted">host · SharePoint</text>
-			<text x="455" y="50" text-anchor="end" class="label acc">signed in ✓</text>
+			<text x="455" y="50" text-anchor="end" class="label ok">signed in ✓</text>
 			<!-- host session jar -->
 			<rect class="jar full" x="60" y="100" width="70" height="60" rx="10"/>
 			<text x="95" y="138" text-anchor="middle" class="label acc" style="font-size:16px">session</text>
@@ -259,25 +403,25 @@
 		<!-- LEFT: first-party -->
 		<g class="fragment" data-fragment-index="1">
 			<rect class="box" x="20" y="20" width="460" height="330" rx="14"/>
-			<rect x="20" y="20" width="460" height="44" rx="14" fill="rgba(255,255,255,0.08)"/>
+			<rect x="20" y="20" width="460" height="44" rx="14" fill="var(--surface-2)"/>
 			<circle cx="44" cy="42" r="6" fill="var(--muted)"/><circle cx="64" cy="42" r="6" fill="var(--muted)"/><circle cx="84" cy="42" r="6" fill="var(--muted)"/>
-			<rect x="104" y="28" width="340" height="28" rx="14" fill="rgba(255,255,255,0.08)"/>
+			<rect x="104" y="28" width="340" height="28" rx="14" fill="var(--surface-2)"/>
 			<text x="124" y="48" class="label acc" style="font-weight:600">app.example</text>
 			<text x="250" y="130" text-anchor="middle" class="label">your app, top-level</text>
-			<text x="250" y="215" text-anchor="middle" style="font-size:64px">🍪</text>
+			<use href="#g-cookie" x="221.0" y="164.2" width="58.0" height="58.0"/>
 			<text x="250" y="270" text-anchor="middle" class="label muted">cookie for app.example</text>
-			<text x="250" y="325" text-anchor="middle" class="label acc" style="font-weight:600">first-party → sent</text>
+			<text x="250" y="325" text-anchor="middle" class="label ok" style="font-weight:600">first-party → sent</text>
 		</g>
 		<!-- RIGHT: third-party -->
 		<g class="fragment" data-fragment-index="2">
 			<rect class="box" x="520" y="20" width="460" height="330" rx="14"/>
-			<rect x="520" y="20" width="460" height="44" rx="14" fill="rgba(255,255,255,0.08)"/>
+			<rect x="520" y="20" width="460" height="44" rx="14" fill="var(--surface-2)"/>
 			<circle cx="544" cy="42" r="6" fill="var(--muted)"/><circle cx="564" cy="42" r="6" fill="var(--muted)"/><circle cx="584" cy="42" r="6" fill="var(--muted)"/>
-			<rect x="604" y="28" width="340" height="28" rx="14" fill="rgba(255,255,255,0.08)"/>
+			<rect x="604" y="28" width="340" height="28" rx="14" fill="var(--surface-2)"/>
 			<text x="624" y="48" class="label bad" style="font-weight:600">host.example</text>
 			<rect class="box" x="570" y="90" width="360" height="200" rx="10" stroke-dasharray="8 6"/>
 			<text x="750" y="120" text-anchor="middle" class="label muted">&lt;iframe&gt; app.example</text>
-			<text x="750" y="205" text-anchor="middle" style="font-size:64px">🍪</text>
+			<use href="#g-cookie" x="721.0" y="154.2" width="58.0" height="58.0"/>
 			<text x="750" y="213" text-anchor="middle" class="label bad" style="font-size:80px; font-weight:800; opacity:0.9">✕</text>
 			<text x="750" y="265" text-anchor="middle" class="label muted">the same cookie</text>
 			<text x="750" y="325" text-anchor="middle" class="label bad" style="font-weight:600">third-party → blocked</text>
@@ -296,12 +440,12 @@
 	<svg class="diagram" viewBox="0 0 1000 420">
 		<rect class="box" x="20" y="20" width="960" height="380"/>
 		<text x="40" y="58" class="lane-title">host.example — SharePoint · Teams · Salesforce · …</text>
-		<text x="960" y="58" text-anchor="end" class="label acc">Signed in as Azat ✓</text>
+		<text x="960" y="58" text-anchor="end" class="label ok">Signed in as Azat ✓</text>
 		<rect class="box" x="120" y="100" width="760" height="270"/>
 		<text x="140" y="138" class="label muted">&lt;iframe src="https://app.example"&gt;</text>
 		<text x="400" y="250" class="label" style="font-size:30px">Sign in</text>
 		<rect x="380" y="270" width="200" height="54" rx="8" fill="var(--accent)"/>
-		<text x="420" y="306" style="fill:#0f1115;font-weight:600">Continue →</text>
+		<text x="420" y="306" style="fill:var(--on-accent);font-weight:600">Continue →</text>
 	</svg>
 	<aside class="notes">
 		<p>Here's the situation. Your Next.js app lives inside somebody else's page. SharePoint web part, Teams tab, Salesforce Lightning component, ServiceNow, Confluence — choose your fighter. The host already has the user signed in against a shared identity provider — in the Microsoft world that's Entra.</p>
@@ -314,7 +458,7 @@
 	<svg class="diagram" viewBox="0 0 1000 330" style="max-height:380px">
 		<!-- host page -->
 		<rect class="box" x="30" y="20" width="620" height="290" rx="14"/>
-		<rect x="30" y="20" width="620" height="40" rx="14" fill="rgba(255,255,255,0.08)"/>
+		<rect x="30" y="20" width="620" height="40" rx="14" fill="var(--surface-2)"/>
 		<text x="50" y="47" class="label muted">host.example</text>
 		<!-- tracker pixel -->
 		<g class="fragment" data-fragment-index="1">
@@ -333,7 +477,7 @@
 		<!-- browser verdict -->
 		<g class="fragment" data-fragment-index="3">
 			<text x="825" y="95" text-anchor="middle" class="lane-title">the browser</text>
-			<text x="825" y="165" text-anchor="middle" class="label" style="font-size:90px">🍪</text>
+			<use href="#g-cookie" x="796.0" y="105.4" width="58.0" height="58.0"/>
 			<text x="825" y="172" text-anchor="middle" class="label bad" style="font-size:110px; font-weight:800; opacity:0.9">✕</text>
 			<text x="825" y="225" text-anchor="middle" class="label muted">same shape:</text>
 			<text x="825" y="252" text-anchor="middle" class="label muted">foreign origin, inside</text>
@@ -376,7 +520,7 @@
 		</div>
 		<div class="fix-card fragment" data-fragment-index="3">
 			<svg viewBox="0 0 200 120" class="diagram fix-pic">
-				<rect x="70" y="45" width="60" height="50" rx="8" fill="rgba(255,255,255,0.08)" stroke="var(--fg)" stroke-width="3"/>
+				<rect x="70" y="45" width="60" height="50" rx="8" fill="var(--surface-2)" stroke="var(--fg)" stroke-width="3"/>
 				<path d="M82 45 v-12 a18 18 0 0 1 36 0 v12" fill="none" stroke="var(--fg)" stroke-width="3"/>
 				<circle cx="100" cy="68" r="5" fill="var(--fg)"/><rect x="98" y="70" width="4" height="12" fill="var(--fg)"/>
 				<rect x="138" y="58" width="48" height="22" rx="4" fill="var(--danger)"/><text x="162" y="73" text-anchor="middle" style="fill:#fff; font-size:11px; font-weight:700">RENTED</text>
@@ -452,7 +596,7 @@
 		</div>
 		<div class="fix-card fragment" data-fragment-index="3">
 			<svg viewBox="0 0 200 120" class="diagram fix-pic">
-				<rect x="15" y="40" width="170" height="36" rx="18" fill="rgba(255,255,255,0.08)" stroke="var(--muted)" stroke-width="2"/>
+				<rect x="15" y="40" width="170" height="36" rx="18" fill="var(--surface-2)" stroke="var(--muted)" stroke-width="2"/>
 				<text x="30" y="64" class="label muted" style="font-size:12px">https://app/…?token=</text>
 				<rect x="140" y="47" width="38" height="22" rx="5" fill="var(--danger)"/>
 				<text x="159" y="63" text-anchor="middle" style="fill:#fff; font-size:11px; font-weight:700">eyJ…</text>
@@ -463,10 +607,10 @@
 		</div>
 		<div class="fix-card fragment" data-fragment-index="4">
 			<svg viewBox="0 0 200 120" class="diagram fix-pic">
-				<rect x="70" y="50" width="60" height="50" rx="8" fill="rgba(255,255,255,0.08)" stroke="var(--fg)" stroke-width="3"/>
+				<rect x="70" y="50" width="60" height="50" rx="8" fill="var(--surface-2)" stroke="var(--fg)" stroke-width="3"/>
 				<path d="M82 50 v-14 a18 18 0 0 1 36 0 v4" fill="none" stroke="var(--fg)" stroke-width="3"/>
 				<circle cx="100" cy="72" r="5" fill="var(--fg)"/><rect x="98" y="74" width="4" height="12" fill="var(--fg)"/>
-				<rect x="138" y="62" width="48" height="22" rx="4" fill="var(--accent)"/><text x="162" y="77" text-anchor="middle" style="fill:#0f1115; font-size:11px; font-weight:700">YOURS</text>
+				<rect x="138" y="62" width="48" height="22" rx="4" fill="var(--accent)"/><text x="162" y="77" text-anchor="middle" style="fill:var(--on-accent); font-size:11px; font-weight:700">YOURS</text>
 			</svg>
 			<p class="fix-title">No vendor lock-in</p>
 			<p class="fix-why">your auth library, your identity provider, your keys</p>
@@ -494,14 +638,15 @@
 <section id="flow">
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 1 of 5</p>
-	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:470px">
+		<h3 class="step-title">Open a popup — on <em>your</em> origin, top-level</h3>
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:440px">
 		<defs>
-			<marker id="sa1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
-			<marker id="sd1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
+			<marker id="sa1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker>
+			<marker id="sd1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--line-strong)"/></marker>
 		</defs>
 		<!-- host window -->
 		<rect class="box" x="20" y="60" width="400" height="390" rx="14"/>
-		<rect x="20" y="60" width="400" height="40" rx="14" fill="rgba(255,255,255,0.08)"/>
+		<rect x="20" y="60" width="400" height="40" rx="14" fill="var(--surface-2)"/>
 		<text x="40" y="87" class="label muted">host · signed in ✓</text>
 		<!-- iframe -->
 		<rect class="box" x="50" y="130" width="340" height="290" rx="10" stroke-dasharray="8 6"/>
@@ -511,30 +656,30 @@
 		<text x="220" y="390" text-anchor="middle" class="label muted" style="font-size:16px">partitioned jar</text>
 		<!-- popup window (top-level) -->
 		<rect class="box acc" x="450" y="20" width="240" height="200" rx="12"/>
-		<rect x="450" y="20" width="240" height="36" rx="12" fill="rgba(255,255,255,0.08)"/>
+		<rect x="450" y="20" width="240" height="36" rx="12" fill="var(--surface-2)"/>
 		<text x="466" y="45" class="label muted">popup · top-level</text>
 		<rect class="jar " x="500" y="80" width="140" height="110" rx="12"/>
 		<text x="570" y="150" text-anchor="middle" style="font-size:48px"></text>
 		<!-- app server -->
 		<rect class="box" x="740" y="40" width="240" height="190" rx="12"/>
 		<text x="860" y="70" text-anchor="middle" class="label muted">app server</text>
-		<rect class="box " x="770" y="95" width="180" height="110" rx="10"/>
+		<rect class="box " x="756" y="95" width="208" height="110" rx="10"/>
 		<text x="860" y="122" text-anchor="middle" class="label muted" style="font-size:16px">transfer store · ≤ 60 s</text>
 		<text x="860" y="180" text-anchor="middle" style="font-size:40px"></text>
 		<!-- idp -->
 		<rect class="box" x="740" y="290" width="240" height="140" rx="12"/>
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
-		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
+		<text x="860" y="395" text-anchor="middle" class="label ok">session alive ✓</text>
 		<!-- arrows -->
-		<g class="act"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sa1)"/><text x="300" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
+		<g class="act"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sa1)"/><text x="40" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="todo"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
-		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd1)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
-		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
+		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
+		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd1)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage(ticket)</text></g>
+		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume ticket → Set-Cookie</text></g>
 	</svg>
 
 		<div class="tracker"><span class="trk todo">inherit host SSO</span><span class="trk todo">silently</span><span class="trk todo">no token leaks</span><span class="trk todo">no lock-in</span></div>
-		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong>Open a popup — on <em>your</em> origin, top-level</strong><br><span class="muted">the host never runs your code</span></p>
+		<p class="step-cap">the host never runs your code</p>
 		<aside class="notes">
 		<p>Let me walk the flow. Four lanes: the iframe — your app, embedded; the popup — also your app, but top-level; your app's server; and the identity provider.</p>
 		<p>The iframe opens a popup to <code>/auth/popup</code> — on <i>your</i> origin, not the host's. The host never runs any of your code. That's why the same pattern ports to SharePoint, Teams, Salesforce, whatever.</p>
@@ -542,14 +687,15 @@
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 2 of 5</p>
-	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:470px">
+		<h3 class="step-title">Normal OAuth sign-in, top-level</h3>
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:440px">
 		<defs>
-			<marker id="sa2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
-			<marker id="sd2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
+			<marker id="sa2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker>
+			<marker id="sd2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--line-strong)"/></marker>
 		</defs>
 		<!-- host window -->
 		<rect class="box" x="20" y="60" width="400" height="390" rx="14"/>
-		<rect x="20" y="60" width="400" height="40" rx="14" fill="rgba(255,255,255,0.08)"/>
+		<rect x="20" y="60" width="400" height="40" rx="14" fill="var(--surface-2)"/>
 		<text x="40" y="87" class="label muted">host · signed in ✓</text>
 		<!-- iframe -->
 		<rect class="box" x="50" y="130" width="340" height="290" rx="10" stroke-dasharray="8 6"/>
@@ -559,44 +705,45 @@
 		<text x="220" y="390" text-anchor="middle" class="label muted" style="font-size:16px">partitioned jar</text>
 		<!-- popup window (top-level) -->
 		<rect class="box acc" x="450" y="20" width="240" height="200" rx="12"/>
-		<rect x="450" y="20" width="240" height="36" rx="12" fill="rgba(255,255,255,0.08)"/>
+		<rect x="450" y="20" width="240" height="36" rx="12" fill="var(--surface-2)"/>
 		<text x="466" y="45" class="label muted">popup · top-level</text>
 		<rect class="jar full" x="500" y="80" width="140" height="110" rx="12"/>
-		<text x="570" y="150" text-anchor="middle" style="font-size:48px">🍪</text>
+		<use href="#g-cookie" x="547.2" y="110.9" width="45.6" height="45.6"/>
 		<!-- app server -->
 		<rect class="box" x="740" y="40" width="240" height="190" rx="12"/>
 		<text x="860" y="70" text-anchor="middle" class="label muted">app server</text>
-		<rect class="box " x="770" y="95" width="180" height="110" rx="10"/>
+		<rect class="box " x="756" y="95" width="208" height="110" rx="10"/>
 		<text x="860" y="122" text-anchor="middle" class="label muted" style="font-size:16px">transfer store · ≤ 60 s</text>
 		<text x="860" y="180" text-anchor="middle" style="font-size:40px"></text>
 		<!-- idp -->
 		<rect class="box" x="740" y="290" width="240" height="140" rx="12"/>
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
-		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
+		<text x="860" y="395" text-anchor="middle" class="label ok">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="300" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="40" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="act"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sa2)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa2)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
-		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
-		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
+		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
+		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage(ticket)</text></g>
+		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume ticket → Set-Cookie</text></g>
 	</svg>
 
 		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk todo">no token leaks</span><span class="trk todo">no lock-in</span></div>
-		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong>Normal OAuth sign-in, top-level</strong><br><span class="muted">the IdP sees first-party cookies → code, no prompt → session cookie in the popup's jar</span></p>
+		<p class="step-cap">the IdP sees first-party cookies → code, no prompt → session cookie in the popup's jar</p>
 		<aside class="notes">
 		<p>In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is <i>where</i> this runs. Look at the clipboard at the bottom: two of the four are already green — we inherited the host SSO, and nobody was prompted.</p>
 	</aside>
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 3 of 5</p>
-	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:470px">
+		<h3 class="step-title"><code class="inline">POST /auth/bridge</code> → verify session → park the cookie → mint a ticket</h3>
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:440px">
 		<defs>
-			<marker id="sa3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
-			<marker id="sd3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
+			<marker id="sa3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker>
+			<marker id="sd3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--line-strong)"/></marker>
 		</defs>
 		<!-- host window -->
 		<rect class="box" x="20" y="60" width="400" height="390" rx="14"/>
-		<rect x="20" y="60" width="400" height="40" rx="14" fill="rgba(255,255,255,0.08)"/>
+		<rect x="20" y="60" width="400" height="40" rx="14" fill="var(--surface-2)"/>
 		<text x="40" y="87" class="label muted">host · signed in ✓</text>
 		<!-- iframe -->
 		<rect class="box" x="50" y="130" width="340" height="290" rx="10" stroke-dasharray="8 6"/>
@@ -606,30 +753,30 @@
 		<text x="220" y="390" text-anchor="middle" class="label muted" style="font-size:16px">partitioned jar</text>
 		<!-- popup window (top-level) -->
 		<rect class="box acc" x="450" y="20" width="240" height="200" rx="12"/>
-		<rect x="450" y="20" width="240" height="36" rx="12" fill="rgba(255,255,255,0.08)"/>
+		<rect x="450" y="20" width="240" height="36" rx="12" fill="var(--surface-2)"/>
 		<text x="466" y="45" class="label muted">popup · top-level</text>
 		<rect class="jar full" x="500" y="80" width="140" height="110" rx="12"/>
-		<text x="570" y="150" text-anchor="middle" style="font-size:48px">🍪🎫</text>
+		<use href="#g-cookie" x="520.3" y="110.9" width="45.6" height="45.6"/><use href="#g-ticket" x="569.8" y="117.2" width="50.4" height="33.0"/>
 		<!-- app server -->
 		<rect class="box" x="740" y="40" width="240" height="190" rx="12"/>
 		<text x="860" y="70" text-anchor="middle" class="label muted">app server</text>
-		<rect class="box acc" x="770" y="95" width="180" height="110" rx="10"/>
+		<rect class="box acc" x="756" y="95" width="208" height="110" rx="10"/>
 		<text x="860" y="122" text-anchor="middle" class="label muted" style="font-size:16px">transfer store · ≤ 60 s</text>
-		<text x="860" y="180" text-anchor="middle" style="font-size:40px">🍪</text>
+		<use href="#g-cookie" x="841.0" y="147.4" width="38.0" height="38.0"/>
 		<!-- idp -->
 		<rect class="box" x="740" y="290" width="240" height="140" rx="12"/>
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
-		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
+		<text x="860" y="395" text-anchor="middle" class="label ok">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="300" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="40" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="act"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sa3)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa3)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
-		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
-		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
+		<g class="act"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sa3)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa3)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
+		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage(ticket)</text></g>
+		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume ticket → Set-Cookie</text></g>
 	</svg>
 
 		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk now">… no token leaks</span><span class="trk todo">no lock-in</span></div>
-		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">POST /auth/bridge</code> → verify session → park the cookie → mint a ticket</strong><br><span class="muted">🎫 = 256-bit · one-time · ≤ 60 s — the token stays on the server</span></p>
+		<p class="step-cap">ticket = 256-bit · one-time · ≤ 60 s — the token stays on the server</p>
 		<aside class="notes">
 		<p>This is where the title happens.</p>
 		<p>The popup calls <code>POST /auth/bridge</code>. The server checks there is a real session, parks it for sixty seconds, and returns a one-time ticket. The popup never gets the token — only the ticket.</p>
@@ -637,94 +784,96 @@
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 4 of 5</p>
-	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:470px">
+		<h3 class="step-title"><code class="inline">postMessage({ code }, appOrigin)</code></h3>
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:440px">
 		<defs>
-			<marker id="sa4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
-			<marker id="sd4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
+			<marker id="sa4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker>
+			<marker id="sd4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--line-strong)"/></marker>
 		</defs>
 		<!-- host window -->
 		<rect class="box" x="20" y="60" width="400" height="390" rx="14"/>
-		<rect x="20" y="60" width="400" height="40" rx="14" fill="rgba(255,255,255,0.08)"/>
+		<rect x="20" y="60" width="400" height="40" rx="14" fill="var(--surface-2)"/>
 		<text x="40" y="87" class="label muted">host · signed in ✓</text>
 		<!-- iframe -->
 		<rect class="box" x="50" y="130" width="340" height="290" rx="10" stroke-dasharray="8 6"/>
 		<text x="220" y="160" text-anchor="middle" class="label muted">&lt;iframe&gt; your app</text>
 		<rect class="jar " x="150" y="250" width="140" height="110" rx="12"/>
-		<text x="220" y="318" text-anchor="middle" style="font-size:48px">🎫</text>
+		<use href="#g-ticket" x="194.8" y="285.2" width="50.4" height="33.0"/>
 		<text x="220" y="390" text-anchor="middle" class="label muted" style="font-size:16px">partitioned jar</text>
 		<!-- popup window (top-level) -->
 		<rect class="box acc" x="450" y="20" width="240" height="200" rx="12"/>
-		<rect x="450" y="20" width="240" height="36" rx="12" fill="rgba(255,255,255,0.08)"/>
+		<rect x="450" y="20" width="240" height="36" rx="12" fill="var(--surface-2)"/>
 		<text x="466" y="45" class="label muted">popup · top-level</text>
 		<rect class="jar full" x="500" y="80" width="140" height="110" rx="12"/>
-		<text x="570" y="150" text-anchor="middle" style="font-size:48px">🍪</text>
+		<use href="#g-cookie" x="547.2" y="110.9" width="45.6" height="45.6"/>
 		<!-- app server -->
 		<rect class="box" x="740" y="40" width="240" height="190" rx="12"/>
 		<text x="860" y="70" text-anchor="middle" class="label muted">app server</text>
-		<rect class="box " x="770" y="95" width="180" height="110" rx="10"/>
+		<rect class="box " x="756" y="95" width="208" height="110" rx="10"/>
 		<text x="860" y="122" text-anchor="middle" class="label muted" style="font-size:16px">transfer store · ≤ 60 s</text>
-		<text x="860" y="180" text-anchor="middle" style="font-size:40px">🍪</text>
+		<use href="#g-cookie" x="841.0" y="147.4" width="38.0" height="38.0"/>
 		<!-- idp -->
 		<rect class="box" x="740" y="290" width="240" height="140" rx="12"/>
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
-		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
+		<text x="860" y="395" text-anchor="middle" class="label ok">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd4)"/><text x="300" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd4)"/><text x="40" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
-		<g class="act"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sa4)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
-		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
+		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
+		<g class="act"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sa4)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage(ticket)</text></g>
+		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume ticket → Set-Cookie</text></g>
 	</svg>
 
 		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk now">… no token leaks</span><span class="trk todo">no lock-in</span></div>
-		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">postMessage({ code }, appOrigin)</code></strong><br><span class="muted">only the ticket crosses — explicit target origin, never <code class="inline">*</code></span></p>
+		<p class="step-cap">only the ticket crosses — explicit target origin, never <code class="inline">*</code></p>
 		<aside class="notes">
 		<p>The popup <code>postMessage</code>s that ticket to the iframe — with an explicit target origin, never <code>*</code>. The iframe checks the sender's origin <i>and</i> the sender's window. Why both — in a few minutes.</p>
 	</aside>
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 5 of 5</p>
-	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:470px">
+		<h3 class="step-title"><code class="inline">fetch /auth/consume?code=…</code> → <code class="inline">Set-Cookie … Partitioned</code></h3>
+	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:440px">
 		<defs>
-			<marker id="sa5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/></marker>
-			<marker id="sd5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b4b8c2"/></marker>
+			<marker id="sa5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker>
+			<marker id="sd5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--line-strong)"/></marker>
 		</defs>
 		<!-- host window -->
 		<rect class="box" x="20" y="60" width="400" height="390" rx="14"/>
-		<rect x="20" y="60" width="400" height="40" rx="14" fill="rgba(255,255,255,0.08)"/>
+		<rect x="20" y="60" width="400" height="40" rx="14" fill="var(--surface-2)"/>
 		<text x="40" y="87" class="label muted">host · signed in ✓</text>
 		<!-- iframe -->
 		<rect class="box" x="50" y="130" width="340" height="290" rx="10" stroke-dasharray="8 6"/>
 		<text x="220" y="160" text-anchor="middle" class="label muted">&lt;iframe&gt; your app</text>
 		<rect class="jar full" x="150" y="250" width="140" height="110" rx="12"/>
-		<text x="220" y="318" text-anchor="middle" style="font-size:48px">🍪</text>
+		<use href="#g-cookie" x="197.2" y="278.9" width="45.6" height="45.6"/>
 		<text x="220" y="390" text-anchor="middle" class="label muted" style="font-size:16px">partitioned jar</text>
 		<!-- popup window (top-level) -->
 		<rect class="box " x="450" y="20" width="240" height="200" rx="12"/>
-		<rect x="450" y="20" width="240" height="36" rx="12" fill="rgba(255,255,255,0.08)"/>
+		<rect x="450" y="20" width="240" height="36" rx="12" fill="var(--surface-2)"/>
 		<text x="466" y="45" class="label muted">popup · top-level</text>
 		<rect class="jar full" x="500" y="80" width="140" height="110" rx="12"/>
-		<text x="570" y="150" text-anchor="middle" style="font-size:48px">🍪</text>
+		<use href="#g-cookie" x="547.2" y="110.9" width="45.6" height="45.6"/>
 		<!-- app server -->
 		<rect class="box" x="740" y="40" width="240" height="190" rx="12"/>
 		<text x="860" y="70" text-anchor="middle" class="label muted">app server</text>
-		<rect class="box acc" x="770" y="95" width="180" height="110" rx="10"/>
+		<rect class="box acc" x="756" y="95" width="208" height="110" rx="10"/>
 		<text x="860" y="122" text-anchor="middle" class="label muted" style="font-size:16px">transfer store · ≤ 60 s</text>
 		<text x="860" y="180" text-anchor="middle" style="font-size:40px"></text>
 		<!-- idp -->
 		<rect class="box" x="740" y="290" width="240" height="140" rx="12"/>
 		<text x="860" y="325" text-anchor="middle" class="label muted">identity provider</text>
-		<text x="860" y="395" text-anchor="middle" class="label acc">session alive ✓</text>
+		<text x="860" y="395" text-anchor="middle" class="label ok">session alive ✓</text>
 		<!-- arrows -->
-		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="300" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
+		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="40" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M770 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
-		<g class="done"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage( 🎫 )</text></g>
-		<g class="act"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sa5)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa5)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume 🎫 → Set-Cookie</text></g>
+		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
+		<g class="done"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage(ticket)</text></g>
+		<g class="act"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sa5)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa5)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume ticket → Set-Cookie</text></g>
 	</svg>
 
 		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk done">✓ no token leaks</span><span class="trk todo">no lock-in</span></div>
-		<p class="small" style="text-align:center; margin:0.2em 0 0"><strong><code class="inline">fetch /auth/consume?code=…</code> → <code class="inline">Set-Cookie … Partitioned</code></strong><br><span class="muted">the jar that was empty is full — CHIPS keeps the session we delivered</span></p>
+		<p class="step-cap">the jar that was empty is full — CHIPS keeps the session we delivered</p>
 		<aside class="notes">
 		<p>The iframe redeems the ticket: <code>fetch('/auth/consume?code=…', { credentials: 'include' })</code>. The server deletes it on first read and answers with <code>Set-Cookie</code> — <code>Partitioned</code> — into the jar we said was empty. CHIPS couldn't create the session; it can keep the one we just delivered.</p>
 		<p>The popup closes. The user saw a flash for under a second. The iframe reloads, signed in. And the third item on the clipboard turns green: the token never left the server side — only the ticket crossed.</p>
@@ -786,8 +935,8 @@
 	</aside>
 	</section>
 
-	<section class="center-slide rule-title">
-		<p class="kicker">Rule 1 of 5</p>
+	<section class="rule-title" data-background-color="var(--card-bg)">
+		<div class="rt-strip"><span><b>Rule 01</b> / 05</span><span>A Bridge the Token Never Crosses</span></div>
 		<h1>Verify the session <span class="accent">first</span></h1>
 		<aside class="notes"></aside>
 	</section>
@@ -812,8 +961,8 @@ if (!session)
 	</aside>
 	</section>
 
-	<section class="center-slide rule-title">
-		<p class="kicker">Rule 2 of 5</p>
+	<section class="rule-title" data-background-color="var(--card-bg)">
+		<div class="rt-strip"><span><b>Rule 02</b> / 05</span><span>A Bridge the Token Never Crosses</span></div>
 		<h1>The ticket is not the key</h1>
 		<aside class="notes"></aside>
 	</section>
@@ -835,8 +984,8 @@ if (!session)
 	</aside>
 	</section>
 
-	<section class="center-slide rule-title">
-		<p class="kicker">Rule 3 of 5</p>
+	<section class="rule-title" data-background-color="var(--card-bg)">
+		<div class="rt-strip"><span><b>Rule 03</b> / 05</span><span>A Bridge the Token Never Crosses</span></div>
 		<h1>Trust the sender <span class="accent">twice</span></h1>
 		<aside class="notes"></aside>
 	</section>
@@ -863,8 +1012,8 @@ window.addEventListener("message", (event) => {
 	</aside>
 	</section>
 
-	<section class="center-slide rule-title">
-		<p class="kicker">Rule 4 of 5</p>
+	<section class="rule-title rt-long" data-background-color="var(--card-bg)">
+		<div class="rt-strip"><span><b>Rule 04</b> / 05</span><span>A Bridge the Token Never Crosses</span></div>
 		<h1>Zero tokens in URLs — for the <span class="accent">whole roundtrip</span></h1>
 		<aside class="notes"></aside>
 	</section>
@@ -887,8 +1036,8 @@ window.addEventListener("message", (event) => {
 	</section>
 
 
-	<section class="center-slide rule-title">
-		<p class="kicker">Rule 5 of 5 · added after shipping (v0.3.1)</p>
+	<section class="rule-title rt-long" data-background-color="var(--card-bg)">
+		<div class="rt-strip"><span><b>Rule 05</b> / 05 · added after shipping (v0.3.1)</span><span>A Bridge the Token Never Crosses</span></div>
 		<h1>Only a same-origin <span class="accent">fetch</span> may redeem</h1>
 		<aside class="notes"></aside>
 	</section>
@@ -1185,7 +1334,7 @@ export function middleware(request: NextRequest) {
 		</div>
 		<div class="fix-card" data-fragment-index="3">
 			<svg viewBox="0 0 200 120" class="diagram fix-pic">
-				<rect x="15" y="40" width="170" height="36" rx="18" fill="rgba(255,255,255,0.08)" stroke="var(--muted)" stroke-width="2"/>
+				<rect x="15" y="40" width="170" height="36" rx="18" fill="var(--surface-2)" stroke="var(--muted)" stroke-width="2"/>
 				<text x="30" y="64" class="label muted" style="font-size:12px">https://app/…?token=</text>
 				<rect x="140" y="47" width="38" height="22" rx="5" fill="var(--danger)"/>
 				<text x="159" y="63" text-anchor="middle" style="fill:#fff; font-size:11px; font-weight:700">eyJ…</text>
@@ -1196,10 +1345,10 @@ export function middleware(request: NextRequest) {
 		</div>
 		<div class="fix-card" data-fragment-index="4">
 			<svg viewBox="0 0 200 120" class="diagram fix-pic">
-				<rect x="70" y="50" width="60" height="50" rx="8" fill="rgba(255,255,255,0.08)" stroke="var(--fg)" stroke-width="3"/>
+				<rect x="70" y="50" width="60" height="50" rx="8" fill="var(--surface-2)" stroke="var(--fg)" stroke-width="3"/>
 				<path d="M82 50 v-14 a18 18 0 0 1 36 0 v4" fill="none" stroke="var(--fg)" stroke-width="3"/>
 				<circle cx="100" cy="72" r="5" fill="var(--fg)"/><rect x="98" y="74" width="4" height="12" fill="var(--fg)"/>
-				<rect x="138" y="62" width="48" height="22" rx="4" fill="var(--accent)"/><text x="162" y="77" text-anchor="middle" style="fill:#0f1115; font-size:11px; font-weight:700">YOURS</text>
+				<rect x="138" y="62" width="48" height="22" rx="4" fill="var(--accent)"/><text x="162" y="77" text-anchor="middle" style="fill:var(--on-accent); font-size:11px; font-weight:700">YOURS</text>
 			</svg>
 			<span class="want-badge">✓</span><p class="fix-title">No vendor lock-in</p>
 			<p class="fix-why">two libraries, two live demos, two lines</p>
@@ -1282,13 +1431,37 @@ export function middleware(request: NextRequest) {
 <script>
 	Reveal.initialize({
 		hash: true,
-		slideNumber: 'c/t',
+		slideNumber: false,
 		transition: 'none',
 		width: 1280,
 		height: 720,
-		margin: 0.06,
+		margin: 0.08,
 		plugins: [ RevealHighlight, RevealNotes ]
 	});
+
+	/* T toggles light / dark and remembers the choice */
+	Reveal.addKeyBinding({ keyCode: 84, key: 'T', description: 'Toggle light / dark theme' }, function () {
+		var dark = document.documentElement.classList.toggle('theme-dark');
+		try { localStorage.setItem('deck-theme', dark ? 'dark' : 'light'); } catch (e) {}
+	});
+
+	/* footer: section name + slide number; hidden on the title and on inverted cards */
+	(function () {
+		var SECTION = { disclaimer: 'Opening', about: 'Opening', origin: 'Opening', 'bridge-meme': 'Opening', takeaways: 'Opening',
+			party: 'The problem', setup: 'The problem', 'why-banned': 'The problem', fixes: 'The problem', 'chips-jar': 'The problem', constraints: 'The problem',
+			realisation: 'The bridge', flow: 'The bridge', shape: 'The bridge', demo: 'Demo', invariants: 'Five rules', seam: 'Reference implementation',
+			grows: 'Wrap-up', 'constraints-done': 'Wrap-up', credits: 'Wrap-up', thanks: 'Wrap-up', appendix: 'Appendix' };
+		var foot = document.querySelector('.deck-foot'), sec = foot.querySelector('.df-sec'), num = foot.querySelector('.df-num');
+		function update() {
+			var s = Reveal.getCurrentSlide(); if (!s) return;
+			var top = s.parentElement.tagName === 'SECTION' ? s.parentElement : s;
+			var all = Reveal.getSlides();
+			sec.textContent = SECTION[top.id] || '';
+			num.textContent = (all.indexOf(s) + 1) + ' / ' + all.length;
+			foot.classList.toggle('off', s.id === 'title' || s.classList.contains('rule-title'));
+		}
+		Reveal.on('ready', update); Reveal.on('slidechanged', update);
+	})();
 </script>
 </body>
 </html>
