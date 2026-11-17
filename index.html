@@ -30,11 +30,6 @@
 			--on-accent: #ffffff;
 			--ok: #34785c;                /* "passed / allowed" */
 			--danger: #cf2d56;            /* "blocked" */
-			--card-bg: #26251e;           /* inverted title cards */
-			--card-fg: #f7f7f4;
-			--card-muted: #a3a299;
-			--card-line: #4c4b42;
-			--card-accent: #ff6b2c;
 			--cookie: #e9c98b;
 			--cookie-line: #26251e;
 			--cookie-dot: #26251e;
@@ -73,11 +68,6 @@
 			--on-accent: #1b1a17;
 			--ok: #72c7a3;
 			--danger: #f4728f;
-			--card-bg: #f2f1ed;
-			--card-fg: #26251e;
-			--card-muted: #6f6e68;
-			--card-line: #bdbcb6;
-			--card-accent: #f54e00;
 			--cookie-line: #edece6;
 			--cookie-dot: #3a2a12;
 			--code-kw: #ff8d5c;
@@ -236,13 +226,21 @@
 		.reveal .title-slide .motif-label { font-family: var(--r-code-font); font-size: 14px; letter-spacing: 0.04em; fill: var(--muted); }
 		.reveal .title-slide .who { font-family: var(--r-code-font); font-size: 0.53em; margin: 1.2em 0 0; }
 
-		/* inverted rule cards */
+		/* rule title cards: same theme, full-frame type */
 		.reveal .rule-title { text-align: left; }
-		.reveal .rule-title .rt-strip { display: flex; justify-content: space-between; font-family: var(--r-code-font); font-size: 0.47em; letter-spacing: 0.09em; text-transform: uppercase; color: var(--card-muted); border-bottom: 1px solid var(--card-line); padding-bottom: 0.8em; }
-		.reveal .rule-title .rt-strip b { color: var(--card-fg); font-weight: 500; }
-		.reveal .rule-title h1 { color: var(--card-fg); font-weight: 600; font-size: 4.6em; line-height: 0.9; letter-spacing: -0.055em; text-transform: uppercase; max-width: none; margin: 0.28em 0 0 -0.04em; }
+		.reveal .rule-title .rt-strip { display: flex; justify-content: space-between; font-family: var(--r-code-font); font-size: 0.47em; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 0.8em; }
+		.reveal .rule-title .rt-strip b { color: var(--fg); font-weight: 500; }
+		.reveal .rule-title h1 { color: var(--fg); font-weight: 600; font-size: 4.6em; line-height: 0.9; letter-spacing: -0.055em; text-transform: uppercase; max-width: none; margin: 0.28em 0 0 -0.04em; }
 		.reveal .rule-title.rt-long h1 { font-size: 3.3em; line-height: 0.93; }
-		.reveal .rule-title h1 .accent { color: var(--card-accent); }
+		.reveal .rule-title h1 .accent { color: var(--accent); }
+
+		/* screenshots: hairline frame; in the dark theme a light screenshot is inverted instead of glowing */
+		.reveal img.shot { border: 1px solid var(--line); border-radius: 4px; }
+		html.theme-dark .reveal img.shot { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.92); }
+
+		/* 2x2 cards: larger pictograms */
+		.reveal .fix-card { grid-template-columns: 230px 1fr; }
+		.reveal svg.fix-pic { width: 230px; }
 
 		/* footer */
 		.reveal .deck-foot { position: absolute; left: 4vw; right: 4vw; bottom: 1.1vh; z-index: 5; display: flex; justify-content: space-between; font-family: var(--r-code-font); font-size: 1.05vw; letter-spacing: 0.04em; color: var(--muted); pointer-events: none; }
@@ -296,7 +294,7 @@
 	</div>
 	<p class="big" style="margin-top:0.3em; font-size:1.15em">This talk might cause an uncontrolled desire for snacks<br><span class="fragment accent">…and diabetes.</span></p>
 	<aside class="notes">
-		<p>Before we start, a disclaimer. This talk might cause an uncontrolled desire for snacks — we'll be talking about cookies and chips for twenty-five minutes, and none of them are edible. ▸ …and diabetes. <i>(beat)</i></p>
+		<p>Before we start, a disclaimer. This talk might cause an uncontrolled desire for snacks — we'll be talking about cookies and chips for the next half hour, and none of them are edible. ▸ …and diabetes. <i>(beat)</i></p>
 	</aside>
 </section>
 
@@ -311,7 +309,7 @@
 		</div>
 	</div>
 	<aside class="notes">
-		<p>I'm Azat. I'm a software architect and tech lead, and I've been writing JavaScript for a bit over ten years. One thing up front: tonight is about a pattern, not a product. If you walk out of here and hand-roll your own version — that's a win, as long as it passes the checklist I'll give you later.</p>
+		<p>I'm Azat. I'm a software architect and tech lead, and I've been writing JavaScript for a bit over ten years. Lately I spend most of my time on one question: how sessions and tokens cross trust boundaries — between browser contexts, and between AI agents. Today is the browser half. One thing up front: this talk is about a pattern, not a product. If you walk out of here and hand-roll your own version — that's a win, as long as it passes the checklist I'll give you later.</p>
 	</aside>
 </section>
 
@@ -390,7 +388,7 @@
 		<li class="fragment">working wiring for Auth.js and Better Auth</li>
 	</ul>
 	<aside class="notes">
-		<p>Four things. ▸ A mental model — a one-time ticket across a gap you don't trust. Everything else is transport. ▸ Five rules you can hold up against <i>any</i> popup-or-iframe auth scheme. ▸ Where CHIPS — partitioned cookies — helps, and where it doesn't. ▸ And working wiring for both Auth.js and Better Auth, so you can see the pattern is not tied to a library.</p>
+		<p>Four things. ▸ A mental model — a one-time ticket across a gap you don't trust. Everything else is transport. ▸ Five rules you can hold up against <i>any</i> popup-or-iframe auth scheme. ▸ Where CHIPS — partitioned cookies — helps, and where it doesn't. ▸ And working wiring for Auth.js and Better Auth — two open-source auth libraries for JavaScript apps, where the session lives in your own cookie, not at a vendor — so you can see the pattern is not tied to a library.</p>
 	</aside>
 </section>
 
@@ -436,7 +434,7 @@
 </section>
 
 <section id="setup">
-	<h2>Your Next.js app, inside somebody else's page</h2>
+	<h2>Your web app, inside somebody else's page</h2>
 	<svg class="diagram" viewBox="0 0 1000 420">
 		<rect class="box" x="20" y="20" width="960" height="380"/>
 		<text x="40" y="58" class="lane-title">host.example — SharePoint · Teams · Salesforce · …</text>
@@ -448,7 +446,7 @@
 		<text x="420" y="306" style="fill:var(--on-accent);font-weight:600">Continue →</text>
 	</svg>
 	<aside class="notes">
-		<p>Here's the situation. Your Next.js app lives inside somebody else's page. SharePoint web part, Teams tab, Salesforce Lightning component, ServiceNow, Confluence — choose your fighter. The host already has the user signed in against a shared identity provider — in the Microsoft world that's Entra.</p>
+		<p>Here's the situation. Your web app — mine was Next.js, but nothing here depends on it — lives inside somebody else's page. SharePoint web part, Teams tab, Salesforce Lightning component, ServiceNow, Confluence — choose your fighter. The host already has the user signed in against a shared identity provider — in the Microsoft world that's Entra.</p>
 		<p>Ten years ago this was boring. The iframe just saw the same cookies as the host, and life went on. Now you know why it doesn't: that cookie is third-party here.</p>
 	</aside>
 </section>
@@ -730,7 +728,7 @@
 		<div class="tracker"><span class="trk done">✓ inherit host SSO</span><span class="trk done">✓ silently</span><span class="trk todo">no token leaks</span><span class="trk todo">no lock-in</span></div>
 		<p class="step-cap">the IdP sees first-party cookies → code, no prompt → session cookie in the popup's jar</p>
 		<aside class="notes">
-		<p>In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is <i>where</i> this runs. Look at the clipboard at the bottom: two of the four are already green — we inherited the host SSO, and nobody was prompted.</p>
+		<p>In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is <i>where</i> this runs. Two of our four requirements are already met: we inherited the host's sign-in, and nobody was prompted. You'll see them turn green at the bottom of the slide.</p>
 	</aside>
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
@@ -876,7 +874,7 @@
 		<p class="step-cap">the jar that was empty is full — CHIPS keeps the session we delivered</p>
 		<aside class="notes">
 		<p>The iframe redeems the ticket: <code>fetch('/auth/consume?code=…', { credentials: 'include' })</code>. The server deletes it on first read and answers with <code>Set-Cookie</code> — <code>Partitioned</code> — into the jar we said was empty. CHIPS couldn't create the session; it can keep the one we just delivered.</p>
-		<p>The popup closes. The user saw a flash for under a second. The iframe reloads, signed in. And the third item on the clipboard turns green: the token never left the server side — only the ticket crossed.</p>
+		<p>The popup closes. The user saw a flash for under a second. The iframe reloads, signed in. And the third requirement is met: the token never left the server side — only the ticket crossed.</p>
 	</aside>
 	</section>
 </section>
@@ -935,7 +933,7 @@
 	</aside>
 	</section>
 
-	<section class="rule-title" data-background-color="var(--card-bg)">
+	<section class="rule-title">
 		<div class="rt-strip"><span><b>Rule 01</b> / 05</span><span>A Bridge the Token Never Crosses</span></div>
 		<h1>Verify the session <span class="accent">first</span></h1>
 		<aside class="notes"></aside>
@@ -961,7 +959,7 @@ if (!session)
 	</aside>
 	</section>
 
-	<section class="rule-title" data-background-color="var(--card-bg)">
+	<section class="rule-title">
 		<div class="rt-strip"><span><b>Rule 02</b> / 05</span><span>A Bridge the Token Never Crosses</span></div>
 		<h1>The ticket is not the key</h1>
 		<aside class="notes"></aside>
@@ -984,7 +982,7 @@ if (!session)
 	</aside>
 	</section>
 
-	<section class="rule-title" data-background-color="var(--card-bg)">
+	<section class="rule-title">
 		<div class="rt-strip"><span><b>Rule 03</b> / 05</span><span>A Bridge the Token Never Crosses</span></div>
 		<h1>Trust the sender <span class="accent">twice</span></h1>
 		<aside class="notes"></aside>
@@ -994,8 +992,10 @@ if (!session)
 		<h3>Trust the sender <span class="accent">twice</span></h3>
 		<pre><code class="language-ts" data-trim>
 window.addEventListener("message", (event) => {
-  if (!allowedOrigins.includes(event.origin)) return; // wrong origin
-  if (event.source !== popupRef) return;              // right origin, wrong window
+  // wrong origin
+  if (!allowedOrigins.includes(event.origin)) return;
+  // right origin, wrong window
+  if (event.source !== popupRef) return;
   // … settle the flow with event.data.code
 });
 		</code></pre>
@@ -1012,7 +1012,7 @@ window.addEventListener("message", (event) => {
 	</aside>
 	</section>
 
-	<section class="rule-title rt-long" data-background-color="var(--card-bg)">
+	<section class="rule-title rt-long">
 		<div class="rt-strip"><span><b>Rule 04</b> / 05</span><span>A Bridge the Token Never Crosses</span></div>
 		<h1>Zero tokens in URLs — for the <span class="accent">whole roundtrip</span></h1>
 		<aside class="notes"></aside>
@@ -1036,7 +1036,7 @@ window.addEventListener("message", (event) => {
 	</section>
 
 
-	<section class="rule-title rt-long" data-background-color="var(--card-bg)">
+	<section class="rule-title rt-long">
 		<div class="rt-strip"><span><b>Rule 05</b> / 05 · added after shipping (v0.3.1)</span><span>A Bridge the Token Never Crosses</span></div>
 		<h1>Only a same-origin <span class="accent">fetch</span> may redeem</h1>
 		<aside class="notes"></aside>
@@ -1076,7 +1076,7 @@ window.addEventListener("message", (event) => {
 		</ul>
 		<p class="tiny">each row ↔ a named, currently-green test in the reference implementation's threat model — link at the end</p>
 		<aside class="notes">
-		<p>Here's the whole list on one slide. Take a photo. Five rules. Tomorrow, against whatever you already shipped.</p>
+		<p>Here's the whole list on one slide. Take a photo. Five rules. On Monday, against whatever you already shipped.</p>
 	</aside>
 	</section>
 
@@ -1096,10 +1096,10 @@ window.addEventListener("message", (event) => {
 				<span class="muted">→ two live origins, positive + negative case, recorded in live-validation.md</span></p>
 			</div>
 		</div>
-		<p class="tiny">CHIPS: Chrome/Edge 114+ · Firefox 130+ · Safari 18+</p>
+		<p class="tiny">CHIPS: Chrome/Edge 114+ · Firefox 141+ · Safari 26.2+ — live check run in Chrome</p>
 		<aside class="notes">
-		<p>And the honest boundary. The Node tests prove we emit <code>Partitioned</code>, that data flows, and every negative case I just listed. They do <i>not</i> prove a real browser <i>isolates</i> the partition — I had to check that in a browser. I did: two live origins, written down in the repo. Also that <code>fetch</code> — not a navigation — actually sets the cookie in the iframe's jar.</p>
-		<p>If you adopt the pattern, run that live check in <i>your</i> browsers. CHIPS is Chrome and Edge 114, Firefox 130, Safari 18.</p>
+		<p>And the honest boundary. The Node tests prove we emit <code>Partitioned</code>, that data flows, and every negative case I just listed. They do <i>not</i> prove a real browser <i>isolates</i> the partition — I had to check that in a browser. I did, in Chrome: two live origins, written down in the repo. Also that <code>fetch</code> — not a navigation — actually sets the cookie in the iframe's jar.</p>
+		<p>If you adopt the pattern, run that live check in <i>your</i> browsers — and check the versions. CHIPS is Chrome and Edge 114, Firefox 141, Safari 26.2. And it did not arrive in a straight line: in both Safari and Firefox it showed up, went away, and came back between releases.</p>
 	</aside>
 	</section>
 </section>
@@ -1111,7 +1111,7 @@ window.addEventListener("message", (event) => {
 		<p class="kicker">The reference implementation</p>
 		<h2><code class="inline">next-auth-bridge</code></h2>
 		<div class="two-col" style="align-items:center">
-			<img src="assets/repo.png" alt="" onerror="this.style.visibility='hidden'" style="flex:1.6; min-width:0; max-height:420px; object-fit:contain; border-radius:10px;">
+			<img class="shot" src="assets/repo.png" alt="" onerror="this.style.visibility='hidden'" style="flex:1.6; min-width:0; max-height:420px; object-fit:contain;">
 			<div style="flex:0 0 260px; text-align:center">
 				<img src="assets/qr-repo.png" alt="" style="width:220px; height:220px; background:#fff; border-radius:8px; display:block; margin:0 auto 0.4em;">
 				<p class="tiny">github.com/azatdavliatshin/<br>next-auth-bridge</p>
@@ -1381,7 +1381,7 @@ export function middleware(request: NextRequest) {
 		<div><img src="assets/qr-rfc8252.png" alt="">RFC 8252<br>where the native half comes from</div>
 	</div>
 	<div class="bridge-line"></div>
-	<p class="small muted">YerevanJS — see you at the next one</p>
+	<p class="small muted">DevFest Armenia 2026</p>
 	<aside class="notes">
 		<p>That's the bridge. The repo, the threat model, and both demos are at the QR — and RFC 8252, if you want to read where the native half comes from. Questions — and if nobody has one, I'll start with the one I always get: "why not just put a JWT in the URL?"</p>
 	</aside>
@@ -1401,7 +1401,8 @@ export function middleware(request: NextRequest) {
 	</section>
 	<section id="appendix-chips">
 		<h3>CHIPS browser matrix</h3>
-		<p class="small">Chrome/Edge 114+ · Firefox 130+ · Safari 18+</p>
+		<p class="small">Chrome/Edge 114+ · Firefox 141+ · Safari 26.2+</p>
+		<p class="tiny">Safari: shipped in 18.4, broken in 18.5, back in 26.2 · Firefox: listed in 131, re-enabled in 141</p>
 		<p class="small muted">Older Safari: fall back to the Storage Access prompt or a host-level "sign in first" notice.</p>
 	</section>
 	<section id="appendix-store">
@@ -1445,7 +1446,7 @@ export function middleware(request: NextRequest) {
 		try { localStorage.setItem('deck-theme', dark ? 'dark' : 'light'); } catch (e) {}
 	});
 
-	/* footer: section name + slide number; hidden on the title and on inverted cards */
+	/* footer: section name + slide number; hidden on the title and on rule title cards */
 	(function () {
 		var SECTION = { disclaimer: 'Opening', about: 'Opening', origin: 'Opening', 'bridge-meme': 'Opening', takeaways: 'Opening',
 			party: 'The problem', setup: 'The problem', 'why-banned': 'The problem', fixes: 'The problem', 'chips-jar': 'The problem', constraints: 'The problem',

@@ -11,11 +11,11 @@ The talk is called "A Bridge the Token Never Crosses", a little bit poetic, but 
 
 ## 2 · Disclaimer *(joke)*
 
-Before we start, a disclaimer. This talk might cause an uncontrolled desire for snacks — we'll be talking about cookies and chips for twenty-five minutes, and none of them are edible. ▸ …and diabetes. *(beat)*
+Before we start, a disclaimer. This talk might cause an uncontrolled desire for snacks — we'll be talking about cookies and chips for the next half hour, and none of them are edible. ▸ …and diabetes. *(beat)*
 
 ## 3 · Who's talking
 
-I'm Azat. I'm a software architect and tech lead, and I've been writing JavaScript for a bit over ten years. One thing up front: tonight is about a pattern, not a product. If you walk out of here and hand-roll your own version — that's a win, as long as it passes the checklist I'll give you later.
+I'm Azat. I'm a software architect and tech lead, and I've been writing JavaScript for a bit over ten years. Lately I spend most of my time on one question: how sessions and tokens cross trust boundaries — between browser contexts, and between AI agents. Today is the browser half. One thing up front: this talk is about a pattern, not a product. If you walk out of here and hand-roll your own version — that's a win, as long as it passes the checklist I'll give you later.
 
 ## 4 · Origin story
 
@@ -35,7 +35,7 @@ That shape is the bridge. *(beat — let the room react, then move on)*
 
 ## 6 · What you'll leave with
 
-Four things. ▸ A mental model — a one-time ticket across a gap you don't trust. Everything else is transport. ▸ Five rules you can hold up against *any* popup-or-iframe auth scheme. ▸ Where CHIPS — partitioned cookies — helps, and where it doesn't. ▸ And working wiring for both Auth.js and Better Auth, so you can see the pattern is not tied to a library.
+Four things. ▸ A mental model — a one-time ticket across a gap you don't trust. Everything else is transport. ▸ Five rules you can hold up against *any* popup-or-iframe auth scheme. ▸ Where CHIPS — partitioned cookies — helps, and where it doesn't. ▸ And working wiring for Auth.js and Better Auth — two open-source auth libraries for JavaScript apps, where the session lives in your own cookie, not at a vendor — so you can see the pattern is not tied to a library.
 
 ---
 
@@ -45,7 +45,7 @@ Before the problem itself, one definition — because the whole talk stands on i
 
 ## 8 · The setup
 
-Here's the situation. Your Next.js app lives inside somebody else's page. SharePoint web part, Teams tab, Salesforce Lightning component, ServiceNow, Confluence — choose your fighter. The host already has the user signed in against a shared identity provider — in the Microsoft world that's Entra.
+Here's the situation. Your web app — mine was Next.js, but nothing here depends on it — lives inside somebody else's page. SharePoint web part, Teams tab, Salesforce Lightning component, ServiceNow, Confluence — choose your fighter. The host already has the user signed in against a shared identity provider — in the Microsoft world that's Entra.
 
 Ten years ago this was boring. The iframe just saw the same cookies as the host, and life went on. Now you know why it doesn't: that cookie is third-party here.
 
@@ -97,7 +97,7 @@ Let me walk the flow. Four lanes: the iframe — your app, embedded; the popup �
 The iframe opens a popup to `/auth/popup` — on *your* origin, not the host's. The host never runs any of your code. That's why the same pattern ports to SharePoint, Teams, Salesforce, whatever.
 
 ### 14.2 · Step two
-In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is *where* this runs. Look at the clipboard at the bottom: two of the four are already green — we inherited the host SSO, and nobody was prompted.
+In that popup, your auth library does a completely normal OAuth sign-in. Nothing custom. The popup is top-level, so the IdP sees its own first-party cookies, finds the live session, and comes back with no prompt. Your server sets a session cookie — in the popup's first-party jar. The only new thing is *where* this runs. Two of our four requirements are already met: we inherited the host's sign-in, and nobody was prompted. You'll see them turn green at the bottom of the slide.
 
 ### 14.3 · Step three
 This is where the title happens.
@@ -110,7 +110,7 @@ The popup `postMessage`s that ticket to the iframe — with an explicit target o
 ### 14.5 · Step five
 The iframe redeems the ticket: `fetch('/auth/consume?code=…', { credentials: 'include' })`. The server deletes it on first read and answers with `Set-Cookie` — `Partitioned` — into the jar we said was empty. CHIPS couldn't create the session; it can keep the one we just delivered.
 
-The popup closes. The user saw a flash for under a second. The iframe reloads, signed in. And the third item on the clipboard turns green: the token never left the server side — only the ticket crossed.
+The popup closes. The user saw a flash for under a second. The iframe reloads, signed in. And the third requirement is met: the token never left the server side — only the ticket crossed.
 
 ## 15 · The whole shape
 
@@ -166,13 +166,13 @@ The ticket was already one-time and sixty seconds. And that was not enough. Thin
 
 ### 17.6 · The checklist
 
-Here's the whole list on one slide. Take a photo. Five rules. Tomorrow, against whatever you already shipped.
+Here's the whole list on one slide. Take a photo. Five rules. On Monday, against whatever you already shipped.
 
 ### 17.7 · What the tests don't prove
 
-And the honest boundary. The Node tests prove we emit `Partitioned`, that data flows, and every negative case I just listed. They do *not* prove a real browser *isolates* the partition — I had to check that in a browser. I did: two live origins, written down in the repo. Also that `fetch` — not a navigation — actually sets the cookie in the iframe's jar.
+And the honest boundary. The Node tests prove we emit `Partitioned`, that data flows, and every negative case I just listed. They do *not* prove a real browser *isolates* the partition — I had to check that in a browser. I did, in Chrome: two live origins, written down in the repo. Also that `fetch` — not a navigation — actually sets the cookie in the iframe's jar.
 
-If you adopt the pattern, run that live check in *your* browsers. CHIPS is Chrome and Edge 114, Firefox 130, Safari 18.
+If you adopt the pattern, run that live check in *your* browsers — and check the versions. CHIPS is Chrome and Edge 114, Firefox 141, Safari 26.2. And it did not arrive in a straight line: in both Safari and Firefox it showed up, went away, and came back between releases.
 
 ---
 
@@ -230,7 +230,7 @@ That's the bridge. The repo, the threat model, and both demos are at the QR — 
 
 **Why not a JWT in the URL or in `postMessage`?** A token in a URL lives in history, logs, referrers and screenshots. A token in a message payload is a bearer sitting in JavaScript. The code is worthless after one use and sixty seconds; the token isn't. That asymmetry is the whole design.
 
-**Older Safari / no CHIPS?** Chrome/Edge 114+, Firefox 130+, Safari 18+. Below that, fall back to the Storage Access prompt or a host-level "sign in first" notice — degraded, not broken.
+**Older Safari / no CHIPS?** Chrome/Edge 114+, Firefox 141+, Safari 26.2+. Safari had it in 18.4 and lost it in 18.5; Firefox listed it in 131 and re-enabled it in 141. Below those versions, fall back to the Storage Access prompt or a host-level "sign in first" notice — degraded, not broken.
 
 **Why cap the TTL at construction instead of clamping?** Because a clamp is silent and a throw is loud. Security config that fails quietly drifts.
 
