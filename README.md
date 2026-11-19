@@ -2,7 +2,7 @@
 
 Slides for the DevFest Armenia 2026 talk. reveal.js 5.2.1, single `index.html`, no build step.
 
-- Open: `npx serve .` (or any static server) → http://localhost:3000 — or just open `index.html`.
+- Open: `npx serve .` (or any static server) → http://localhost:3000 -- or just open `index.html`.
 - Speaker view: press `S`. Overview: `Esc`. The notes are the full script from `TALK.md` (▸ = click), plus a ⏱ cumulative-time marker.
 - `TALK.md` is the source of truth for the script. After editing it, run `python3 scripts/sync-notes.py` to copy the text back into the slides' notes.
 - Identity: every colour and font is a CSS variable at the top of `index.html`. Two themes share them: light is the default, dark is `html.theme-dark`. Press `T` to switch (the choice is remembered on this machine), or open with `?theme=dark` / `?theme=light`.
