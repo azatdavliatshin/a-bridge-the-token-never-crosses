@@ -237,9 +237,9 @@ Fourth file: the launcher. This is the code that runs inside the iframe.
 
 ### 18.7 · The middleware
 
-Last file: the middleware. Its only job is convenience -- an embedded visitor with no session gets routed to the popup entry page.
+Last file: the middleware. Its only job is convenience -- an embedded visitor with no session gets routed to the popup entry page. How does it know the request is embedded? The browser says so, in one header: `Sec-Fetch-Dest: iframe`.
 ▸ It has its own import path, because middleware runs on the Edge runtime and the rest of the library needs Node's crypto.
-▸ And look at what it checks: that a cookie is *present*. Not that it's valid. So this is routing, not security -- I said it at Invariant 1, and here it is in code. The real gate is `verifySession` on `/auth/bridge`.
+▸ And look at what it checks: that a cookie is *present*. Not that it's valid. Fake the cookie or fake that header, and all you change is which page you land on. So this is routing, not security -- I said it at Invariant 1, and here it is in code. The real gate is `verifySession` on `/auth/bridge`.
 
 ## 19 · Where the same bridge goes next
 

@@ -1372,7 +1372,7 @@ export function middleware(request: NextRequest) {
 		</code></pre>
 		<p class="small muted">The real gate is <code class="inline">verifySession</code> inside <code class="inline">/auth/bridge</code>. This only decides which page an embedded, unauthenticated visitor lands on.</p>
 		<aside class="notes">
-		<p>Last file: the middleware. Its only job is convenience -- an embedded visitor with no session gets routed to the popup entry page.<br>▸ It has its own import path, because middleware runs on the Edge runtime and the rest of the library needs Node's crypto.<br>▸ And look at what it checks: that a cookie is <i>present</i>. Not that it's valid. So this is routing, not security -- I said it at Invariant 1, and here it is in code. The real gate is <code>verifySession</code> on <code>/auth/bridge</code>.</p>
+		<p>Last file: the middleware. Its only job is convenience -- an embedded visitor with no session gets routed to the popup entry page. How does it know the request is embedded? The browser says so, in one header: <code>Sec-Fetch-Dest: iframe</code>.<br>▸ It has its own import path, because middleware runs on the Edge runtime and the rest of the library needs Node's crypto.<br>▸ And look at what it checks: that a cookie is <i>present</i>. Not that it's valid. Fake the cookie or fake that header, and all you change is which page you land on. So this is routing, not security -- I said it at Invariant 1, and here it is in code. The real gate is <code>verifySession</code> on <code>/auth/bridge</code>.</p>
 	</aside>
 	</section>
 </section>
