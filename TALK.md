@@ -114,7 +114,7 @@ In that popup, your auth library does a completely normal OAuth sign-in. Nothing
 ### 14.3 · Step three
 This is where the title happens.
 
-The popup calls `POST /auth/bridge`. The server checks there is a real session, parks it for sixty seconds, and returns a one-time ticket. The popup never gets the token -- only the ticket.
+The popup calls `/auth/bridge`. The server checks there is a real session, parks it for sixty seconds, and returns a one-time ticket. The popup never gets the token -- only the ticket.
 
 ### 14.4 · Step four
 The popup `postMessage`s that ticket to the iframe -- with an explicit target origin, never `*`. The iframe checks the sender's origin *and* the sender's window. Why both -- in a few minutes.

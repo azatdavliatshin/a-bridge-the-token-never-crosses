@@ -752,7 +752,7 @@
 		<!-- arrows -->
 		<g class="act"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sa1)"/><text x="40" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="todo"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
+		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="640" y="12" class="label" style="font-size:16px">③ /auth/bridge</text></g>
 		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd1)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage(ticket)</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd1)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd1)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume ticket → Set-Cookie</text></g>
 	</svg>
@@ -801,7 +801,7 @@
 		<!-- arrows -->
 		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="40" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="act"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sa2)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa2)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
+		<g class="todo"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="640" y="12" class="label" style="font-size:16px">③ /auth/bridge</text></g>
 		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd2)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage(ticket)</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd2)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd2)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume ticket → Set-Cookie</text></g>
 	</svg>
@@ -814,7 +814,7 @@
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
 		<p class="kicker">The bridge · step 3 of 5</p>
-		<h3 class="step-title"><code class="inline">POST /auth/bridge</code> → verify session → park the cookie → mint a ticket</h3>
+		<h3 class="step-title"><code class="inline">/auth/bridge</code> → verify session → park the cookie → mint a ticket</h3>
 	<svg class="diagram scene" viewBox="0 -10 1000 480" style="max-height:440px">
 		<defs>
 			<marker id="sa3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker>
@@ -849,7 +849,7 @@
 		<!-- arrows -->
 		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="40" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="act"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sa3)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa3)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
+		<g class="act"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sa3)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa3)"/><text x="640" y="12" class="label" style="font-size:16px">③ /auth/bridge</text></g>
 		<g class="todo"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd3)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage(ticket)</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd3)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd3)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume ticket → Set-Cookie</text></g>
 	</svg>
@@ -858,7 +858,7 @@
 		<p class="step-cap">ticket = 256-bit · one-time · ≤ 60 s -- the token stays on the server</p>
 		<aside class="notes">
 		<p>This is where the title happens.</p>
-		<p>The popup calls <code>POST /auth/bridge</code>. The server checks there is a real session, parks it for sixty seconds, and returns a one-time ticket. The popup never gets the token -- only the ticket.</p>
+		<p>The popup calls <code>/auth/bridge</code>. The server checks there is a real session, parks it for sixty seconds, and returns a one-time ticket. The popup never gets the token -- only the ticket.</p>
 	</aside>
 	</section>
 	<section data-auto-animate data-auto-animate-id="flow">
@@ -898,7 +898,7 @@
 		<!-- arrows -->
 		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd4)"/><text x="40" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
+		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="640" y="12" class="label" style="font-size:16px">③ /auth/bridge</text></g>
 		<g class="act"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sa4)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage(ticket)</text></g>
 		<g class="todo"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sd4)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd4)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume ticket → Set-Cookie</text></g>
 	</svg>
@@ -946,7 +946,7 @@
 		<!-- arrows -->
 		<g class="done"><path d="M390 200 C 430 160, 440 150, 450 140" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="40" y="122" class="label" style="font-size:16px">① open /auth/popup</text></g>
 		<g class="done"><path d="M690 120 C 730 150, 730 300, 740 330" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M745 360 C 720 330, 700 220, 660 190" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="520" y="262" class="label" style="font-size:16px">② OAuth, top-level</text></g>
-		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="640" y="12" class="label" style="font-size:16px">③ POST /auth/bridge</text></g>
+		<g class="done"><path d="M690 90 H 735" fill="none" stroke-width="4" marker-end="url(#sd5)"/><path d="M756 150 H 650" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sd5)"/><text x="640" y="12" class="label" style="font-size:16px">③ /auth/bridge</text></g>
 		<g class="done"><path d="M500 180 C 430 230, 330 240, 300 290" fill="none" stroke-width="4" marker-end="url(#sd5)"/><text x="200" y="215" class="label" style="font-size:16px">④ postMessage(ticket)</text></g>
 		<g class="act"><path d="M290 330 C 500 400, 700 300, 775 210" fill="none" stroke-width="4" marker-end="url(#sa5)"/><path d="M760 230 C 650 360, 450 420, 300 350" fill="none" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#sa5)"/><text x="470" y="440" class="label" style="font-size:16px">⑤ consume ticket → Set-Cookie</text></g>
 	</svg>
@@ -1103,7 +1103,7 @@ window.addEventListener("message", (event) => {
 			<tr><th>client-constructed URL</th><th>carries</th></tr>
 			<tr><td><code class="inline">/auth/popup</code></td><td>nothing</td></tr>
 			<tr><td>IdP authorize URL</td><td>state, PKCE challenge -- owned by your auth library</td></tr>
-			<tr><td><code class="inline">POST /auth/bridge</code> → body</td><td><code class="inline">{ code }</code> only</td></tr>
+			<tr><td><code class="inline">/auth/bridge</code> → body</td><td><code class="inline">{ code }</code> only</td></tr>
 			<tr><td><code class="inline">postMessage</code> payload</td><td><code class="inline">{ source, type, code }</code></td></tr>
 			<tr><td><code class="inline">/auth/consume?code=…</code></td><td>the opaque code -- the only thing allowed in a URL</td></tr>
 		</table>
@@ -1282,12 +1282,11 @@ export const { bridge, consume } = createAuthBridge({
 
 	<section>
 		<p class="kicker">2 · the routes -- server side</p>
-		<h3>Two files, three lines</h3>
-		<pre><code class="language-ts" data-trim data-line-numbers="|1-4|6-8">
+		<h3>Two files, two lines</h3>
+		<pre><code class="language-ts" data-trim data-line-numbers="|1-3|5-7">
 // app/auth/bridge/route.ts      ③ verify → park cookie → mint ticket
 import { bridge } from "@/lib/auth-bridge";
-export const GET  = (req: Request) => bridge(req);
-export const POST = (req: Request) => bridge(req);
+export const GET = (req: Request) => bridge(req);
 
 // app/auth/consume/route.ts     ⑤ redeem ticket → Set-Cookie … Partitioned
 import { consume } from "@/lib/auth-bridge";
